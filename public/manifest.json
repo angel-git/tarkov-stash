@@ -1,9 +1,9 @@
 {
-  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "qwik-project-name",
-  "short_name": "Welcome to Qwik",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#fff",
-  "description": "A Qwik project app."
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "tarkov-stash",
+    "short_name": "Tarkov Stash",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "description": "A tarkov mode for SPT, allows to modify your stash"
 }
