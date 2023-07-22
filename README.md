@@ -19,7 +19,12 @@ Simple stash editor for SPT, it allows to add items in **empty** spaces of your 
 
 - Cheese
 
-## Not planned features
+## Known issues
+
+- You can't rotate items
+- The stash size that you see might not be complete, if you need more space move items to the bottom on the client amd relaunch the app
+
+## Features not planned
 
 - Deleting items
 - Moving items
