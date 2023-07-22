@@ -81,7 +81,7 @@ impl<'de> Deserialize<'de> for Item {
 
         let helper: ItemHelper = ItemHelper::deserialize(deserializer)?;
 
-        let cartridges = "cartridges".to_string();
+        // let cartridges = "cartridges".to_string();
 
         // Choose the appropriate variant for the Location enum based on slotId
         let location = match (helper.slotId.as_ref(), helper.location) {

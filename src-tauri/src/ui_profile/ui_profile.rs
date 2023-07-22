@@ -23,8 +23,6 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
     let mut items: Vec<Item> = Vec::new();
 
     for item in tarkov_profile.characters.pmc.Inventory.items.iter() {
-        println!("current item: {}", item._id.to_string());
-
         let parent_id = item.parentId.as_ref();
         let item_slot = item.slotId.as_ref();
         let location = item.location.as_ref();
