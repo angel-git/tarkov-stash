@@ -7,6 +7,9 @@ devDependencies:
   '@builder.io/qwik-city':
     specifier: ^1.2.6
     version: 1.2.6
+  '@tauri-apps/api':
+    specifier: ^1.4.0
+    version: 1.4.0
   '@tauri-apps/cli':
     specifier: ^1.4.0
     version: 1.4.0
@@ -390,6 +393,11 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
+
+  /@tauri-apps/api@1.4.0:
+    resolution: {integrity: sha512-Jd6HPoTM1PZSFIzq7FB8VmMu3qSSyo/3lSwLpoapW+lQ41CL5Dow2KryLg+gyazA/58DRWI9vu/XpEeHK4uMdw==}
+    engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: true
 
   /@tauri-apps/cli-darwin-arm64@1.4.0:
