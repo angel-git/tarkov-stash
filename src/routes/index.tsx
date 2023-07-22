@@ -21,6 +21,7 @@ const loadFile = (file?: File) => {
 };
 
 export default component$(() => {
+    // TODO verify server is not running
     return (
         <>
             <div class="container container-center container-spacing-xl">
