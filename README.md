@@ -32,6 +32,10 @@ Simple stash editor for SPT, it allows to add items in **empty** spaces of your 
 
 ## Dev notes
 
+All items can be fouund on this endpoint: https://dev.sp-tarkov.com/SPT-AKI/Server/raw/branch/master/project/assets/database/templates/items.json
+
+
+
 ### Dev mode
 
 ```
