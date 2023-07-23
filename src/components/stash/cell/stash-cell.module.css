@@ -1,0 +1,24 @@
+.grid-item {
+    position: relative;
+    background-image: url("../../../media/items/unknown.png");
+}
+
+.grid-item div.item-5449016a4bdc2d6f028b456f {
+    height: 64px;
+    width: 64px;
+    background-image: url("../../../media/items/roubles.png");
+}
+
+.grid-item .empty {
+    height: 64px;
+    width: 64px;
+    background-image: url("../../../media/items/empty.png");
+}
+
+.grid-item .amount {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 13px;
+}
+
