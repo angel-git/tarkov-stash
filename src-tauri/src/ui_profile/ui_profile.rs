@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
     pub name: String,
+    #[serde(rename = "sizeX")]
+    pub size_x: u16,
+    #[serde(rename = "sizeY")]
+    pub size_y: u16,
     pub items: Vec<Item>,
 }
 
@@ -14,23 +18,40 @@ pub struct Item {
     pub x: u16,
     pub y: u16,
     pub amount: u32,
-    pub isStockable: bool,
+    #[serde(rename = "isStockable")]
+    pub is_stockable: bool,
 }
 
 pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
-    let stash = &tarkov_profile.characters.pmc.Inventory.stash;
+    let stash = &tarkov_profile.characters.pmc.inventory.stash;
+    let stash_bonuses = &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .filter(|b| b.t.eq("StashSize"))
+        .count();
+    let stash_size_y = if stash_bonuses <= &1 {
+        28
+    } else if stash_bonuses == &2 {
+        38
+    } else if stash_bonuses == &3 {
+        48
+    } else {
+        68
+    };
 
     let mut items: Vec<Item> = Vec::new();
 
-    for item in tarkov_profile.characters.pmc.Inventory.items.iter() {
-        let parent_id = item.parentId.as_ref();
-        let item_slot = item.slotId.as_ref();
+    for item in tarkov_profile.characters.pmc.inventory.items.iter() {
+        let parent_id = item.parent_id.as_ref();
+        let item_slot = item.slot_id.as_ref();
         let location = item.location.as_ref();
         let udp_option = item.upd.as_ref();
-        if !(parent_id.is_some() && parent_id.unwrap().eq(stash)) {
+        if parent_id.is_none() || parent_id.unwrap() != stash {
             continue;
         };
-        if !(item_slot.is_some() && item_slot.unwrap().eq("hideout")) {
+        if item_slot.is_none() || item_slot.unwrap() != "hideout" {
             continue;
         };
         let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
@@ -44,8 +65,8 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
 
         if udp_option.is_some() {
             let udp = udp_option.unwrap();
-            if udp.StackObjectsCount.is_some() {
-                amount = udp.StackObjectsCount.unwrap();
+            if udp.stack_objects_count.is_some() {
+                amount = udp.stack_objects_count.unwrap();
                 is_stockable = true;
             }
         }
@@ -56,13 +77,15 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
             x: location_in_stash.x,
             y: location_in_stash.y,
             amount,
-            isStockable: is_stockable,
+            is_stockable,
         };
         items.push(i)
     }
 
     UIProfile {
-        name: tarkov_profile.characters.pmc.Info.Nickname,
+        name: tarkov_profile.characters.pmc.info.nickname,
+        size_x: 10,
+        size_y: stash_size_y,
         items,
     }
 }

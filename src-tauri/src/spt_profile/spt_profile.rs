@@ -20,13 +20,18 @@ pub struct Characters {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PMC {
-    pub Inventory: Inventory,
-    pub Info: PMCInfo,
+    #[serde(rename = "Inventory")]
+    pub inventory: Inventory,
+    #[serde(rename = "Info")]
+    pub info: PMCInfo,
+    #[serde(rename = "Bonuses")]
+    pub bonuses: Vec<Bonuses>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PMCInfo {
-    pub Nickname: String,
+    #[serde(rename = "Nickname")]
+    pub nickname: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -39,10 +44,18 @@ pub struct Inventory {
 pub struct Item {
     pub _id: String,
     pub _tpl: String,
-    pub parentId: Option<String>,
+    #[serde(rename = "parentId")]
+    pub parent_id: Option<String>,
     pub location: Option<Location>,
-    pub slotId: Option<String>,
+    #[serde(rename = "slotId")]
+    pub slot_id: Option<String>,
     pub upd: Option<UPD>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Bonuses {
+    #[serde(rename = "type")]
+    pub t: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -60,7 +73,8 @@ pub struct LocationInStash {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UPD {
-    pub StackObjectsCount: Option<u32>,
+    #[serde(rename = "StackObjectsCount")]
+    pub stack_objects_count: Option<u32>,
 }
 
 impl<'de> Deserialize<'de> for Item {
@@ -72,10 +86,11 @@ impl<'de> Deserialize<'de> for Item {
         struct ItemHelper {
             _id: String,
             _tpl: String,
-            parentId: Option<String>,
+            #[serde(rename = "parentId")]
+            parent_id: Option<String>,
             location: Option<Location>,
-            // Deserialize this field as an option
-            slotId: Option<String>,
+            #[serde(rename = "slotId")]
+            slot_id: Option<String>,
             upd: Option<UPD>,
         }
 
@@ -84,9 +99,9 @@ impl<'de> Deserialize<'de> for Item {
         // let cartridges = "cartridges".to_string();
 
         // Choose the appropriate variant for the Location enum based on slotId
-        let location = match (helper.slotId.as_ref(), helper.location) {
-            (Some(cartridges), Some(Location::Number(number))) => {
-                // If slotId is "cartridges" and location is a number, use Loc ation::Number
+        let location = match (helper.slot_id.as_ref(), helper.location) {
+            (_, Some(Location::Number(number))) => {
+                // If slotId is "cartridges" and location is a number, use Location::Number
                 Some(Location::Number(number))
             }
             (_, Some(location)) => Some(location), // Otherwise, use the provided location variant
@@ -96,9 +111,9 @@ impl<'de> Deserialize<'de> for Item {
         Ok(Item {
             _id: helper._id,
             _tpl: helper._tpl,
-            parentId: helper.parentId,
+            parent_id: helper.parent_id,
             location,
-            slotId: helper.slotId,
+            slot_id: helper.slot_id,
             upd: helper.upd,
         })
     }

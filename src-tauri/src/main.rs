@@ -19,7 +19,7 @@ fn load_profile_file(content: &str) -> Result<UIProfile, String> {
     let tarkov_profile = load_profile(content);
     let res = match tarkov_profile {
         Ok(p) => Ok(convert_profile_to_ui(p)),
-        _ => Err("whops".into()),
+        Err(e) => Err(e.to_string()),
     };
     res
 }
