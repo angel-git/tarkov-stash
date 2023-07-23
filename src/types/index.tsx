@@ -6,7 +6,7 @@ export interface Profile {
     name: string;
     sizeX: number;
     sizeY: number;
-    items: Array<Item>
+    items: Array<Item>;
 }
 
 export interface Item {

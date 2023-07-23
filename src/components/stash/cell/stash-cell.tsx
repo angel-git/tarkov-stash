@@ -8,7 +8,11 @@ interface StashCellProps {
 export const StashCell = ({ item }: StashCellProps) => {
     const renderCell = () => {
         if (item) {
-            return <div class={styles[`item-${item.tpl}`]}><div class={styles['amount']}>{item.isStockable ? item.amount : ""}</div></div>;
+            return (
+                <div class={styles[`item-${item.tpl}`]}>
+                    <div class={styles['amount']}>{item.isStockable ? item.amount : ''}</div>
+                </div>
+            );
         } else {
             return <div class={styles['empty']}></div>;
         }

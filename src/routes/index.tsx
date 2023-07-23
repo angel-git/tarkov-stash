@@ -1,15 +1,12 @@
 import { $, component$, useStore } from '@builder.io/qwik';
 import { invoke } from '@tauri-apps/api/tauri';
-import type {IProfile, Profile} from '~/types';
+import type { IProfile, Profile } from '~/types';
 import { Stash } from '~/components/stash/stash';
-import {useNavigate} from "@builder.io/qwik-city";
-
-
+import { useNavigate } from '@builder.io/qwik-city';
 
 export default component$(() => {
     const nav = useNavigate();
-    const p = useStore<IProfile>({profile: undefined});
-
+    const p = useStore<IProfile>({ profile: undefined });
 
     const loadFile = $((file?: File) => {
         if (!file) {
@@ -24,14 +21,14 @@ export default component$(() => {
                 })
                 .catch((e) => {
                     console.error(e);
-                    nav('/error')
+                    nav('/error');
                 });
         });
         reader.readAsText(file, 'UTF-8');
     });
 
     if (p.profile) {
-        return <Stash profile={p.profile} />
+        return <Stash profile={p.profile} />;
     }
 
     // TODO verify server is not running
