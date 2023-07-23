@@ -10,8 +10,8 @@ export const Stash = ({ profile }: StashProps) => {
     const renderStash = () => {
         const orderedItems: Array<Item | undefined> = [];
 
-        for (let row = 0; row < profile.sizeX; row++) {
-            for (let col = 0; col < profile.sizeY; col++) {
+        for (let col = 0; col < profile.sizeY; col++) {
+            for (let row = 0; row < profile.sizeX; row++) {
                 const maybeItem = profile.items.find((item) => item.x === row && item.y === col);
                 orderedItems.push(maybeItem);
             }
