@@ -1,0 +1,9 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 64px);
+}
+
+img {
+    height: 64px;
+    width: 64px;
+}
