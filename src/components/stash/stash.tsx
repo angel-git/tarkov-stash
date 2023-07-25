@@ -1,12 +1,35 @@
+import { $, component$, useStore } from '@builder.io/qwik';
 import type { Item, Profile } from '~/types';
 import styles from './stash.module.css';
+import type { ItemOptions } from '~/components/stash/cell/stash-cell';
 import { StashCell } from '~/components/stash/cell/stash-cell';
+import { Dialog } from '~/components/stash/dialog/dialog';
 
 interface StashProps {
     profile: Profile;
 }
 
-export const Stash = ({ profile }: StashProps) => {
+export interface StashStore {
+    item?: Item;
+    option?: ItemOptions;
+}
+
+export const Stash = component$<StashProps>(({ profile }: StashProps) => {
+    const store = useStore<StashStore>({ item: undefined, option: undefined });
+
+    const handleOnClick = $((item: Item) => {
+        store.option = undefined;
+        if (item.id === store.item?.id) {
+            store.item = undefined;
+        } else {
+            store.item = item;
+        }
+    });
+
+    const handleOnOptionClick = $((option: ItemOptions) => {
+        store.option = option;
+    });
+
     const renderStash = () => {
         const orderedItems: Array<Item | undefined> = [];
 
@@ -19,7 +42,7 @@ export const Stash = ({ profile }: StashProps) => {
         return (
             <>
                 {orderedItems.map((item, index) => {
-                    return <StashCell key={index} item={item} />;
+                    return <StashCell store={store} key={item?.id ?? index} item={item} onClick$={handleOnClick} onOptionClick$={handleOnOptionClick} />;
                 })}
             </>
         );
@@ -34,8 +57,9 @@ export const Stash = ({ profile }: StashProps) => {
                 <h4>
                     Your current stash size is {profile.sizeX}x{profile.sizeY}
                 </h4>
+                {store.item && store.option && <Dialog item={store.item} option={store.option} />}
                 <div class={styles.grid}>{renderStash()}</div>
             </div>
         </>
     );
-};
+});

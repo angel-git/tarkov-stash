@@ -7,6 +7,9 @@ devDependencies:
   '@builder.io/qwik-city':
     specifier: ^1.2.6
     version: 1.2.6
+  '@modular-forms/qwik':
+    specifier: ^0.19.1
+    version: 0.19.1(@builder.io/qwik-city@1.2.6)(@builder.io/qwik@1.2.6)
   '@tauri-apps/api':
     specifier: ^1.4.0
     version: 1.4.0
@@ -358,6 +361,16 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@modular-forms/qwik@0.19.1(@builder.io/qwik-city@1.2.6)(@builder.io/qwik@1.2.6):
+    resolution: {integrity: sha512-Ty01o4a5NHisB4RWZVsL2Fp0g2iDzZBPuJGOj1ex72+HzVROrNJFO3Sl3svcaTqrzZ9qB0t+UXM45fN/LNc5og==}
+    peerDependencies:
+      '@builder.io/qwik': 1.1.5
+      '@builder.io/qwik-city': 1.1.5
+    dependencies:
+      '@builder.io/qwik': 1.2.6(undici@5.22.1)
+      '@builder.io/qwik-city': 1.2.6
     dev: true
 
   /@nodelib/fs.scandir@2.1.5:
