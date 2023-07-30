@@ -1,6 +1,6 @@
 <script>
-	import { page } from '$app/stores'
-	const errorMessage = $page.url.searchParams.get('message')
+	import { page } from '$app/stores';
+	const errorMessage = $page.url.searchParams.get('message');
 </script>
 
 <div class="container container-center">

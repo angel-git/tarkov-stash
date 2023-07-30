@@ -1611,7 +1611,7 @@
 						"location": { "isSearched": true, "r": "Horizontal", "x": 0, "y": 0 },
 						"parentId": "5fe49a0e2694b0755a504876",
 						"slotId": "hideout",
-						"upd": { "SpawnedInSession": true, "StackObjectsCount": 60 }
+						"upd": { "SpawnedInSession": true, "StackObjectsCount": 108 }
 					},
 					{
 						"_id": "eaac3f0d91833f55ef850fd1",

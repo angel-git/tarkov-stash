@@ -41,7 +41,7 @@ a:hover {
 }
 
 span.highlight {
-	color: var(--color-highlight)
+	color: var(--color-highlight);
 }
 
 h1 {
