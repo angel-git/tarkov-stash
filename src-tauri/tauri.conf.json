@@ -15,7 +15,7 @@
 			"all": false
 		},
 		"bundle": {
-			"active": true,
+			"active": false,
 			"category": "DeveloperTool",
 			"copyright": "",
 			"deb": {
