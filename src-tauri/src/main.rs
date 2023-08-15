@@ -20,12 +20,7 @@ struct TarkovStashState {
 fn main() {
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let submenu = Submenu::new(
-        "File",
-        Menu::new()
-            .add_item(open)
-            .add_item(quit),
-    );
+    let submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
 
     let menu = Menu::new()
         // .add_native_item(MenuItem::Quit)
@@ -36,27 +31,25 @@ fn main() {
         .manage(TarkovStashState {
             profile_file: Mutex::new(None),
         })
-        .on_menu_event(|event| {
-            match event.menu_item_id() {
-                "quit" => {
-                    std::process::exit(0);
-                }
-                "open" => {
-                    FileDialogBuilder::default()
-                        .add_filter("json", &["json"])
-                        .pick_file(move |path_buf| match path_buf {
-                            Some(p) => {
-                                let window = event.window();
-                                let state: State<TarkovStashState> = window.state();
-                                *state.profile_file.lock().unwrap() =
-                                    Some(p.as_path().to_str().unwrap().to_string());
-                                window.emit("profile_loaded", "");
-                            }
-                            _ => {}
-                        });
-                }
-                _ => {}
+        .on_menu_event(|event| match event.menu_item_id() {
+            "quit" => {
+                std::process::exit(0);
             }
+            "open" => {
+                FileDialogBuilder::default()
+                    .add_filter("json", &["json"])
+                    .pick_file(move |path_buf| match path_buf {
+                        Some(p) => {
+                            let window = event.window();
+                            let state: State<TarkovStashState> = window.state();
+                            *state.profile_file.lock().unwrap() =
+                                Some(p.as_path().to_str().unwrap().to_string());
+                            window.emit("profile_loaded", "");
+                        }
+                        _ => {}
+                    });
+            }
+            _ => {}
         })
         .invoke_handler(tauri::generate_handler![load_profile_file, change_amount])
         .run(tauri::generate_context!())
