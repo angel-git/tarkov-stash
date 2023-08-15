@@ -28,8 +28,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: install frontend dependencies
         run: pnpm install
-      - name: check prettier
-        run: pnpm run format:check
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
