@@ -5,6 +5,8 @@ on:
 
 jobs:
   publish-tauri:
+    env:
+      GH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
     strategy:
