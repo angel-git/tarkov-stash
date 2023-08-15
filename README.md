@@ -28,4 +28,4 @@ See the current roadmap for v1: https://github.com/users/angel-git/projects/1/vi
 
 - Update version in `tauri.conf.json`
 - Create a new release with proper tag
-- Github action will take over and upload the executable 
+- Github action will take over and upload the executable
