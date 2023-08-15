@@ -21,7 +21,6 @@
 		}
 	}
 
-
 	function handleOpenClick(item: Item) {
 		// TODO check if we allow to open menu for this item
 		if (itemOpenId === item.id) {
