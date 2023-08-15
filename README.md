@@ -10,6 +10,16 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Demo
 
+TODO
+
+### Download
+
+> Backup your profile before running this.
+
+Never run any `.exe` file that you have downloaded from internet. Including this. Use it at your own risk.
+
+See the [releases](https://github.com/angel-git/tarkov-stash/releases) page.
+
 ### Development
 
 See the current roadmap for v1: https://github.com/users/angel-git/projects/1/views/3
