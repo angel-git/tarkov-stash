@@ -28,4 +28,3 @@ jobs:
           cargo fmt --check
       - name: rust tests
         run: cargo test
-
