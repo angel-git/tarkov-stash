@@ -1,8 +1,7 @@
 name: 'publish'
 on:
-  push:
-    branches:
-      - release
+  release:
+    types: [ created ]
 
 jobs:
   publish-tauri:
@@ -28,13 +27,5 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: install frontend dependencies
         run: pnpm install
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: tarkov-stash-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'tarkov-stash v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-          includeRelease: true
+      - name: Build Portable Binaries (Windows)
+        run: pnpm tauri build
