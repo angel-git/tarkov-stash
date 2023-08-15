@@ -1,9 +1,21 @@
 ## Tarkov stash
 
-TODO
+Simple stash editor with a simple UI. If you need more advanced features I recommend to use [SPT-API Profile editor](https://hub.sp-tarkov.com/files/file/184-spt-aki-profile-editor/)
 
-### Release
+This is based out of another project of mine: [task-stash-console](https://github.com/angel-git/tarkov-stash-console):
+
+### Features
+
+- Increase currencies
+
+### Demo
+
+### Development
+
+See the current roadmap for v1: https://github.com/users/angel-git/projects/1/views/3
+
+#### Release
 
 - Update version in `tauri.conf.json`
-- Commit changes to `master`
-- Merge master into `release` branch
+- Create a new release with proper tag
+- Github action will take over and upload the executable 
