@@ -3,7 +3,6 @@
 	import { profile } from '../../store';
 	import StashGrid from './stash-grid.svelte';
 	import AmountModal from './modal/modal-amount.svelte';
-	import { onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api';
 	import { afterNavigate, goto } from '$app/navigation';
 
@@ -13,15 +12,12 @@
 	afterNavigate(() => {
 		invoke<Profile>('load_profile_file', {})
 			.then((p) => {
-				console.log('got new profile from backend', p);
 				profile.set(p);
 			})
 			.catch((error) => {
 				goto(`/error?message=${error}`);
 			});
 	});
-
-	// let profile = $profileStore;
 
 	function handleOptionClicked(option: Option, item: Item) {
 		// document.body.style.overflow = "hidden";
@@ -49,7 +45,7 @@
 		<h4>
 			Your current stash size is {$profile.sizeX}x{$profile.sizeY}
 		</h4>
-		{#if selectedOption && selectedOption === 'amount'}
+		{#if selectedItem && selectedOption && selectedOption === 'amount'}
 			<AmountModal item={selectedItem} onClose={handleCloseModal} />
 		{/if}
 		<StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />

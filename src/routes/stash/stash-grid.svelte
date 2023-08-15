@@ -3,20 +3,24 @@
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
-	const orderedItems: Array<Item> = [];
+	let orderedItems: Array<Item | undefined>;
+	$: orderedItems = [];
 
 	let itemOpenId = '-1';
 
-	// if (profile) {
-	console.log('got profile');
-
-	for (let col = 0; col < profile.sizeY; col++) {
-		for (let row = 0; row < profile.sizeX; row++) {
-			const maybeItem = profile.items.find((item: Item) => item.x === row && item.y === col);
-			orderedItems.push(maybeItem);
+	$: {
+		if (profile) {
+			const tempItems: Array<Item | undefined> = [];
+			for (let col = 0; col < profile.sizeY; col++) {
+				for (let row = 0; row < profile.sizeX; row++) {
+					const maybeItem = profile.items.find((item: Item) => item.x === row && item.y === col);
+					tempItems.push(maybeItem);
+				}
+			}
+			orderedItems = [...tempItems];
 		}
 	}
-	// }
+
 
 	function handleOpenClick(item: Item) {
 		// TODO check if we allow to open menu for this item
