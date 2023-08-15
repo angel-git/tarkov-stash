@@ -1,11 +1,11 @@
 <script>
 	import { page } from '$app/stores';
-	import {onMount} from "svelte";
+	import { onMount } from 'svelte';
 
 	$: errorMessage = '';
 	onMount(() => {
 		errorMessage = $page.url.searchParams.get('message') || 'No error from the backend :(';
-	})
+	});
 </script>
 
 <div class="container container-center">
