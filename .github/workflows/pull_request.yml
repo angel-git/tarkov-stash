@@ -1,0 +1,31 @@
+name: PR Verification
+
+on:
+  pull_request:
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Setup pnpm 7
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install frontend dependencies
+        run: pnpm install
+      - name: check prettier
+        run: pnpm format:check
+      - name: check cargo fmt
+        run: |
+          cd src-tauri
+          cargo fmt --check
+      - name: rust tests
+        run: cargo test
+
