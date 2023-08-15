@@ -1,16 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::fs;
-use std::net::TcpStream;
-use std::sync::Mutex;
-
-use tauri::api::dialog::FileDialogBuilder;
-use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
-
 use crate::spt_profile::spt_profile::load_profile;
 use crate::ui_profile::ui_profile::{convert_profile_to_ui, Item, UIProfile};
 use crate::utils::utils::update_item_amount;
+use std::fs;
+use std::sync::Mutex;
+use tauri::api::dialog::FileDialogBuilder;
+use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
 pub mod spt_profile;
 pub mod ui_profile;
@@ -44,15 +41,10 @@ fn main() {
                     .pick_file(move |path_buf| match path_buf {
                         Some(p) => {
                             let window = event.window();
-                            let is_server_running = check_if_server_is_running();
-                            if is_server_running {
-                                window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
-                            } else {
-                                let state: State<TarkovStashState> = window.state();
-                                *state.profile_file.lock().unwrap() =
-                                    Some(p.as_path().to_str().unwrap().to_string());
-                                window.emit("profile_loaded", "").expect("Can't emit event to window!");;
-                            }
+                            let state: State<TarkovStashState> = window.state();
+                            *state.profile_file.lock().unwrap() =
+                                Some(p.as_path().to_str().unwrap().to_string());
+                            window.emit("profile_loaded", "");
                         }
                         _ => {}
                     });
@@ -104,8 +96,4 @@ fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
         }
         None => Err("Could not find file inside app state".to_string()),
     }
-}
-
-fn check_if_server_is_running() -> bool {
-    TcpStream::connect("127.0.0.1:6969").is_ok()
 }
