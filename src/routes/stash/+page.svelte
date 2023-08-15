@@ -20,16 +20,9 @@
 	});
 
 	function handleOptionClicked(option: Option, item: Item) {
-		// document.body.style.overflow = "hidden";
-		// document.body.style.height = "100%";
 		selectedOption = option;
 		selectedItem = item;
 	}
-
-	// function handleCloseDialog() {
-	// document.body.style.overflow = "auto";
-	// document.body.style.height = "auto";
-	// }
 
 	function handleCloseModal() {
 		selectedOption = undefined;

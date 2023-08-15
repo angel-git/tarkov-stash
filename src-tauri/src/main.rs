@@ -19,13 +19,11 @@ struct TarkovStashState {
 
 fn main() {
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
-    let restore_backup = CustomMenuItem::new("restore_backup".to_string(), "Restore backup");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let submenu = Submenu::new(
         "File",
         Menu::new()
             .add_item(open)
-            .add_item(restore_backup)
             .add_item(quit),
     );
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	export let showModal; // boolean
+	export let showModal: boolean;
 	export let onConfirm: () => void;
 
-	let dialog; // HTMLDialogElement
+	let dialog: HTMLDialogElement;
 
 	$: if (dialog && showModal) dialog.showModal();
 	$: if (dialog && !showModal) dialog.close();
