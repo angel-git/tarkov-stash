@@ -30,7 +30,6 @@ jobs:
       - name: Build Portable Binaries (Windows)
         run: |
           pnpm tauri build
-          ls ./src-tauri/target/release/
-          mv ./src-tauri/target/${{ matrix.target }}/release/tarkov-stash.exe ./src-tauri/target/${{ matrix.target }}/release/tarkov-stash-${{ github.ref_name }}_x64-portable.exe
+          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe
       - name: Upload Portable Binaries (Windows)
-        run: bash -c 'gh release upload ${{ github.ref_name }} ./src-tauri/target/${{ matrix.target }}/release/tarkov-stash-${{ github.ref_name }}_x64-portable.exe --clobber'
+        run: bash -c 'gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe --clobber'
