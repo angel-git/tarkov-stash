@@ -1,1 +1,1 @@
-pub mod ui_profile;
+pub mod ui_profile_serializer;

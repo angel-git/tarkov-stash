@@ -17,7 +17,7 @@ pub fn update_item_amount(
 
     if let Some(items) = optional_items {
         if let Some(item) = items
-            .into_iter()
+            .iter_mut()
             .find(|i| i.get("_id").unwrap().as_str().unwrap() == item_id)
         {
             if let Some(upd) = item.get_mut("upd") {
@@ -34,7 +34,7 @@ pub fn update_item_amount(
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::utils::update_item_amount;
+    use crate::stash::stash_utils::update_item_amount;
     use serde_json::Value;
 
     #[test]
