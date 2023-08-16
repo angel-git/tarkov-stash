@@ -25,4 +25,4 @@ export interface BsgItem {
 	name: string;
 }
 
-export type Option = 'amount';
+export type Option = 'amount' | 'fir';

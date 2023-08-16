@@ -1,11 +1,13 @@
 <script lang="ts">
-	import type { Item, Profile, Option } from '../../types';
+	import type {Item, Profile, Option, BsgItem} from '../../types';
 	import { ITEMS_TEMPLATE_UPDATABLE } from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
 	let orderedItems: Array<Item | undefined>;
+	let bsgItems: { [key: string]: BsgItem };
 	$: orderedItems = [];
+	$: bsgItems = {};
 
 	let itemOpenId = '-1';
 
@@ -19,6 +21,7 @@
 				}
 			}
 			orderedItems = [...tempItems];
+			bsgItems = profile.bsgItems;
 		}
 	}
 
@@ -46,9 +49,7 @@
 				<div
 					tabindex="-1"
 					role="button"
-					class={`item-${item.tpl} ${
-						ITEMS_TEMPLATE_UPDATABLE.includes(item.tpl) ? 'item-clickable' : ''
-					}`}
+					class={`item-${item.tpl} item-clickable`}
 					on:click={() => handleOpenClick(item)}
 				>
 					<div class="item-info">
@@ -65,14 +66,26 @@
 			{/if}
 			{#if item?.id === itemOpenId}
 				<div class="options">
+					<div class="title">{bsgItems[item.tpl].name}</div>
+					{#if ITEMS_TEMPLATE_UPDATABLE.includes(item.tpl)}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="option"
+							tabindex="-1"
+							role="button"
+							on:click={() => handleOptionClicked('amount', item)}
+						>
+							Change amount
+						</div>
+					{/if}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
-						class="option"
-						tabindex="-1"
-						role="button"
-						on:click={() => handleOptionClicked('amount', item)}
+							class="option"
+							tabindex="-1"
+							role="button"
+							on:click={() => handleOptionClicked('fir', item)}
 					>
-						Change amount
+						Toggle fir
 					</div>
 				</div>
 			{/if}
@@ -139,6 +152,7 @@
 		bottom: 2px;
 		right: 2px;
 		font-size: 13px;
+		user-select: none;
 	}
 
 	.options {
@@ -149,11 +163,16 @@
 		border: 1px solid var(--color-text);
 		font-size: 12px;
 		z-index: 2;
-		width: 100px;
+		min-width: 100px;
 	}
 
 	.options .option {
 		padding: 8px 4px;
+	}
+
+	.options .title {
+		font-weight: bold;
+		border-bottom: 1px solid var(--color-text);
 	}
 
 	.options .option:hover {
