@@ -20,8 +20,13 @@
 	});
 
 	function handleOptionClicked(option: Option, item: Item) {
-		selectedOption = option;
-		selectedItem = item;
+		if (option === 'fir') {
+			invoke('change_fir', { item }).catch((e) => goto(`/error?message=${e}`));
+			handleCloseModal();
+		} else {
+			selectedOption = option;
+			selectedItem = item;
+		}
 	}
 
 	function handleCloseModal() {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Item, Profile, Option, BsgItem} from '../../types';
+	import type { Item, Profile, Option, BsgItem } from '../../types';
 	import { ITEMS_TEMPLATE_UPDATABLE } from './helper';
 
 	export let profile: Profile;
@@ -54,7 +54,7 @@
 				>
 					<div class="item-info">
 						{#if item.isFir}
-							<div class="fir"></div>
+							<div class="fir" />
 						{/if}
 						{#if item.isStockable}
 							<div class="amount">{item.amount}</div>
@@ -78,15 +78,17 @@
 							Change amount
 						</div>
 					{/if}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div
+					{#if !item.isFir}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
 							class="option"
 							tabindex="-1"
 							role="button"
 							on:click={() => handleOptionClicked('fir', item)}
-					>
-						Toggle fir
-					</div>
+						>
+							Set fir
+						</div>
+					{/if}
 				</div>
 			{/if}
 		</div>
