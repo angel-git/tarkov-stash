@@ -8,13 +8,13 @@ use std::sync::Mutex;
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
-use crate::spt_profile::spt_profile::load_profile;
-use crate::ui_profile::ui_profile::{convert_profile_to_ui, Item, UIProfile};
-use crate::utils::utils::update_item_amount;
+use crate::spt_profile::spt_profile_serializer::load_profile;
+use crate::stash::stash_utils::update_item_amount;
+use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
 pub mod spt_profile;
+pub mod stash;
 pub mod ui_profile;
-pub mod utils;
 
 struct TarkovStashState {
     pub profile_file: Mutex<Option<String>>,
@@ -41,8 +41,7 @@ fn main() {
             "open" => {
                 FileDialogBuilder::default()
                     .add_filter("json", &["json"])
-                    .pick_file(move |path_buf| match path_buf {
-                        Some(p) => {
+                    .pick_file(move |path_buf| if let Some(p) = path_buf {
                             let window = event.window();
                             let is_server_running = check_if_server_is_running();
                             if is_server_running {
@@ -53,8 +52,6 @@ fn main() {
                                     Some(p.as_path().to_str().unwrap().to_string());
                                 window.emit("profile_loaded", "").expect("Can't emit event to window!");
                             }
-                        }
-                        _ => {}
                     });
             }
             _ => {}
@@ -73,11 +70,10 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
             create_backup(file);
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
-            let res = match tarkov_profile {
+            match tarkov_profile {
                 Ok(p) => Ok(convert_profile_to_ui(p)),
                 Err(e) => Err(e.to_string()),
-            };
-            res
+            }
         }
         None => Err("Could not file loaded into memory".to_string()),
     }

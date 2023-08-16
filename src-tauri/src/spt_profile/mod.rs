@@ -1,1 +1,1 @@
-pub mod spt_profile;
+pub mod spt_profile_serializer;

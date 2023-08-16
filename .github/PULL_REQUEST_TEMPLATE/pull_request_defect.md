@@ -1,0 +1,5 @@
+- [ ] Run production build in local: `pnpm tauri build`
+- [ ] Action is green
+- [ ] Squash and merge
+- [ ] Add issue number
+- Resolves #

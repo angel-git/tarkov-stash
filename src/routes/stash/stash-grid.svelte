@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Item, Profile, Option } from '../../types';
+	import { ITEMS_TEMPLATE_UPDATABLE } from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
@@ -21,8 +22,8 @@
 		}
 	}
 
-	function handleOpenClick(item: Item) {
-		// TODO check if we allow to open menu for this item
+	function handleOpenClick(item: Item | undefined) {
+		if (!item) return;
 		if (itemOpenId === item.id) {
 			itemOpenId = '-1';
 		} else {
@@ -30,7 +31,8 @@
 		}
 	}
 
-	function handleOptionClicked(option: Option, item: Item) {
+	function handleOptionClicked(option: Option, item: Item | undefined) {
+		if (!item) return;
 		itemOpenId = '-1';
 		onOptionClicked(option, item);
 	}
@@ -40,9 +42,13 @@
 	{#each orderedItems as item}
 		<div class="grid-item">
 			{#if item}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
+					tabindex="-1"
 					role="button"
-					class={`item-${item.tpl} item-clickable`}
+					class={`item-${item.tpl} ${
+						ITEMS_TEMPLATE_UPDATABLE.includes(item.tpl) ? 'item-clickable' : ''
+					}`}
 					on:click={() => handleOpenClick(item)}
 				>
 					<div class="amount">{item.isStockable ? item.amount : ''}</div>
@@ -52,7 +58,13 @@
 			{/if}
 			{#if item?.id === itemOpenId}
 				<div class="options">
-					<div class="option" on:click={() => handleOptionClicked('amount', item)}>
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<div
+						class="option"
+						tabindex="-1"
+						role="button"
+						on:click={() => handleOptionClicked('amount', item)}
+					>
 						Change amount
 					</div>
 				</div>

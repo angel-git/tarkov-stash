@@ -1,4 +1,4 @@
-use crate::spt_profile::spt_profile::{Location, TarkovProfile};
+use crate::spt_profile::spt_profile_serializer::{Location, TarkovProfile};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -64,10 +64,11 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
         let mut is_stockable = false;
 
         if udp_option.is_some() {
-            let udp = udp_option.unwrap();
-            if udp.stack_objects_count.is_some() {
-                amount = udp.stack_objects_count.unwrap();
-                is_stockable = true;
+            if let Some(udp) = udp_option {
+                if udp.stack_objects_count.is_some() {
+                    amount = udp.stack_objects_count.unwrap();
+                    is_stockable = true;
+                }
             }
         }
 
