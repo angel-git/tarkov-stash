@@ -13,7 +13,7 @@ pub struct UIProfile {
     #[serde(rename = "sizeY")]
     pub size_y: u16,
     pub items: Vec<Item>,
-    #[serde(rename = "bsgItem")]
+    #[serde(rename = "bsgItems")]
     pub bsg_items: HashMap<String, BsgItem>,
 }
 
@@ -113,7 +113,7 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> 
                     id.to_string(),
                     BsgItem {
                         id: id.to_string(),
-                        name: name.to_string(),
+                        name: name.as_str().unwrap().to_string(),
                     },
                 );
             }
