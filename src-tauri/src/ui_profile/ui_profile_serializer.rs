@@ -1,5 +1,9 @@
-use crate::spt_profile::spt_profile_serializer::{Location, TarkovProfile};
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -9,6 +13,8 @@ pub struct UIProfile {
     #[serde(rename = "sizeY")]
     pub size_y: u16,
     pub items: Vec<Item>,
+    #[serde(rename = "bsgItem")]
+    pub bsg_items: HashMap<String, BsgItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -22,7 +28,13 @@ pub struct Item {
     pub is_stockable: bool,
 }
 
-pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
+#[derive(Deserialize, Serialize, Debug)]
+pub struct BsgItem {
+    pub id: String,
+    pub name: String,
+}
+
+pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> UIProfile {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -83,10 +95,29 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
         items.push(i)
     }
 
+    let bsg_items_root: HashMap<String, Value> = serde_json::from_str(bsg_items).unwrap();
+    let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
+    bsg_items_root.keys().for_each(|k| {
+        let item = bsg_items_root.get(k).unwrap();
+        let id = item.get("_id").unwrap().as_str().unwrap();
+        if let Some(props) = item.get("_props") {
+            if let Some(name) = props.get("ShortName") {
+                bsg_items.insert(
+                    id.to_string(),
+                    BsgItem {
+                        id: id.to_string(),
+                        name: name.to_string(),
+                    },
+                );
+            }
+        }
+    });
+
     UIProfile {
         name: tarkov_profile.characters.pmc.info.nickname,
         size_x: 10,
         size_y: stash_size_y,
         items,
+        bsg_items,
     }
 }

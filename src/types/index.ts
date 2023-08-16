@@ -7,6 +7,7 @@ export interface Profile {
 	sizeX: number;
 	sizeY: number;
 	items: Array<Item>;
+	bsgItems: { [key: string]: BsgItem };
 }
 
 export interface Item {
@@ -16,6 +17,11 @@ export interface Item {
 	y: number;
 	amount: number;
 	isStockable: boolean;
+}
+
+export interface BsgItem {
+	id: string;
+	name: string;
 }
 
 export type Option = 'amount';

@@ -3,16 +3,17 @@
 
 use std::fs;
 use std::net::TcpStream;
+use std::path::Path;
 use std::sync::Mutex;
 
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
-use crate::spt_profile::spt_profile_serializer::load_profile;
+use crate::spt::spt_profile_serializer::load_profile;
 use crate::stash::stash_utils::update_item_amount;
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
-pub mod spt_profile;
+pub mod spt;
 pub mod stash;
 pub mod ui_profile;
 
@@ -68,10 +69,23 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     match binding {
         Some(file) => {
             create_backup(file);
+            let bsg_items_path = Path::new(file)
+                .ancestors()
+                .nth(3)
+                .unwrap()
+                .join("Aki_Data")
+                .join("Server")
+                .join("database")
+                .join("templates")
+                .join("items.json");
+            bsg_items_path.try_exists().expect(
+                "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
+            );
+            let bsg_items = fs::read_to_string(bsg_items_path).unwrap();
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
-                Ok(p) => Ok(convert_profile_to_ui(p)),
+                Ok(p) => Ok(convert_profile_to_ui(p, bsg_items.as_str())),
                 Err(e) => Err(e.to_string()),
             }
         }
