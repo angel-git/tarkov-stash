@@ -34,3 +34,5 @@ jobs:
         run: |
           cd src-tauri
           cargo test
+      - name: make frontend build
+        run: pnpm run build

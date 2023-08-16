@@ -1,5 +1,9 @@
-use crate::spt_profile::spt_profile_serializer::{Location, TarkovProfile};
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -9,6 +13,8 @@ pub struct UIProfile {
     #[serde(rename = "sizeY")]
     pub size_y: u16,
     pub items: Vec<Item>,
+    #[serde(rename = "bsgItems")]
+    pub bsg_items: HashMap<String, BsgItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -20,9 +26,17 @@ pub struct Item {
     pub amount: u32,
     #[serde(rename = "isStockable")]
     pub is_stockable: bool,
+    #[serde(rename = "isFir")]
+    pub is_fir: bool,
 }
 
-pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
+#[derive(Deserialize, Serialize, Debug)]
+pub struct BsgItem {
+    pub id: String,
+    pub name: String,
+}
+
+pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> UIProfile {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -62,12 +76,16 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
 
         let mut amount = 1;
         let mut is_stockable = false;
+        let mut spawned_in_session = false;
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
                 if udp.stack_objects_count.is_some() {
                     amount = udp.stack_objects_count.unwrap();
                     is_stockable = true;
+                }
+                if udp.spawned_in_session.is_some() {
+                    spawned_in_session = udp.spawned_in_session.unwrap();
                 }
             }
         }
@@ -79,14 +97,34 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile) -> UIProfile {
             y: location_in_stash.y,
             amount,
             is_stockable,
+            is_fir: spawned_in_session,
         };
         items.push(i)
     }
+
+    let bsg_items_root: HashMap<String, Value> = serde_json::from_str(bsg_items).unwrap();
+    let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
+    bsg_items_root.keys().for_each(|k| {
+        let item = bsg_items_root.get(k).unwrap();
+        let id = item.get("_id").unwrap().as_str().unwrap();
+        if let Some(props) = item.get("_props") {
+            if let Some(name) = props.get("ShortName") {
+                bsg_items.insert(
+                    id.to_string(),
+                    BsgItem {
+                        id: id.to_string(),
+                        name: name.as_str().unwrap().to_string(),
+                    },
+                );
+            }
+        }
+    });
 
     UIProfile {
         name: tarkov_profile.characters.pmc.info.nickname,
         size_x: 10,
         size_y: stash_size_y,
         items,
+        bsg_items,
     }
 }

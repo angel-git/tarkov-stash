@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Item } from '../../../types';
-	import { invoke } from '@tauri-apps/api';
 	import { goto } from '$app/navigation';
 
 	import Modal from './modal.svelte';
+	import { invokeWithLoader } from '../../../helper';
 
 	export let onClose: () => void;
 	export let item: Item;
@@ -16,7 +16,7 @@
 	function handleConfirm() {
 		showModal = false;
 
-		invoke('change_amount', { item: { ...item, amount } }).catch((e) =>
+		invokeWithLoader('change_amount', { item: { ...item, amount } }).catch((e) =>
 			goto(`/error?message=${e}`)
 		);
 	}

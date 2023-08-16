@@ -1,18 +1,20 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use serde_json::Error;
 use std::fs;
 use std::net::TcpStream;
+use std::path::Path;
 use std::sync::Mutex;
 
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
-use crate::spt_profile::spt_profile_serializer::load_profile;
-use crate::stash::stash_utils::update_item_amount;
+use crate::spt::spt_profile_serializer::load_profile;
+use crate::stash::stash_utils::{update_item_amount, update_spawned_in_session};
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
-pub mod spt_profile;
+pub mod spt;
 pub mod stash;
 pub mod ui_profile;
 
@@ -56,7 +58,7 @@ fn main() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount])
+        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -68,10 +70,23 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     match binding {
         Some(file) => {
             create_backup(file);
+            let bsg_items_path = Path::new(file)
+                .ancestors()
+                .nth(3)
+                .unwrap()
+                .join("Aki_Data")
+                .join("Server")
+                .join("database")
+                .join("templates")
+                .join("items.json");
+            bsg_items_path.try_exists().expect(
+                "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
+            );
+            let bsg_items = fs::read_to_string(bsg_items_path).unwrap();
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
-                Ok(p) => Ok(convert_profile_to_ui(p)),
+                Ok(p) => Ok(convert_profile_to_ui(p, bsg_items.as_str())),
                 Err(e) => Err(e.to_string()),
             }
         }
@@ -81,20 +96,32 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
 
 #[tauri::command]
 fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    with_state_do(item, app, update_item_amount)
+}
+
+#[tauri::command]
+fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    with_state_do(item, app, update_spawned_in_session)
+}
+
+fn with_state_do(
+    item: Item,
+    app: tauri::AppHandle,
+    f: fn(file_content: &str, item: &Item) -> Result<String, Error>,
+) -> Result<String, String> {
     let state: State<TarkovStashState> = app.state();
     let b = state.profile_file.lock().unwrap();
     let binding = b.as_ref();
     match binding {
         Some(file) => {
             let content = fs::read_to_string(file).unwrap();
-            let new_content_result =
-                update_item_amount(content.as_str(), item.id.as_str(), item.amount);
+            let new_content_result = f(content.as_str(), &item);
             match new_content_result {
                 Ok(new_content) => {
                     fs::write(file, new_content).expect("Cant write profile file!");
                     app.emit_all("profile_loaded", "")
                         .expect("Can't emit event to window!");
-                    Ok("huehue".to_string())
+                    Ok("updated".to_string())
                 }
                 Err(e) => Err(e.to_string()),
             }
