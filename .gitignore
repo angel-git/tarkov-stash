@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 .idea
 .vscode
 tmp
+example/user/profiles/*.json.back.*

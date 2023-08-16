@@ -51,7 +51,7 @@ fn main() {
                                 let state: State<TarkovStashState> = window.state();
                                 *state.profile_file.lock().unwrap() =
                                     Some(p.as_path().to_str().unwrap().to_string());
-                                window.emit("profile_loaded", "").expect("Can't emit event to window!");;
+                                window.emit("profile_loaded", "").expect("Can't emit event to window!");
                             }
                         }
                         _ => {}
@@ -70,8 +70,8 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     let binding = b.as_ref();
     match binding {
         Some(file) => {
+            create_backup(file);
             let content = fs::read_to_string(file).unwrap();
-            // *state.json_content.lock().unwrap() = Some(content.clone());
             let tarkov_profile = load_profile(content.as_str());
             let res = match tarkov_profile {
                 Ok(p) => Ok(convert_profile_to_ui(p)),
@@ -95,8 +95,9 @@ fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
                 update_item_amount(content.as_str(), item.id.as_str(), item.amount);
             match new_content_result {
                 Ok(new_content) => {
-                    fs::write(file, new_content);
-                    app.emit_all("profile_loaded", "");
+                    fs::write(file, new_content).expect("Cant write profile file!");
+                    app.emit_all("profile_loaded", "")
+                        .expect("Can't emit event to window!");
                     Ok("huehue".to_string())
                 }
                 Err(e) => Err(e.to_string()),
@@ -108,4 +109,14 @@ fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
 
 fn check_if_server_is_running() -> bool {
     TcpStream::connect("127.0.0.1:6969").is_ok()
+}
+
+fn create_backup(profile_path: &str) {
+    let mut backup_number = 0;
+    let mut backup_path = format!("{profile_path}.back.{backup_number}");
+    while fs::metadata(&backup_path).is_ok() {
+        backup_number += 1;
+        backup_path = format!("{profile_path}.back.{backup_number}");
+    }
+    fs::copy(profile_path, backup_path).unwrap();
 }
