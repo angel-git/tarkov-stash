@@ -51,7 +51,14 @@
 					}`}
 					on:click={() => handleOpenClick(item)}
 				>
-					<div class="amount">{item.isStockable ? item.amount : ''}</div>
+					<div class="item-info">
+						{#if item.isFir}
+							<div class="fir"></div>
+						{/if}
+						{#if item.isStockable}
+							<div class="amount">{item.amount}</div>
+						{/if}
+					</div>
 				</div>
 			{:else}
 				<div class="empty" />
@@ -104,6 +111,21 @@
 		height: 64px;
 		width: 64px;
 		cursor: pointer;
+	}
+
+	.fir {
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		height: 10px;
+		width: 10px;
+		background-image: url($lib/images/fir.png);
+		background-size: 10px 10px;
+	}
+
+	.item-info {
+		width: 100%;
+		height: 100%;
 	}
 
 	.empty {

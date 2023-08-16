@@ -75,6 +75,8 @@ pub struct LocationInStash {
 pub struct UPD {
     #[serde(rename = "StackObjectsCount")]
     pub stack_objects_count: Option<u32>,
+    #[serde(rename = "SpawnedInSession")]
+    pub spawned_in_session: Option<bool>,
 }
 
 impl<'de> Deserialize<'de> for Item {

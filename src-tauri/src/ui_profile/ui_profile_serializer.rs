@@ -26,6 +26,8 @@ pub struct Item {
     pub amount: u32,
     #[serde(rename = "isStockable")]
     pub is_stockable: bool,
+    #[serde(rename = "isFir")]
+    pub is_fir: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -74,12 +76,16 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> 
 
         let mut amount = 1;
         let mut is_stockable = false;
+        let mut spawned_in_session = false;
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
                 if udp.stack_objects_count.is_some() {
                     amount = udp.stack_objects_count.unwrap();
                     is_stockable = true;
+                }
+                if udp.spawned_in_session.is_some() {
+                    spawned_in_session = udp.spawned_in_session.unwrap();
                 }
             }
         }
@@ -91,6 +97,7 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> 
             y: location_in_stash.y,
             amount,
             is_stockable,
+            is_fir: spawned_in_session,
         };
         items.push(i)
     }

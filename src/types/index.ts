@@ -17,6 +17,7 @@ export interface Item {
 	y: number;
 	amount: number;
 	isStockable: boolean;
+	isFir: boolean;
 }
 
 export interface BsgItem {
