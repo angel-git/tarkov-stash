@@ -1,18 +1,12 @@
+use crate::ui_profile::ui_profile_serializer::Item;
 use serde_json::{json, Error, Value};
 
-pub fn update_item_amount(
-    file_content: &str,
-    item_id: &str,
-    stack_objects_count: u32,
-) -> Result<String, Error> {
+pub fn update_item_amount(file_content: &str, item: &Item) -> Result<String, Error> {
+    let item_id = item.id.as_str();
+    let stack_objects_count = item.amount;
     let mut root: Value = serde_json::from_str(file_content)?;
 
-    let optional_items = root
-        .get_mut("characters")
-        .and_then(|v| v.get_mut("pmc"))
-        .and_then(|v| v.get_mut("Inventory"))
-        .and_then(|v| v.get_mut("items"))
-        .and_then(|v| v.as_array_mut());
+    let optional_items = get_inventory_items(&mut root);
 
     if let Some(items) = optional_items {
         if let Some(item) = items
@@ -30,15 +24,11 @@ pub fn update_item_amount(
     serde_json::to_string(&root)
 }
 
-pub fn update_spawned_in_session(file_content: &str, item_id: &str) -> Result<String, Error> {
+pub fn update_spawned_in_session(file_content: &str, item: &Item) -> Result<String, Error> {
+    let item_id = item.id.as_str();
     let mut root: Value = serde_json::from_str(file_content).unwrap();
 
-    let optional_items = root
-        .get_mut("characters")
-        .and_then(|v| v.get_mut("pmc"))
-        .and_then(|v| v.get_mut("Inventory"))
-        .and_then(|v| v.get_mut("items"))
-        .and_then(|v| v.as_array_mut());
+    let optional_items = get_inventory_items(&mut root);
 
     if let Some(items) = optional_items {
         for i in items.iter_mut() {
@@ -60,9 +50,18 @@ pub fn update_spawned_in_session(file_content: &str, item_id: &str) -> Result<St
     serde_json::to_string(&root)
 }
 
+fn get_inventory_items(root: &mut Value) -> Option<&mut Vec<Value>> {
+    root.get_mut("characters")
+        .and_then(|v| v.get_mut("pmc"))
+        .and_then(|v| v.get_mut("Inventory"))
+        .and_then(|v| v.get_mut("items"))
+        .and_then(|v| v.as_array_mut())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::stash::stash_utils::{update_item_amount, update_spawned_in_session};
+    use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
 
     #[test]
@@ -113,7 +112,16 @@ mod tests {
   }
 }"#;
 
-        let updated = update_item_amount(json, "41d413738e53a1eaa78d3112", 66).unwrap();
+        let item = Item {
+            id: "41d413738e53a1eaa78d3112".to_string(),
+            tpl: "5449016a4bdc2d6f028b456f".to_string(),
+            x: 0,
+            y: 0,
+            amount: 66,
+            is_stockable: false,
+            is_fir: false,
+        };
+        let updated = update_item_amount(json, &item).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
         let mut test_ok = false;
 
@@ -189,12 +197,30 @@ mod tests {
   }
 }"#;
 
+        let item_41d413738e53a1eaa78d3112 = Item {
+            id: "41d413738e53a1eaa78d3112".to_string(),
+            tpl: "5449016a4bdc2d6f028b456f".to_string(),
+            x: 0,
+            y: 0,
+            amount: 66,
+            is_stockable: false,
+            is_fir: false,
+        };
+        let item_3eb9393a58f797c0c5f0e38e = Item {
+            id: "3eb9393a58f797c0c5f0e38e".to_string(),
+            tpl: "590c37d286f77443be3d7827".to_string(),
+            x: 0,
+            y: 0,
+            amount: 66,
+            is_stockable: false,
+            is_fir: false,
+        };
         // update both items
         let update_41d413738e53a1eaa78d3112 =
-            update_spawned_in_session(json, "41d413738e53a1eaa78d3112").unwrap();
+            update_spawned_in_session(json, &item_41d413738e53a1eaa78d3112).unwrap();
         let update_3eb9393a58f797c0c5f0e38e = update_spawned_in_session(
             update_41d413738e53a1eaa78d3112.as_str(),
-            "3eb9393a58f797c0c5f0e38e",
+            &item_3eb9393a58f797c0c5f0e38e,
         )
         .unwrap();
 
