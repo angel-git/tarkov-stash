@@ -23,6 +23,7 @@ export interface Item {
 export interface BsgItem {
 	id: string;
 	name: string;
+	shortName: string;
 }
 
 export type Option = 'amount' | 'fir';

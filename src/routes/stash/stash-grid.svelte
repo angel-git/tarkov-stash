@@ -53,6 +53,7 @@
 
 			orderedItems = [...tempItems];
 			bsgItems = profile.bsgItems;
+			console.log('bsgItems', bsgItems);
 		}
 	}
 
@@ -93,6 +94,7 @@
 							class="item-info"
 							style={`background-color: ${hexStringToCssColor(item.tpl, 0.8)};`}
 						>
+							<div class="short-name">{bsgItems[item.tpl].shortName}</div>
 							{#if item.isFir}
 								<div class="fir" />
 							{/if}
@@ -148,7 +150,7 @@
 		height: 64px;
 		width: 64px;
 		position: relative;
-		background-image: url($lib/images/unknown.png);
+		background-image: url($lib/images/empty.png);
 	}
 
 	.item-5449016a4bdc2d6f028b456f {
@@ -169,9 +171,13 @@
 		cursor: pointer;
 	}
 
+	.item-clickable:hover {
+		filter: brightness(120%);
+	}
+
 	.fir {
 		position: absolute;
-		top: 2px;
+		bottom: 2px;
 		left: 2px;
 		height: 10px;
 		width: 10px;
@@ -187,6 +193,13 @@
 	.item-part {
 		width: 100%;
 		height: 100%;
+	}
+
+	.short-name {
+		font-size: 10px;
+		position: absolute;
+		right: 2px;
+		top: 2px;
 	}
 
 	.empty {
