@@ -6,6 +6,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Features
 
+- Set *found in raid* to items
 - Increase currencies
 
 ### Demo
