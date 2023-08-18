@@ -39,3 +39,11 @@
 		<input type="number" on:keyup={handleKeyUp} bind:value={amount} min="1" max="500000" />
 	</div>
 </Modal>
+
+
+<style>
+	input {
+			background-color: var(--color-background);
+			color: var(--color-text)
+	}
+</style>
