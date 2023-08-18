@@ -117,9 +117,12 @@ mod tests {
             tpl: "5449016a4bdc2d6f028b456f".to_string(),
             x: 0,
             y: 0,
+            size_x: 0,
+            size_y: 0,
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         let updated = update_item_amount(json, &item).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
@@ -202,18 +205,24 @@ mod tests {
             tpl: "5449016a4bdc2d6f028b456f".to_string(),
             x: 0,
             y: 0,
+            size_x: 0,
+            size_y: 0,
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         let item_3eb9393a58f797c0c5f0e38e = Item {
             id: "3eb9393a58f797c0c5f0e38e".to_string(),
             tpl: "590c37d286f77443be3d7827".to_string(),
             x: 0,
             y: 0,
+            size_x: 0,
+            size_y: 0,
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         // update both items
         let update_41d413738e53a1eaa78d3112 =

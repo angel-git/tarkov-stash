@@ -69,6 +69,7 @@ pub enum Location {
 pub struct LocationInStash {
     pub x: u16,
     pub y: u16,
+    pub r: String, // "Horizontal" | "Vertical"
 }
 
 #[derive(Deserialize, Serialize, Debug)]
