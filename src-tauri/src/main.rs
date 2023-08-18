@@ -1,12 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde_json::Error;
 use std::fs;
 use std::net::TcpStream;
 use std::path::Path;
 use std::sync::Mutex;
 
+use serde_json::{Error, Value};
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
@@ -45,7 +45,7 @@ fn main() {
                     .add_filter("json", &["json"])
                     .pick_file(move |path_buf| if let Some(p) = path_buf {
                             let window = event.window();
-                            let is_server_running = check_if_server_is_running();
+                            let is_server_running = is_server_running();
                             if is_server_running {
                                 window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
                             } else {
@@ -69,20 +69,11 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     let binding = b.as_ref();
     match binding {
         Some(file) => {
+            if !is_server_compatible(file) {
+                println!("🔥 Your current spt-server version might not be compatible! use with *more* caution")
+            }
             create_backup(file);
-            let bsg_items_path = Path::new(file)
-                .ancestors()
-                .nth(3)
-                .unwrap()
-                .join("Aki_Data")
-                .join("Server")
-                .join("database")
-                .join("templates")
-                .join("items.json");
-            bsg_items_path.try_exists().expect(
-                "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
-            );
-            let bsg_items = fs::read_to_string(bsg_items_path).unwrap();
+            let bsg_items = load_bsg_items(file);
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
@@ -130,8 +121,24 @@ fn with_state_do(
     }
 }
 
-fn check_if_server_is_running() -> bool {
+fn is_server_running() -> bool {
     TcpStream::connect("127.0.0.1:6969").is_ok()
+}
+
+fn is_server_compatible(file: &String) -> bool {
+    let core = Path::new(file)
+        .ancestors()
+        .nth(3)
+        .unwrap()
+        .join("Aki_Data")
+        .join("Server")
+        .join("configs")
+        .join("core.json");
+
+    let core_json: Value =
+        serde_json::from_str(fs::read_to_string(core).unwrap().as_str()).unwrap();
+    let version = core_json.get("akiVersion").unwrap().as_str().unwrap();
+    version.starts_with("3.6")
 }
 
 fn create_backup(profile_path: &str) {
@@ -142,4 +149,20 @@ fn create_backup(profile_path: &str) {
         backup_path = format!("{profile_path}.back.{backup_number}");
     }
     fs::copy(profile_path, backup_path).unwrap();
+}
+
+fn load_bsg_items(file: &String) -> String {
+    let items = Path::new(file)
+        .ancestors()
+        .nth(3)
+        .unwrap()
+        .join("Aki_Data")
+        .join("Server")
+        .join("database")
+        .join("templates")
+        .join("items.json");
+    items.try_exists().expect(
+        "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
+    );
+    fs::read_to_string(items).unwrap()
 }
