@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Item, Profile, Option, BsgItem } from '../../types';
-	import { ITEMS_TEMPLATE_UPDATABLE } from './helper';
+	import {hexStringToCssColor, ITEMS_TEMPLATE_UPDATABLE} from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
@@ -70,7 +70,7 @@
 		<div class="grid-item">
 			{#if item}
 				{#if item.id === fakeId}
-					<div class={`item-${item.tpl}`} />
+					<div class="item-part" style={`background-color: ${hexStringToCssColor(item.tpl)}; background-image: none`} />
 				{:else}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
@@ -79,7 +79,7 @@
 						class={`item-${item.tpl} item-clickable`}
 						on:click={() => handleOpenClick(item)}
 					>
-						<div class="item-info">
+						<div class="item-info" style={`background-color: ${hexStringToCssColor(item.tpl, 0.8)};`}>
 							{#if item.isFir}
 								<div class="fir" />
 							{/if}
@@ -167,6 +167,11 @@
 	}
 
 	.item-info {
+		width: 100%;
+		height: 100%;
+	}
+
+	.item-part {
 		width: 100%;
 		height: 100%;
 	}
