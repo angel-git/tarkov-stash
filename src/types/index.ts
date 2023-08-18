@@ -15,6 +15,8 @@ export interface Item {
 	tpl: string;
 	x: number;
 	y: number;
+	sizeX: number;
+	sizeY: number;
 	amount: number;
 	isStockable: boolean;
 	isFir: boolean;
