@@ -211,7 +211,7 @@
 		border: 1px solid var(--color-text);
 		font-size: 12px;
 		z-index: 2;
-		min-width: 100px;
+		min-width: 120px;
 	}
 
 	.options .option {
