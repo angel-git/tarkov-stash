@@ -17,7 +17,7 @@
 		showModal = false;
 
 		invokeWithLoader('change_amount', { item: { ...item, amount } }).catch((e) =>
-			goto(`/error?message=${e}`)
+			goto(`/error?message=${e}`),
 		);
 	}
 

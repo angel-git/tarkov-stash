@@ -20,7 +20,7 @@ export interface Item {
 	amount: number;
 	isStockable: boolean;
 	isFir: boolean;
-	rotation: "Horizontal" | "Vertical";
+	rotation: 'Horizontal' | 'Vertical';
 }
 
 export interface BsgItem {
