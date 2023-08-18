@@ -10,16 +10,40 @@
 	$: bsgItems = {};
 
 	let itemOpenId = '-1';
+	let fakeId = 'XXX';
 
 	$: {
 		if (profile) {
+			const addedItems = new Set();
 			const tempItems: Array<Item | undefined> = [];
+
+			const grid = Array.from({ length: profile.sizeY }, () => Array(profile.sizeX).fill(null));
+
+			profile.items.forEach((item) => {
+				for (let col = item.y; col < item.y + item.sizeY; col++) {
+					for (let row = item.x; row < item.x + item.sizeX; row++) {
+						grid[col][row] = item;
+					}
+				}
+			});
+
 			for (let col = 0; col < profile.sizeY; col++) {
 				for (let row = 0; row < profile.sizeX; row++) {
-					const maybeItem = profile.items.find((item: Item) => item.x === row && item.y === col);
-					tempItems.push(maybeItem);
+					const item = grid[col][row];
+					if (item) {
+						if (addedItems.has(item.id)) {
+							tempItems.push({...item, id: fakeId});
+						} else {
+							tempItems.push(item);
+							addedItems.add(item.id);
+						}
+					} else {
+						tempItems.push(undefined)
+					}
+
 				}
 			}
+
 			orderedItems = [...tempItems];
 			bsgItems = profile.bsgItems;
 		}
@@ -45,22 +69,26 @@
 	{#each orderedItems as item}
 		<div class="grid-item">
 			{#if item}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div
-					tabindex="-1"
-					role="button"
-					class={`item-${item.tpl} item-clickable`}
-					on:click={() => handleOpenClick(item)}
-				>
-					<div class="item-info">
-						{#if item.isFir}
-							<div class="fir" />
-						{/if}
-						{#if item.isStockable}
-							<div class="amount">{item.amount}</div>
-						{/if}
+				{#if item.id === fakeId}
+					<div class={`item-${item.tpl}`} />
+				{:else}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<div
+						tabindex="-1"
+						role="button"
+						class={`item-${item.tpl} item-clickable`}
+						on:click={() => handleOpenClick(item)}
+					>
+						<div class="item-info">
+							{#if item.isFir}
+								<div class="fir" />
+							{/if}
+							{#if item.isStockable}
+								<div class="amount">{item.amount}</div>
+							{/if}
+						</div>
 					</div>
-				</div>
+				{/if}
 			{:else}
 				<div class="empty" />
 			{/if}
