@@ -7,6 +7,8 @@
 	import Loading from '$lib/images/loading.gif';
 	import { invokeWithLoader } from '../../helper';
 
+	const supported_version = '3.6';
+
 	$: isLoading = $loading;
 	let selectedOption: Option | undefined;
 	let selectedItem: Item | undefined;
@@ -39,6 +41,11 @@
 
 <div class="container container-center">
 	{#if $profile}
+		{#if !$profile.sptVersion.startsWith(supported_version)}
+			<h4 style="color: orangered">
+				{`Your SPT version ${$profile.sptVersion} might not be compatible with current supported version: ${supported_version}.x`}
+			</h4>
+		{/if}
 		<h3>
 			Editing <span class="highlight">{$profile.name}</span>'s stash
 		</h3>

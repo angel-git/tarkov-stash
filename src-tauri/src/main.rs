@@ -69,20 +69,18 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     let binding = b.as_ref();
     match binding {
         Some(file) => {
-            if !is_server_compatible(file) {
-                println!("🔥 Your current spt-server version might not be compatible! use with *more* caution")
-            }
             create_backup(file);
             let bsg_items = load_bsg_items(file);
             let locale = load_locale(file);
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
-                Ok(p) => Ok(convert_profile_to_ui(
-                    p,
-                    bsg_items.as_str(),
-                    locale.as_str(),
-                )),
+                Ok(p) => {
+                    let mut ui_profile =
+                        convert_profile_to_ui(p, bsg_items.as_str(), locale.as_str());
+                    ui_profile.spt_version = Some(get_server_version(file));
+                    Ok(ui_profile)
+                }
                 Err(e) => Err(e.to_string()),
             }
         }
@@ -130,7 +128,7 @@ fn is_server_running() -> bool {
     TcpStream::connect("127.0.0.1:6969").is_ok()
 }
 
-fn is_server_compatible(file: &String) -> bool {
+fn get_server_version(file: &String) -> String {
     let core = Path::new(file)
         .ancestors()
         .nth(3)
@@ -142,8 +140,12 @@ fn is_server_compatible(file: &String) -> bool {
 
     let core_json: Value =
         serde_json::from_str(fs::read_to_string(core).unwrap().as_str()).unwrap();
-    let version = core_json.get("akiVersion").unwrap().as_str().unwrap();
-    version.starts_with("3.6")
+    core_json
+        .get("akiVersion")
+        .unwrap()
+        .as_str()
+        .unwrap()
+        .to_string()
 }
 
 fn create_backup(profile_path: &str) {

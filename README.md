@@ -4,18 +4,13 @@ Simple stash editor with a simple UI. If you need more advanced features I recom
 
 This is based out of another project of mine: [task-stash-console](https://github.com/angel-git/tarkov-stash-console):
 
-> Some versions are not compatible, please check the terminal logs to see warnings
-
-### Requirements
-
-It is recommended to run this with [Windows terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) and not the default command prompt, it supports emojis :-)
-
 ### Features
 
-- Set *found in raid* to items
+- Backup your profile
+- Set _found in raid_ to items
 - Increase currencies
 
-### Demo
+### Screenshots
 
 TODO
 

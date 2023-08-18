@@ -17,6 +17,8 @@ pub struct UIProfile {
     pub items: Vec<Item>,
     #[serde(rename = "bsgItems")]
     pub bsg_items: HashMap<String, BsgItem>,
+    #[serde(rename = "sptVersion")]
+    pub spt_version: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -131,11 +133,11 @@ pub fn convert_profile_to_ui(
         let id = item.get("_id").unwrap().as_str().unwrap();
         if let Some(props) = item.get("_props") {
             if let Some(name) = props.get("ShortName") {
-                let locale_id = format!("{} Name", id.to_string());
+                let locale_id = format!("{} Name", id);
                 let maybe_name = locale_root.get(locale_id.as_str());
                 let name = maybe_name
                     .and_then(|v| v.as_str())
-                    .unwrap_or(name.as_str().unwrap());
+                    .unwrap_or_else(|| name.as_str().unwrap());
                 bsg_items.insert(
                     id.to_string(),
                     BsgItem {
@@ -153,6 +155,7 @@ pub fn convert_profile_to_ui(
         size_y: stash_size_y,
         items,
         bsg_items,
+        spt_version: None,
     }
 }
 
