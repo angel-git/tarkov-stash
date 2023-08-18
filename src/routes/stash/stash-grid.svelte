@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Item, Profile, Option, BsgItem } from '../../types';
-	import {hexStringToCssColor, ITEMS_TEMPLATE_UPDATABLE} from './helper';
+	import { hexStringToCssColor, ITEMS_TEMPLATE_UPDATABLE } from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
@@ -32,15 +32,14 @@
 					const item = grid[col][row];
 					if (item) {
 						if (addedItems.has(item.id)) {
-							tempItems.push({...item, id: fakeId});
+							tempItems.push({ ...item, id: fakeId });
 						} else {
 							tempItems.push(item);
 							addedItems.add(item.id);
 						}
 					} else {
-						tempItems.push(undefined)
+						tempItems.push(undefined);
 					}
-
 				}
 			}
 
@@ -70,7 +69,10 @@
 		<div class="grid-item">
 			{#if item}
 				{#if item.id === fakeId}
-					<div class="item-part" style={`background-color: ${hexStringToCssColor(item.tpl)}; background-image: none`} />
+					<div
+						class="item-part"
+						style={`background-color: ${hexStringToCssColor(item.tpl)}; background-image: none`}
+					/>
 				{:else}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
@@ -79,7 +81,10 @@
 						class={`item-${item.tpl} item-clickable`}
 						on:click={() => handleOpenClick(item)}
 					>
-						<div class="item-info" style={`background-color: ${hexStringToCssColor(item.tpl, 0.8)};`}>
+						<div
+							class="item-info"
+							style={`background-color: ${hexStringToCssColor(item.tpl, 0.8)};`}
+						>
 							{#if item.isFir}
 								<div class="fir" />
 							{/if}
