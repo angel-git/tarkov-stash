@@ -44,6 +44,8 @@ pub struct Item {
 pub struct BsgItem {
     pub id: String,
     pub name: String,
+    #[serde(rename = "shortName")]
+    pub short_name: String,
 }
 
 pub fn convert_profile_to_ui(
@@ -132,17 +134,22 @@ pub fn convert_profile_to_ui(
         let item = bsg_items_root.get(k).unwrap();
         let id = item.get("_id").unwrap().as_str().unwrap();
         if let Some(props) = item.get("_props") {
-            if let Some(name) = props.get("ShortName") {
-                let locale_id = format!("{} Name", id);
-                let maybe_name = locale_root.get(locale_id.as_str());
+            if let Some(short_name) = props.get("ShortName") {
+                let maybe_name = locale_root.get(format!("{} Name", id).as_str());
+                let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
                 let name = maybe_name
                     .and_then(|v| v.as_str())
-                    .unwrap_or_else(|| name.as_str().unwrap());
+                    .unwrap_or_else(|| short_name.as_str().unwrap());
+                let short_name = maybe_short_name
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_else(|| short_name.as_str().unwrap());
+
                 bsg_items.insert(
                     id.to_string(),
                     BsgItem {
                         id: id.to_string(),
                         name: name.to_string(),
+                        short_name: short_name.to_string(),
                     },
                 );
             }
