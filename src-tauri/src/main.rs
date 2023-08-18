@@ -74,10 +74,15 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
             }
             create_backup(file);
             let bsg_items = load_bsg_items(file);
+            let locale = load_locale(file);
             let content = fs::read_to_string(file).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
-                Ok(p) => Ok(convert_profile_to_ui(p, bsg_items.as_str())),
+                Ok(p) => Ok(convert_profile_to_ui(
+                    p,
+                    bsg_items.as_str(),
+                    locale.as_str(),
+                )),
                 Err(e) => Err(e.to_string()),
             }
         }
@@ -163,6 +168,23 @@ fn load_bsg_items(file: &String) -> String {
         .join("items.json");
     items.try_exists().expect(
         "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
+    );
+    fs::read_to_string(items).unwrap()
+}
+
+fn load_locale(file: &String) -> String {
+    let items = Path::new(file)
+        .ancestors()
+        .nth(3)
+        .unwrap()
+        .join("Aki_Data")
+        .join("Server")
+        .join("database")
+        .join("locales")
+        .join("global")
+        .join("en.json");
+    items.try_exists().expect(
+        "Can't find `en.json` in your `SPT\\Aki_Data\\Server\\database\\locales\\global` folder",
     );
     fs::read_to_string(items).unwrap()
 }

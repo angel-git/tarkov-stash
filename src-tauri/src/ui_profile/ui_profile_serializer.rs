@@ -44,8 +44,13 @@ pub struct BsgItem {
     pub name: String,
 }
 
-pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> UIProfile {
+pub fn convert_profile_to_ui(
+    tarkov_profile: TarkovProfile,
+    bsg_items: &str,
+    locale: &str,
+) -> UIProfile {
     let bsg_items_root: HashMap<String, Value> = serde_json::from_str(bsg_items).unwrap();
+    let locale_root: HashMap<String, Value> = serde_json::from_str(locale).unwrap();
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -126,11 +131,16 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> 
         let id = item.get("_id").unwrap().as_str().unwrap();
         if let Some(props) = item.get("_props") {
             if let Some(name) = props.get("ShortName") {
+                let locale_id = format!("{} Name", id.to_string());
+                let maybe_name = locale_root.get(locale_id.as_str());
+                let name = maybe_name
+                    .and_then(|v| v.as_str())
+                    .unwrap_or(name.as_str().unwrap());
                 bsg_items.insert(
                     id.to_string(),
                     BsgItem {
                         id: id.to_string(),
-                        name: name.as_str().unwrap().to_string(),
+                        name: name.to_string(),
                     },
                 );
             }
