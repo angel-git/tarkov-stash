@@ -34,6 +34,8 @@ pub struct Item {
     pub is_stockable: bool,
     #[serde(rename = "isFir")]
     pub is_fir: bool,
+    #[serde(rename = "rotation")]
+    pub r: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -113,6 +115,7 @@ pub fn convert_profile_to_ui(tarkov_profile: TarkovProfile, bsg_items: &str) -> 
             amount,
             is_stockable,
             is_fir: spawned_in_session,
+            r: location_in_stash.r.to_string(),
         };
         items.push(i)
     }
@@ -167,9 +170,6 @@ fn calculate_item_size(
     all_children.iter().for_each(|c| {
         let bsg_item = bsg_items_root.get(c).unwrap();
         let parsed_bsg_item = load_item(bsg_item.to_string().as_str()).unwrap();
-
-        // TODO check skipThisItems
-        // TODO check folded!
 
         if parsed_bsg_item._props.extra_size_force_add {
             forced_up += parsed_bsg_item._props.extra_size_up;
@@ -267,10 +267,5 @@ mod tests {
         );
         assert_eq!(size_x, 3);
         assert_eq!(size_y, 2);
-    }
-
-    #[test]
-    fn should_calculate_size_folded() {
-        assert_eq!(false, true);
     }
 }

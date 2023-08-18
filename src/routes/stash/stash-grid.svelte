@@ -20,9 +20,17 @@
 			const grid = Array.from({ length: profile.sizeY }, () => Array(profile.sizeX).fill(null));
 
 			profile.items.forEach((item) => {
-				for (let col = item.y; col < item.y + item.sizeY; col++) {
-					for (let row = item.x; row < item.x + item.sizeX; row++) {
-						grid[col][row] = item;
+				const rotatedItem =
+					item.rotation === 'Vertical'
+						? {
+								...item,
+								sizeX: item.sizeY,
+								sizeY: item.sizeX,
+						  }
+						: item;
+				for (let col = rotatedItem.y; col < rotatedItem.y + rotatedItem.sizeY; col++) {
+					for (let row = rotatedItem.x; row < rotatedItem.x + rotatedItem.sizeX; row++) {
+						grid[col][row] = rotatedItem;
 					}
 				}
 			});

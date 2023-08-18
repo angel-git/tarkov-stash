@@ -122,6 +122,7 @@ mod tests {
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         let updated = update_item_amount(json, &item).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
@@ -209,6 +210,7 @@ mod tests {
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         let item_3eb9393a58f797c0c5f0e38e = Item {
             id: "3eb9393a58f797c0c5f0e38e".to_string(),
@@ -220,6 +222,7 @@ mod tests {
             amount: 66,
             is_stockable: false,
             is_fir: false,
+            r: "Horitzontal".to_string(),
         };
         // update both items
         let update_41d413738e53a1eaa78d3112 =
