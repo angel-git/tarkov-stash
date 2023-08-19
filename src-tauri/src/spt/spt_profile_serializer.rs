@@ -69,7 +69,7 @@ pub enum Location {
 pub struct LocationInStash {
     pub x: u16,
     pub y: u16,
-    pub r: String, // "Horizontal" | "Vertical"
+    pub r: String, // "Horizontal" | "Vertical" // TODO this sometimes is a number, fix f55479855a0b8d37e9ca3f3f.json
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -78,6 +78,30 @@ pub struct UPD {
     pub stack_objects_count: Option<u32>,
     #[serde(rename = "SpawnedInSession")]
     pub spawned_in_session: Option<bool>,
+    #[serde(rename = "FoodDrink")]
+    pub food_drink: Option<FoodDrink>,
+    #[serde(rename = "MedKit")]
+    pub med_kit: Option<MedKit>,
+    #[serde(rename = "Resource")]
+    pub resource: Option<Resource>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct FoodDrink {
+    #[serde(rename = "HpPercent")]
+    pub hp_percent: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct MedKit {
+    #[serde(rename = "HpResource")]
+    pub hp_resource: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Resource {
+    #[serde(rename = "Value")]
+    pub value: u16,
 }
 
 impl<'de> Deserialize<'de> for Item {
@@ -98,8 +122,6 @@ impl<'de> Deserialize<'de> for Item {
         }
 
         let helper: ItemHelper = ItemHelper::deserialize(deserializer)?;
-
-        // let cartridges = "cartridges".to_string();
 
         // Choose the appropriate variant for the Location enum based on slotId
         let location = match (helper.slot_id.as_ref(), helper.location) {

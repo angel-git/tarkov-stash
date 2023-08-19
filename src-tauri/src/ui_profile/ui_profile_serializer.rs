@@ -40,6 +40,11 @@ pub struct Item {
     pub is_fir: bool,
     #[serde(rename = "rotation")]
     pub r: String,
+    pub resource: Option<u16>,
+    #[serde(rename = "maxResource")]
+    pub max_resource: Option<u16>,
+    #[serde(rename = "backgroundColor")]
+    pub background_color: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -96,6 +101,7 @@ pub fn convert_profile_to_ui(
 
         let mut amount = 1;
         let mut spawned_in_session = false;
+        let mut resource = None;
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
@@ -104,6 +110,15 @@ pub fn convert_profile_to_ui(
                 }
                 if udp.spawned_in_session.is_some() {
                     spawned_in_session = udp.spawned_in_session.unwrap();
+                }
+                if udp.food_drink.is_some() {
+                    resource = Some(udp.food_drink.as_ref().unwrap().hp_percent);
+                }
+                if udp.med_kit.is_some() {
+                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource);
+                }
+                if udp.resource.is_some() {
+                    resource = Some(udp.resource.as_ref().unwrap().value);
                 }
             }
         }
@@ -114,7 +129,14 @@ pub fn convert_profile_to_ui(
             &bsg_items_root,
         );
 
-        let stack_max_size = get_item_stack_max_size(item, &bsg_items_root);
+        let bsg_item = get_bsg_item(item, &bsg_items_root);
+        let stack_max_size = bsg_item._props.stack_max_size;
+        let max_resource = bsg_item
+            ._props
+            .max_resource
+            .or(bsg_item._props.max_hp_resource);
+
+        let background_color = bsg_item._props.background_color;
 
         let i = Item {
             id: item._id.to_string(),
@@ -128,6 +150,9 @@ pub fn convert_profile_to_ui(
             stack_max_size,
             is_fir: spawned_in_session,
             r: location_in_stash.r.to_string(),
+            max_resource,
+            resource,
+            background_color,
         };
         items.push(i)
     }
@@ -248,13 +273,12 @@ fn find_all_items_from_parent(
     result
 }
 
-fn get_item_stack_max_size(
+fn get_bsg_item(
     item: &spt::spt_profile_serializer::Item,
     bsg_items_root: &HashMap<String, Value>,
-) -> u32 {
+) -> spt::spt_bsg_items_serializer::Item {
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
-    let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
-    parsed_parent_item._props.stack_max_size
+    load_item(parent_item.to_string().as_str()).unwrap()
 }
 
 #[cfg(test)]
