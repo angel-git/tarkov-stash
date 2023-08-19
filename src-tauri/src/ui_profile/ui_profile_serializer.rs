@@ -32,6 +32,8 @@ pub struct Item {
     #[serde(rename = "sizeY")]
     pub size_y: u16,
     pub amount: u32,
+    #[serde(rename = "stackMaxSize")]
+    pub stack_max_size: u32,
     #[serde(rename = "isStockable")]
     pub is_stockable: bool,
     #[serde(rename = "isFir")]
@@ -93,14 +95,12 @@ pub fn convert_profile_to_ui(
         };
 
         let mut amount = 1;
-        let mut is_stockable = false;
         let mut spawned_in_session = false;
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
                 if udp.stack_objects_count.is_some() {
                     amount = udp.stack_objects_count.unwrap();
-                    is_stockable = true;
                 }
                 if udp.spawned_in_session.is_some() {
                     spawned_in_session = udp.spawned_in_session.unwrap();
@@ -114,6 +114,8 @@ pub fn convert_profile_to_ui(
             &bsg_items_root,
         );
 
+        let stack_max_size = get_item_stack_max_size(item, &bsg_items_root);
+
         let i = Item {
             id: item._id.to_string(),
             tpl: item._tpl.to_string(),
@@ -122,7 +124,8 @@ pub fn convert_profile_to_ui(
             size_x,
             size_y,
             amount,
-            is_stockable,
+            is_stockable: stack_max_size != 1,
+            stack_max_size,
             is_fir: spawned_in_session,
             r: location_in_stash.r.to_string(),
         };
@@ -243,6 +246,15 @@ fn find_all_items_from_parent(
     }
 
     result
+}
+
+fn get_item_stack_max_size(
+    item: &spt::spt_profile_serializer::Item,
+    bsg_items_root: &HashMap<String, Value>,
+) -> u32 {
+    let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
+    let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
+    parsed_parent_item._props.stack_max_size
 }
 
 #[cfg(test)]

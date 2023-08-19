@@ -25,6 +25,8 @@ pub struct Props {
     pub extra_size_up: u16,
     #[serde(rename = "ExtraSizeDown")]
     pub extra_size_down: u16,
+    #[serde(rename = "StackMaxSize")]
+    pub stack_max_size: u32,
 }
 
 pub fn load_item(item_json: &str) -> Result<Item, Error> {
