@@ -40,10 +40,9 @@
 	</div>
 </Modal>
 
-
 <style>
 	input {
-			background-color: var(--color-background);
-			color: var(--color-text)
+		background-color: var(--color-background);
+		color: var(--color-text);
 	}
 </style>
