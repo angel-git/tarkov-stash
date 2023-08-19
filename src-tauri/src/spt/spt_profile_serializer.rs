@@ -69,7 +69,8 @@ pub enum Location {
 pub struct LocationInStash {
     pub x: u16,
     pub y: u16,
-    pub r: String, // "Horizontal" | "Vertical" // TODO this sometimes is a number, fix f55479855a0b8d37e9ca3f3f.json
+    #[serde(deserialize_with = "deserialize_rotation")]
+    pub r: String, // "Horizontal" | "Vertical" | u16
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -102,6 +103,19 @@ pub struct MedKit {
 pub struct Resource {
     #[serde(rename = "Value")]
     pub value: u16,
+}
+
+fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let rotation_value: serde_json::Value = Deserialize::deserialize(deserializer)?;
+
+    match rotation_value {
+        serde_json::Value::Number(num) if num.as_u64() == Some(0) => Ok("Horizontal".to_string()),
+        serde_json::Value::Number(num) if num.as_u64() == Some(1) => Ok("Vertical".to_string()),
+        _ => Ok(rotation_value.as_str().unwrap().to_string()),
+    }
 }
 
 impl<'de> Deserialize<'de> for Item {
