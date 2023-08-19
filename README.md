@@ -8,7 +8,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 - Backup your profile
 - Set _found in raid_ to items
-- Increase currencies
+- Increase stock of items (currency, ammo)
+
+### Limitations
+
+- Some images are not correct as they don't include all attachments
+- Rotates items don't look nice
 
 ### Screenshots
 

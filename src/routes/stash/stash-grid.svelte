@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Item, Profile, Option, BsgItem } from '../../types';
-	import { hexStringToCssColor } from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
@@ -53,7 +52,6 @@
 
 			orderedItems = [...tempItems];
 			bsgItems = profile.bsgItems;
-			console.log('bsgItems', bsgItems);
 		}
 	}
 
@@ -71,39 +69,43 @@
 		itemOpenId = '-1';
 		onOptionClicked(option, item);
 	}
+
+	function calculateBackgroundStyle(item: Item) {
+		return `position: absolute; background-image: url(https://assets.tarkov.dev/${
+			item.tpl
+		}-base-image.png); background-size: ${item.sizeX * 64}px ${item.sizeY * 64}px`;
+	}
+
+	function calculateSizeStyle(item: Item) {
+		return `z-index: 2; position: relative; height: ${item.sizeY * 64}px; width: ${
+			item.sizeX * 64
+		}px;`;
+	}
 </script>
 
 <div class="grid">
 	{#each orderedItems as item}
 		<div class="grid-item">
-			{#if item}
-				{#if item.id === fakeId}
-					<div
-						class="item-part"
-						style={`background-color: ${hexStringToCssColor(item.tpl)}; background-image: none`}
-					/>
-				{:else}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div
-						tabindex="-1"
-						role="button"
-						class={`item-${item.tpl} item-clickable`}
-						on:click={() => handleOpenClick(item)}
-					>
-						<div
-							class="item-info"
-							style={`background-color: ${hexStringToCssColor(item.tpl, 0.8)};`}
-						>
-							<div class="short-name">{bsgItems[item.tpl].shortName}</div>
-							{#if item.isFir}
-								<div class="fir" />
-							{/if}
-							{#if item.isStockable}
-								<div class="amount">{item.amount}</div>
-							{/if}
-						</div>
+			{#if item && item.id !== fakeId}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div
+					tabindex="-1"
+					role="button"
+					class="item-clickable"
+					style={calculateSizeStyle(item)}
+					on:click={() => handleOpenClick(item)}
+				>
+					<div class="item-image" style={calculateBackgroundStyle(item)} />
+					<div class="short-name">{bsgItems[item.tpl].shortName}</div>
+					<div class="item-data">
+						{#if item.isFir}
+							<div class="fir" />
+						{/if}
+						{#if item.isStockable}
+							<div class="amount">{item.amount}</div>
+						{/if}
 					</div>
-				{/if}
+				</div>
 			{:else}
 				<div class="empty" />
 			{/if}
@@ -153,21 +155,7 @@
 		background-image: url($lib/images/empty.png);
 	}
 
-	.item-5449016a4bdc2d6f028b456f {
-		background-image: url($lib/images/5449016a4bdc2d6f028b456f.png);
-	}
-
-	.item-569668774bdc2da2298b4568 {
-		background-image: url($lib/images/569668774bdc2da2298b4568.png);
-	}
-
-	.item-5696686a4bdc2da3298b456a {
-		background-image: url($lib/images/5696686a4bdc2da3298b456a.png);
-	}
-
 	.item-clickable {
-		height: 64px;
-		width: 64px;
 		cursor: pointer;
 	}
 
@@ -176,54 +164,52 @@
 	}
 
 	.fir {
-		position: absolute;
-		bottom: 2px;
-		left: 2px;
-		height: 10px;
-		width: 10px;
+		height: 12px;
+		width: 12px;
 		background-image: url($lib/images/fir.png);
-		background-size: 10px 10px;
+		background-size: 12px 12px;
 	}
 
-	.item-info {
+	.amount {
+		font-size: 13px;
+		z-index: 2;
+	}
+
+	.item-image {
 		width: 100%;
 		height: 100%;
 	}
 
-	.item-part {
-		width: 100%;
+	.item-data {
 		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		justify-content: flex-end;
 	}
 
 	.short-name {
-		font-size: 10px;
+		font-size: 11px;
 		position: absolute;
 		right: 2px;
 		top: 2px;
+		z-index: 2;
 	}
 
 	.empty {
 		height: 64px;
 		width: 64px;
-		background-image: url($lib/images/empty.png);
-	}
-
-	.amount {
-		position: absolute;
-		bottom: 2px;
-		right: 2px;
-		font-size: 13px;
-		user-select: none;
 	}
 
 	.options {
 		position: absolute;
-		bottom: -30px;
-		right: 0;
+		top: 0;
+		left: 0;
 		background-color: var(--color-background);
 		border: 1px solid var(--color-text);
 		font-size: 12px;
-		z-index: 2;
+		z-index: 5;
 		min-width: 120px;
 	}
 
