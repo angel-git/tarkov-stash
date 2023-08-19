@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Item, Profile, Option, BsgItem } from '../../types';
-	import { hexStringToCssColor, ITEMS_TEMPLATE_UPDATABLE } from './helper';
+	import { hexStringToCssColor } from './helper';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
@@ -110,7 +110,7 @@
 			{#if item?.id === itemOpenId}
 				<div class="options">
 					<div class="title">{bsgItems[item.tpl].name}</div>
-					{#if ITEMS_TEMPLATE_UPDATABLE.includes(item.tpl)}
+					{#if item.isStockable}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<div
 							class="option"

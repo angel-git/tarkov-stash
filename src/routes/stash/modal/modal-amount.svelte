@@ -10,6 +10,7 @@
 
 	let showModal = true;
 	let amount = item.amount;
+	let max = item.stackMaxSize;
 
 	$: if (!showModal) onClose();
 
@@ -24,8 +25,8 @@
 	function handleKeyUp() {
 		if (amount < 1) {
 			amount = 1;
-		} else if (amount > 500000) {
-			amount = 500000;
+		} else if (amount > max) {
+			amount = max;
 		}
 	}
 </script>
@@ -36,7 +37,7 @@
 	</h2>
 
 	<div>
-		<input type="number" on:keyup={handleKeyUp} bind:value={amount} min="1" max="500000" />
+		<input type="number" on:keyup={handleKeyUp} bind:value={amount} min="1" {max} />
 	</div>
 </Modal>
 
