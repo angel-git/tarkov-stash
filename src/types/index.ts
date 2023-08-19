@@ -15,6 +15,7 @@ export interface Item {
 	sizeX: number;
 	sizeY: number;
 	amount: number;
+	stackMaxSize: number;
 	isStockable: boolean;
 	isFir: boolean;
 	rotation: 'Horizontal' | 'Vertical';
