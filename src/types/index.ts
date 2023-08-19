@@ -19,6 +19,9 @@ export interface Item {
 	isStockable: boolean;
 	isFir: boolean;
 	rotation: 'Horizontal' | 'Vertical';
+	maxResource: number | null;
+	resource: number | null;
+	backgroundColor: string;
 }
 
 export interface BsgItem {
