@@ -9,7 +9,6 @@
 	$: bsgItems = {};
 
 	let itemOpenId = '-1';
-	let fakeId = 'XXX';
 
 	$: {
 		if (profile) {
@@ -38,11 +37,11 @@
 				for (let row = 0; row < profile.sizeX; row++) {
 					const item = grid[col][row];
 					if (item) {
-						if (addedItems.has(item.id)) {
-							tempItems.push({ ...item, id: fakeId });
-						} else {
+						if (!addedItems.has(item.id)) {
 							tempItems.push(item);
 							addedItems.add(item.id);
+						} else {
+							tempItems.push(undefined);
 						}
 					} else {
 						tempItems.push(undefined);
@@ -86,7 +85,7 @@
 <div class="grid">
 	{#each orderedItems as item}
 		<div class="grid-item">
-			{#if item && item.id !== fakeId}
+			{#if item}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					tabindex="-1"
