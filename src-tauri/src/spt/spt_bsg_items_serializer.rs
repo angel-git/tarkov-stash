@@ -37,6 +37,10 @@ pub struct Props {
     pub max_durability: Option<u16>,
     #[serde(rename = "BackgroundColor")]
     pub background_color: String,
+    #[serde(rename = "Foldable")]
+    pub foldable: Option<bool>,
+    #[serde(rename = "FoldedSlot")]
+    pub folded_slot: Option<String>,
 }
 
 pub fn load_item(item_json: &str) -> Result<Item, Error> {
