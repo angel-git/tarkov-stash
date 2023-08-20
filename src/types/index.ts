@@ -19,9 +19,9 @@ export interface Item {
 	isStockable: boolean;
 	isFir: boolean;
 	rotation: 'Horizontal' | 'Vertical';
-	maxResource: number | null;
-	resource: number | null;
 	backgroundColor: string;
+	resource: number | null;
+	maxResource: number | null;
 }
 
 export interface BsgItem {
@@ -30,4 +30,4 @@ export interface BsgItem {
 	shortName: string;
 }
 
-export type Option = 'amount' | 'fir';
+export type Option = 'amount' | 'fir' | 'resource';

@@ -161,6 +161,17 @@
 							Set fir
 						</div>
 					{/if}
+					{#if item.maxResource && item.maxResource !== 1 && item.resource !== item.maxResource}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="option"
+							tabindex="-1"
+							role="button"
+							on:click={() => handleOptionClicked('resource', item)}
+						>
+							Restore durability
+						</div>
+					{/if}
 				</div>
 			{/if}
 		</div>

@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::collections::HashMap;
 use std::fs;
 use std::net::TcpStream;
 use std::path::Path;
@@ -11,7 +12,7 @@ use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 
 use crate::spt::spt_profile_serializer::load_profile;
-use crate::stash::stash_utils::{update_item_amount, update_spawned_in_session};
+use crate::stash::stash_utils::{update_durability, update_item_amount, update_spawned_in_session};
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
 pub mod spt;
@@ -19,7 +20,13 @@ pub mod stash;
 pub mod ui_profile;
 
 struct TarkovStashState {
-    pub profile_file: Mutex<Option<String>>,
+    pub state: Mutex<MutexState>,
+}
+
+struct MutexState {
+    pub profile_file_path: Option<String>,
+    pub bsg_items: Option<HashMap<String, Value>>,
+    pub locale: Option<HashMap<String, Value>>,
 }
 
 fn main() {
@@ -34,7 +41,12 @@ fn main() {
     tauri::Builder::default()
         .menu(menu)
         .manage(TarkovStashState {
-            profile_file: Mutex::new(None),
+            state: Mutex::new(MutexState {
+                profile_file_path: None,
+                bsg_items: None,
+                locale: None,
+            })
+
         })
         .on_menu_event(|event| match event.menu_item_id() {
             "quit" => {
@@ -50,7 +62,8 @@ fn main() {
                                 window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
                             } else {
                                 let state: State<TarkovStashState> = window.state();
-                                *state.profile_file.lock().unwrap() =
+                                let mut internal_state = state.state.lock().unwrap();
+                                internal_state.profile_file_path =
                                     Some(p.as_path().to_str().unwrap().to_string());
                                 window.emit("profile_loaded", "").expect("Can't emit event to window!");
                             }
@@ -58,27 +71,41 @@ fn main() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir])
+        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 #[tauri::command]
 fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String> {
-    let b = state.profile_file.lock().unwrap();
-    let binding = b.as_ref();
+    let mut internal_state = state.state.lock().unwrap();
+    let b = &internal_state.profile_file_path;
+    let b_clone = b.clone();
+    let binding = b_clone.as_ref();
     match binding {
-        Some(file) => {
-            create_backup(file);
-            let bsg_items = load_bsg_items(file);
-            let locale = load_locale(file);
-            let content = fs::read_to_string(file).unwrap();
+        Some(profile_file_path) => {
+            create_backup(profile_file_path);
+            // save to state internal data
+            let locale = load_locale(profile_file_path);
+            let bsg_items = load_bsg_items(profile_file_path);
+            let bsg_items_root: HashMap<String, Value> =
+                serde_json::from_str(bsg_items.as_str()).unwrap();
+            let locale_root: HashMap<String, Value> =
+                serde_json::from_str(locale.as_str()).unwrap();
+
+            internal_state.locale = Some(locale_root);
+            internal_state.bsg_items = Some(bsg_items_root);
+
+            let content = fs::read_to_string(profile_file_path).unwrap();
             let tarkov_profile = load_profile(content.as_str());
             match tarkov_profile {
                 Ok(p) => {
-                    let mut ui_profile =
-                        convert_profile_to_ui(p, bsg_items.as_str(), locale.as_str());
-                    ui_profile.spt_version = Some(get_server_version(file));
+                    let mut ui_profile = convert_profile_to_ui(
+                        p,
+                        internal_state.bsg_items.as_ref().unwrap(),
+                        internal_state.locale.as_ref().unwrap(),
+                    );
+                    ui_profile.spt_version = Some(get_server_version(profile_file_path));
                     Ok(ui_profile)
                 }
                 Err(e) => Err(e.to_string()),
@@ -98,29 +125,37 @@ fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     with_state_do(item, app, update_spawned_in_session)
 }
 
-fn with_state_do(
-    item: Item,
-    app: tauri::AppHandle,
-    f: fn(file_content: &str, item: &Item) -> Result<String, Error>,
-) -> Result<String, String> {
+#[tauri::command]
+fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    with_state_do(item, app, update_durability)
+}
+
+type UpdateFunction = fn(
+    file_content: &str,
+    item: &Item,
+    bsg_items: &HashMap<String, Value>,
+) -> Result<String, Error>;
+
+fn with_state_do(item: Item, app: tauri::AppHandle, f: UpdateFunction) -> Result<String, String> {
     let state: State<TarkovStashState> = app.state();
-    let b = state.profile_file.lock().unwrap();
-    let binding = b.as_ref();
-    match binding {
-        Some(file) => {
-            let content = fs::read_to_string(file).unwrap();
-            let new_content_result = f(content.as_str(), &item);
-            match new_content_result {
-                Ok(new_content) => {
-                    fs::write(file, new_content).expect("Cant write profile file!");
-                    app.emit_all("profile_loaded", "")
-                        .expect("Can't emit event to window!");
-                    Ok("updated".to_string())
-                }
-                Err(e) => Err(e.to_string()),
-            }
+    let internal_state = state.state.lock().unwrap();
+    let profile_file_path_option = &internal_state.profile_file_path;
+    let bsg_items_option = &internal_state.bsg_items;
+    if profile_file_path_option.is_none() || bsg_items_option.is_none() {
+        return Err("Could not find file inside app state".to_string());
+    }
+    let profile_file_path = profile_file_path_option.as_ref().unwrap();
+    let bsg_items = bsg_items_option.as_ref().unwrap();
+    let profile_content = fs::read_to_string(profile_file_path).unwrap();
+    let new_profile = f(profile_content.as_str(), &item, bsg_items);
+    match new_profile {
+        Ok(new_content) => {
+            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            app.emit_all("profile_loaded", "")
+                .expect("Can't emit event to window!");
+            Ok("updated".to_string())
         }
-        None => Err("Could not find file inside app state".to_string()),
+        Err(e) => Err(e.to_string()),
     }
 }
 

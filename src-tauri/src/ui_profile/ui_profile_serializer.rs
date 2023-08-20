@@ -43,6 +43,8 @@ pub struct Item {
     pub resource: Option<u16>,
     #[serde(rename = "maxResource")]
     pub max_resource: Option<u16>,
+    // #[serde(rename = "originalMaxResource")]
+    // pub original_max_resource: Option<u16>,
     #[serde(rename = "backgroundColor")]
     pub background_color: String,
 }
@@ -57,11 +59,9 @@ pub struct BsgItem {
 
 pub fn convert_profile_to_ui(
     tarkov_profile: TarkovProfile,
-    bsg_items: &str,
-    locale: &str,
+    bsg_items_root: &HashMap<String, Value>,
+    locale_root: &HashMap<String, Value>,
 ) -> UIProfile {
-    let bsg_items_root: HashMap<String, Value> = serde_json::from_str(bsg_items).unwrap();
-    let locale_root: HashMap<String, Value> = serde_json::from_str(locale).unwrap();
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -99,16 +99,17 @@ pub fn convert_profile_to_ui(
             panic!("oh no, wrong item: {}", item._id);
         };
 
-        let bsg_item = get_bsg_item(item, &bsg_items_root);
+        let bsg_item = get_bsg_item(item, bsg_items_root);
 
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
 
-        let mut max_resource = None
+        let max_resource = None
             .or(bsg_item._props.max_resource)
             .or(bsg_item._props.max_hp_resource)
-            .or(bsg_item._props.maximum_number_of_usages);
+            .or(bsg_item._props.maximum_number_of_usages)
+            .or(bsg_item._props.max_durability);
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
@@ -129,11 +130,8 @@ pub fn convert_profile_to_ui(
                 }
                 if udp.repairable.is_some() {
                     resource = Some(udp.repairable.as_ref().unwrap().durability);
-                    max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
-                }
-                if udp.repairable.is_some() {
-                    resource = Some(udp.repairable.as_ref().unwrap().durability);
-                    max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
+                    // we are showing the real max durability, not the current repaired one, uncomment the following code to show that
+                    // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
                 }
                 if udp.key.is_some() {
                     resource = Some(
@@ -147,7 +145,7 @@ pub fn convert_profile_to_ui(
         let (size_x, size_y) = calculate_item_size(
             item,
             &tarkov_profile.characters.pmc.inventory.items,
-            &bsg_items_root,
+            bsg_items_root,
         );
 
         let stack_max_size = bsg_item._props.stack_max_size;

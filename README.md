@@ -9,11 +9,17 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Backup your profile
 - Set _found in raid_ to items
 - Increase stock of items (currency, ammo)
+- Restore durability, usage etc from armors, keys, meds...
 
 ### Limitations
 
 - Some images are not correct as they don't include all attachments
-- Rotates items don't look nice
+- Rotated items don't look nice
+
+### Future features
+
+- Compatible with 0.3.15 (v2)
+- Duplicate items (v2)
 
 ### Screenshots
 
