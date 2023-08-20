@@ -10,6 +10,7 @@
 	$: bsgItems = {};
 
 	let itemOpenId = '-1';
+	let searchTerm = '';
 
 	$: {
 		if (profile) {
@@ -18,21 +19,28 @@
 
 			const grid = Array.from({ length: profile.sizeY }, () => Array(profile.sizeX).fill(null));
 
-			profile.items.forEach((item) => {
-				const rotatedItem =
-					item.rotation === 'Vertical'
-						? {
-								...item,
-								sizeX: item.sizeY,
-								sizeY: item.sizeX,
-						  }
-						: item;
-				for (let col = rotatedItem.y; col < rotatedItem.y + rotatedItem.sizeY; col++) {
-					for (let row = rotatedItem.x; row < rotatedItem.x + rotatedItem.sizeX; row++) {
-						grid[col][row] = rotatedItem;
+			profile.items
+				.filter((item) => {
+					return (
+						profile.bsgItems[item.tpl].name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						profile.bsgItems[item.tpl].shortName.toLowerCase().includes(searchTerm.toLowerCase())
+					);
+				})
+				.forEach((item) => {
+					const rotatedItem =
+						item.rotation === 'Vertical'
+							? {
+									...item,
+									sizeX: item.sizeY,
+									sizeY: item.sizeX,
+							  }
+							: item;
+					for (let col = rotatedItem.y; col < rotatedItem.y + rotatedItem.sizeY; col++) {
+						for (let row = rotatedItem.x; row < rotatedItem.x + rotatedItem.sizeX; row++) {
+							grid[col][row] = rotatedItem;
+						}
 					}
-				}
-			});
+				});
 
 			for (let col = 0; col < profile.sizeY; col++) {
 				for (let row = 0; row < profile.sizeX; row++) {
@@ -70,6 +78,10 @@
 		onOptionClicked(option, item);
 	}
 </script>
+
+<div class="filter">
+	<input placeholder="Type to filter" bind:value={searchTerm} />
+</div>
 
 <div class="grid">
 	{#each orderedItems as item}
@@ -122,6 +134,21 @@
 </div>
 
 <style>
+	.filter {
+		margin: 12px 0;
+	}
+
+	.filter input {
+		padding: 8px;
+		background-color: var(--color-background);
+		color: var(--color-text);
+	}
+
+	.filter input:focus {
+		outline: none;
+		border: 2px solid var(--color-highlight);
+	}
+
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(10, 64px);
