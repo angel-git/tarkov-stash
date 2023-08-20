@@ -75,40 +75,40 @@
           "type": "StashSize"
         },
         {
+          "passive": true,
+          "production": false,
+          "type": "FuelConsumption",
           "value": 5,
-          "passive": true,
-          "production": false,
-          "visible": true,
-          "type": "FuelConsumption"
+          "visible": true
         },
         {
+          "passive": true,
+          "production": false,
+          "type": "EnergyRegeneration",
           "value": -5,
-          "passive": true,
-          "production": false,
-          "visible": true,
-          "type": "EnergyRegeneration"
+          "visible": true
         },
         {
+          "passive": true,
+          "production": false,
+          "type": "HealthRegeneration",
           "value": -5,
-          "passive": true,
-          "production": false,
-          "visible": true,
-          "type": "HealthRegeneration"
+          "visible": true
         },
         {
-          "value": -3,
           "passive": true,
           "production": false,
-          "visible": true,
-          "type": "ExperienceRate"
+          "type": "ExperienceRate",
+          "value": -3,
+          "visible": true
         },
         {
-          "value": -3,
           "passive": true,
           "production": false,
-          "visible": true,
           "skillType": "Physical",
-          "type": "SkillGroupLevelingBoost"
+          "type": "SkillGroupLevelingBoost",
+          "value": -3,
+          "visible": true
         }
       ],
       "CarExtractCounts": {},
@@ -242,6 +242,7 @@
         "57347d7224597744596b4e72": false,
         "57347da92459774491567cf5": false,
         "573718ba2459775a75491131": false,
+        "5737287724597765e1625ae2": false,
         "5751a25924597722c463c472": false,
         "5755356824597772cb798962": false,
         "5755383e24597772cb798966": false,
@@ -308,6 +309,7 @@
         "5bc9b156d4351e00367fbce9": false,
         "5bc9b355d4351e6d1509862a": true,
         "5bc9bc53d4351e00367fbcee": true,
+        "5bc9c377d4351e3bac12251b": false,
         "5bfea6e90db834001b7347f3": false,
         "5bfea7ad0db834001c38f1ee": false,
         "5bfeaa0f0db834001b734927": false,
@@ -367,9 +369,9 @@
         "62a09d79de7ac81993580530": true,
         "62a09e73af34e73a266d932a": true,
         "636270263f2495c26f00b007": true,
-        "5bc9c377d4351e3bac12251b": false,
         "63a71e781031ac76fe773c7d": false,
-        "5737287724597765e1625ae2": false
+        "637b612fb7afa97bfc3d7005": true,
+        "6389c8fb46b54c634724d847": true
       },
       "Health": {
         "BodyParts": {
@@ -377,7 +379,8 @@
             "Health": {
               "Current": 85,
               "Maximum": 85
-            }
+            },
+            "Effects": {}
           },
           "Head": {
             "Health": {
@@ -417,18 +420,18 @@
           }
         },
         "Energy": {
-          "Current": 100,
+          "Current": 92,
           "Maximum": 100
         },
         "Hydration": {
-          "Current": 100,
+          "Current": 95,
           "Maximum": 100
         },
         "Temperature": {
           "Current": 37,
           "Maximum": 40
         },
-        "UpdateTime": 1692361466
+        "UpdateTime": 1692565758
       },
       "Hideout": {
         "Areas": [
@@ -882,14 +885,14 @@
           }
         },
         "Production": {},
-        "sptUpdateLastRunTimestamp": 1692361497
+        "sptUpdateLastRunTimestamp": 1692565779
       },
       "Info": {
         "AccountType": 0,
         "BannedState": false,
         "BannedUntil": 0,
         "Bans": [],
-        "Experience": 24272,
+        "Experience": 25052,
         "GameVersion": "edge_of_darkness",
         "IsStreamerModeAvailable": false,
         "LastTimePlayedAsSavage": 0,
@@ -927,7 +930,7 @@
             "_tpl": "602543c13fee350cd564d032"
           },
           {
-            "_id": "2a8046ad34c01a5d164e540c",
+            "_id": "22bef10e40593aaf0d9500da",
             "_tpl": "54491bb74bdc2d09088b4567",
             "parentId": "5fe49a0e2694b0755a50476c",
             "slotId": "Scabbard",
@@ -939,21 +942,21 @@
             }
           },
           {
-            "_id": "2169cbe21cc3f49cb5099f67",
+            "_id": "8a4ea8f15f82510bc1d2abb0",
             "_tpl": "5857a8bc2459772bad15db29",
             "parentId": "5fe49a0e2694b0755a50476c",
             "slotId": "SecuredContainer"
           },
           {
-            "_id": "9c1ed0ca490038cf3bf851ac",
+            "_id": "782030d4e403194e2bcc608e",
             "_tpl": "627a4e6b255f7527fb05a0f6",
             "parentId": "5fe49a0e2694b0755a50476c",
             "slotId": "Pockets"
           },
           {
-            "_id": "a8d1cf8dfa757bf5e6eecbe6",
+            "_id": "f7003375955d8abc98d21416",
             "_tpl": "5d02778e86f774203e7dedbe",
-            "parentId": "2169cbe21cc3f49cb5099f67",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
             "slotId": "main",
             "location": {
               "x": 0,
@@ -968,9 +971,9 @@
             }
           },
           {
-            "_id": "2df00c9f4747e5adb237d40c",
+            "_id": "ff27158391990500e9a3c539",
             "_tpl": "5af0454c86f7746bf20992e8",
-            "parentId": "2169cbe21cc3f49cb5099f67",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
             "slotId": "main",
             "location": {
               "x": 0,
@@ -985,9 +988,9 @@
             }
           },
           {
-            "_id": "3434683bf1b418b509fc5de7",
+            "_id": "0fe6e8a528bf05f730fe2f4d",
             "_tpl": "5e8488fa988a8701445df1e4",
-            "parentId": "2169cbe21cc3f49cb5099f67",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
             "slotId": "main",
             "location": {
               "x": 1,
@@ -1002,9 +1005,9 @@
             }
           },
           {
-            "_id": "105ffeea65c41942612a8661",
+            "_id": "2283ed10320884e2d9b62ecc",
             "_tpl": "54527a984bdc2d4e668b4567",
-            "parentId": "2169cbe21cc3f49cb5099f67",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
             "slotId": "main",
             "location": {
               "x": 0,
@@ -1017,9 +1020,9 @@
             }
           },
           {
-            "_id": "242717502d900026959adb19",
+            "_id": "02cd96725ec58325e9539621",
             "_tpl": "544fb45d4bdc2dee738b4568",
-            "parentId": "2169cbe21cc3f49cb5099f67",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
             "slotId": "main",
             "location": {
               "x": 2,
@@ -1031,6 +1034,30 @@
               "MedKit": {
                 "HpResource": 400
               }
+            }
+          },
+          {
+            "_id": "444dad6d8ed4a3b47971652e",
+            "_tpl": "5e831507ea0a7c419c2f9bd9",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
+            "slotId": "main",
+            "location": {
+              "x": 1,
+              "y": 0,
+              "r": "Horizontal",
+              "isSearched": true
+            }
+          },
+          {
+            "_id": "98e87164492786c6d08356fc",
+            "_tpl": "544fb3364bdc2d34748b456a",
+            "parentId": "8a4ea8f15f82510bc1d2abb0",
+            "slotId": "main",
+            "location": {
+              "x": 2,
+              "y": 0,
+              "r": "Horizontal",
+              "isSearched": true
             }
           },
           {
@@ -1082,10 +1109,10 @@
             "_id": "b073c9ea52ff96e521e39b0e",
             "_tpl": "57347c5b245977448d35f6e1",
             "location": {
-              "x": 5,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -1100,10 +1127,10 @@
             "_id": "a46e6f989a852a7fbaddeab6",
             "_tpl": "59f32c3b86f77472a31742f0",
             "location": {
-              "x": 7,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -1132,10 +1159,10 @@
             "_id": "c4714b493ceb2793ac93adea",
             "_tpl": "6389c70ca33d8c4cdf4932c6",
             "location": {
-              "x": 8,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -1150,10 +1177,10 @@
             "_id": "0172c836e2090091e1fec243",
             "_tpl": "573476f124597737e04bf328",
             "location": {
-              "x": 6,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -1387,15 +1414,6 @@
             }
           },
           {
-            "_id": "093814c780e091ec7b91f126",
-            "_tpl": "54527a984bdc2d4e668b4567",
-            "parentId": "9cbebf5a500dca39c93d5c40",
-            "slotId": "cartridges",
-            "upd": {
-              "StackObjectsCount": 30
-            }
-          },
-          {
             "_id": "d4a4257a93d1fdc6510d1042",
             "_tpl": "54527a984bdc2d4e668b4567",
             "parentId": "92e31a0305315b9e3f17be89",
@@ -1421,15 +1439,6 @@
             "_id": "7c0fee6a739c26dc33fd8ac5",
             "_tpl": "54527a984bdc2d4e668b4567",
             "parentId": "f2b39e01a453fed8b92354ce",
-            "slotId": "cartridges",
-            "upd": {
-              "StackObjectsCount": 30
-            }
-          },
-          {
-            "_id": "f774e8623cf2be4518276f03",
-            "_tpl": "54527a984bdc2d4e668b4567",
-            "parentId": "af46f0e60e9b9ce9736cbbc6",
             "slotId": "cartridges",
             "upd": {
               "StackObjectsCount": 30
@@ -1568,15 +1577,6 @@
             "slotId": "cartridges",
             "upd": {
               "StackObjectsCount": 17
-            }
-          },
-          {
-            "_id": "572b0abd67acc6f8f0adbe6a",
-            "_tpl": "54527a984bdc2d4e668b4567",
-            "parentId": "b4728719ca2dbe73b545d121",
-            "slotId": "cartridges",
-            "upd": {
-              "StackObjectsCount": 30
             }
           },
           {
@@ -2202,10 +2202,10 @@
             "_id": "a0ed4d074412d6690c2e4b22",
             "_tpl": "5af0534a86f7743b6f354284",
             "location": {
-              "x": 0,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -2219,10 +2219,10 @@
             "_id": "5fb36bf4fb68bc328ffab20f",
             "_tpl": "5e2af47786f7746d404f3aaa",
             "location": {
-              "x": 3,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -2236,10 +2236,10 @@
             "_id": "0a152b7ad51a540d7735c6d6",
             "_tpl": "5e2af4a786f7746d3f3c3400",
             "location": {
-              "x": 1,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 0
             },
             "parentId": "21ae3926cf267bfebb3fedc7",
             "slotId": "main",
@@ -2298,10 +2298,10 @@
             "_id": "7cb4aa4a10ea93eb1dcf40a5",
             "_tpl": "54527a984bdc2d4e668b4567",
             "location": {
-              "x": 0,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2313,10 +2313,10 @@
             "_id": "a4e0e9e40d3a082c9f948f43",
             "_tpl": "54527a984bdc2d4e668b4567",
             "location": {
-              "x": 1,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2328,10 +2328,10 @@
             "_id": "fc55c5eabb624b2bfb67e61a",
             "_tpl": "54527a984bdc2d4e668b4567",
             "location": {
-              "x": 2,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2343,10 +2343,10 @@
             "_id": "3026d0ac1667de73d6d9c80f",
             "_tpl": "5656d7c34bdc2d9d198b4587",
             "location": {
-              "x": 3,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2359,10 +2359,10 @@
             "_id": "0231600adfe047c844f42905",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 4,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2374,10 +2374,10 @@
             "_id": "21b257c2fedc921b2ed7998e",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 5,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2389,10 +2389,10 @@
             "_id": "4c2aadf87505919a560479fa",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 6,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2404,10 +2404,10 @@
             "_id": "78f9d3ea465550a08f53ca3f",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 7,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2419,10 +2419,10 @@
             "_id": "8ba6869f79de5fa733d28968",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 8,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2434,10 +2434,10 @@
             "_id": "ae904bb256375c1fd4854a02",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 9,
-              "y": 0,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 0
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2449,10 +2449,10 @@
             "_id": "b513ecd738d99d1941182400",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 0,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2464,10 +2464,10 @@
             "_id": "b6bc1ee66ce8199e47861f90",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 1,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2479,10 +2479,10 @@
             "_id": "c12938b19f6b937de09ed808",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 2,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2494,10 +2494,10 @@
             "_id": "cf6351884f32e78c9c031083",
             "_tpl": "56d59d3ad2720bdb418b4577",
             "location": {
-              "x": 3,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2509,10 +2509,10 @@
             "_id": "74e174b37fc9d918cda61bbd",
             "_tpl": "573718ba2459775a75491131",
             "location": {
-              "x": 4,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2525,10 +2525,10 @@
             "_id": "97e93afee7afde8075559025",
             "_tpl": "573718ba2459775a75491131",
             "location": {
-              "x": 5,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2541,10 +2541,10 @@
             "_id": "0ac1e12d3d92df9b0e5aa21c",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 6,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2556,10 +2556,10 @@
             "_id": "0db962bdafc65364e25db9a1",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 7,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2571,10 +2571,10 @@
             "_id": "108f78eb025c23dcc8900bff",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 8,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2586,10 +2586,10 @@
             "_id": "1aae71c7ba74a3db8b6cdd76",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 9,
-              "y": 1,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 1
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2601,10 +2601,10 @@
             "_id": "5fe8479bf6fc4f2b3325c56b",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 0,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2616,10 +2616,10 @@
             "_id": "74857f5f160ff91f75c12e8c",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 1,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2631,10 +2631,10 @@
             "_id": "aaff63b7d24c61facdb51bf0",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 2,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2646,10 +2646,10 @@
             "_id": "b3e77e172f0e644e1c8aafed",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 3,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2661,10 +2661,10 @@
             "_id": "c0b8f018c053c42a87dd32c4",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 4,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2676,10 +2676,10 @@
             "_id": "f05ad5cf86628b11f3b5afbd",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 5,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2691,10 +2691,10 @@
             "_id": "f8ca59277eed4bfbb8ccf76d",
             "_tpl": "58820d1224597753c90aeb13",
             "location": {
-              "x": 6,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2706,10 +2706,10 @@
             "_id": "0c8d19e17db285cee49b7cfd",
             "_tpl": "58dd3ad986f77403051cba8f",
             "location": {
-              "x": 7,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2721,10 +2721,10 @@
             "_id": "491cb9035b6cf872130f9d3d",
             "_tpl": "58dd3ad986f77403051cba8f",
             "location": {
-              "x": 8,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2736,10 +2736,10 @@
             "_id": "cb3d013e6fa35ed9f7db6740",
             "_tpl": "59e4d3d286f774176a36250a",
             "location": {
-              "x": 9,
-              "y": 2,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 2
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2751,10 +2751,10 @@
             "_id": "a6884a3fb9f510d2c23bff5d",
             "_tpl": "5448be9a4bdc2dfd2f8b456a",
             "location": {
-              "x": 0,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2763,10 +2763,10 @@
             "_id": "aeffa4282b00c87265df00c8",
             "_tpl": "5448be9a4bdc2dfd2f8b456a",
             "location": {
-              "x": 1,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2775,10 +2775,10 @@
             "_id": "be67c22fe5cb609c49f7f7cb",
             "_tpl": "5448be9a4bdc2dfd2f8b456a",
             "location": {
-              "x": 2,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2790,10 +2790,10 @@
             "_id": "f9345df2cd82c59eab86c3ca",
             "_tpl": "5448be9a4bdc2dfd2f8b456a",
             "location": {
-              "x": 3,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2802,10 +2802,10 @@
             "_id": "da048927ec4776f4aa2ce633",
             "_tpl": "5710c24ad2720bc3458b45a3",
             "location": {
-              "x": 4,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2817,10 +2817,10 @@
             "_id": "307df6185efa76896ed2df2c",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 5,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2829,10 +2829,10 @@
             "_id": "4238da181b49edfa5e8d0230",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 6,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2841,10 +2841,10 @@
             "_id": "6b706aeb40830f9cfd96c353",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 7,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2853,10 +2853,10 @@
             "_id": "b359c231e23f39c0ade99905",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 8,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2865,10 +2865,10 @@
             "_id": "c30284c3c4781694f84eef06",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 9,
-              "y": 3,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 3
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2880,10 +2880,10 @@
             "_id": "efcdee266637c0b12e7fdf50",
             "_tpl": "58d3db5386f77426186285a0",
             "location": {
-              "x": 0,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2892,10 +2892,10 @@
             "_id": "12ceca44d5d324d211e88c4f",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 1,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2904,10 +2904,10 @@
             "_id": "41aa5326c85625685ad58d30",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 2,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2919,10 +2919,10 @@
             "_id": "5e2c9ea673b8ad34dcce5208",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 3,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2931,10 +2931,10 @@
             "_id": "6184921bd2a9268384e78708",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 4,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -2946,10 +2946,10 @@
             "_id": "a577b1fb5ebeaaa88b1b0993",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 5,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2958,10 +2958,10 @@
             "_id": "b1e0f6c97b8a9baa9a62a5ff",
             "_tpl": "5a0c27731526d80618476ac4",
             "location": {
-              "x": 6,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2970,10 +2970,10 @@
             "_id": "7faba6f99dcb48244d99ab2f",
             "_tpl": "55d4887d4bdc2d962f8b4570",
             "location": {
-              "x": 7,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2982,10 +2982,10 @@
             "_id": "827e6ae87a8d453dcdb322a9",
             "_tpl": "55d4887d4bdc2d962f8b4570",
             "location": {
-              "x": 8,
-              "y": 4,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -2994,46 +2994,10 @@
             "_id": "92e31a0305315b9e3f17be89",
             "_tpl": "55d4887d4bdc2d962f8b4570",
             "location": {
+              "isSearched": true,
+              "r": "Horizontal",
               "x": 9,
-              "y": 4,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
-            "_id": "9cbebf5a500dca39c93d5c40",
-            "_tpl": "55d4887d4bdc2d962f8b4570",
-            "location": {
-              "x": 0,
-              "y": 5,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
-            "_id": "af46f0e60e9b9ce9736cbbc6",
-            "_tpl": "55d4887d4bdc2d962f8b4570",
-            "location": {
-              "x": 1,
-              "y": 5,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
-            "_id": "b4728719ca2dbe73b545d121",
-            "_tpl": "55d4887d4bdc2d962f8b4570",
-            "location": {
-              "x": 2,
-              "y": 5,
-              "r": "Horizontal",
-              "isSearched": true
+              "y": 4
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3042,10 +3006,10 @@
             "_id": "f2b39e01a453fed8b92354ce",
             "_tpl": "55d4887d4bdc2d962f8b4570",
             "location": {
-              "x": 3,
-              "y": 5,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 5
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3054,10 +3018,10 @@
             "_id": "a1d72d450906933d0d48016b",
             "_tpl": "5926c3b286f774640d189b6b",
             "location": {
-              "x": 4,
-              "y": 5,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 5
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3069,10 +3033,10 @@
             "_id": "608c0f50036c249a82f0670b",
             "_tpl": "5bfeaa0f0db834001b734927",
             "location": {
-              "x": 5,
-              "y": 5,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 5
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3081,10 +3045,10 @@
             "_id": "828c51bae338cb345edc726f",
             "_tpl": "5bfeaa0f0db834001b734927",
             "location": {
-              "x": 6,
-              "y": 5,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 5
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3093,10 +3057,10 @@
             "_id": "e513ad994a80bd8f7fb130b2",
             "_tpl": "5bfeaa0f0db834001b734927",
             "location": {
-              "x": 7,
-              "y": 6,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 6
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3105,10 +3069,10 @@
             "_id": "fdebfa5c2be44fc95b0db645",
             "_tpl": "5bfeaa0f0db834001b734927",
             "location": {
-              "x": 8,
-              "y": 6,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 6
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3117,10 +3081,10 @@
             "_id": "06b9dc1b77142e78764f29d9",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 9,
-              "y": 6,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 6
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3129,10 +3093,10 @@
             "_id": "2c018a6c6c0f2efcd0b54ab4",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 0,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3141,10 +3105,10 @@
             "_id": "515145aa71cbfb1dbb2ca779",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 1,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3153,10 +3117,10 @@
             "_id": "82a44ecf87b56f34c250ac18",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 2,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3165,10 +3129,10 @@
             "_id": "87192fd454fe74259b88de63",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 3,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3177,10 +3141,10 @@
             "_id": "b0da65762833fde5159cc4bc",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 4,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3189,10 +3153,10 @@
             "_id": "d4824fd9ac9f10046bc9679b",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 5,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3201,10 +3165,10 @@
             "_id": "dc4f5b0528186dd1db1f75a0",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 6,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3213,10 +3177,10 @@
             "_id": "e9ec26dcc4ec6046ea4d2692",
             "_tpl": "5cadc2e0ae9215051e1c21e7",
             "location": {
-              "x": 9,
-              "y": 7,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 7
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3225,10 +3189,10 @@
             "_id": "4707874b6ff7c715b8142fc3",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 0,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3237,10 +3201,10 @@
             "_id": "5469af4635cc81234ae34771",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 1,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3249,10 +3213,10 @@
             "_id": "59ec25c246350d6ad51a38f9",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 2,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3261,10 +3225,10 @@
             "_id": "7c72c9f506e5ad34c892c4b3",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 3,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3273,10 +3237,10 @@
             "_id": "aeabd57305408d6d82a83407",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 4,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3285,10 +3249,10 @@
             "_id": "bdb86936907015f259d66db0",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 5,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3297,10 +3261,10 @@
             "_id": "cccfedc20cd445fdde884d15",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 6,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3309,10 +3273,10 @@
             "_id": "d4598181091378edae7b1ee1",
             "_tpl": "5d2f213448f0355009199284",
             "location": {
-              "x": 7,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3321,10 +3285,10 @@
             "_id": "b6d5c1143b756a1b15236518",
             "_tpl": "590c657e86f77412b013051d",
             "location": {
-              "x": 8,
-              "y": 8,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 8
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3338,10 +3302,10 @@
             "_id": "2d29e969a2a5b800edd5f53c",
             "_tpl": "590c661e86f7741e566b646a",
             "location": {
-              "x": 0,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3355,10 +3319,10 @@
             "_id": "e26310872de85c1efad131bb",
             "_tpl": "590c661e86f7741e566b646a",
             "location": {
-              "x": 2,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3371,10 +3335,10 @@
             "_id": "484d840d17671f31270b6789",
             "_tpl": "590c678286f77426c9660122",
             "location": {
-              "x": 4,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3388,10 +3352,10 @@
             "_id": "b0b29cf556337766f8bc3443",
             "_tpl": "590c678286f77426c9660122",
             "location": {
-              "x": 5,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3405,10 +3369,10 @@
             "_id": "da9af9ab1be6e19756a81bd3",
             "_tpl": "590c678286f77426c9660122",
             "location": {
-              "x": 6,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3422,10 +3386,10 @@
             "_id": "3e8395eec86025067c76c815",
             "_tpl": "5c0e530286f7747fa1419862",
             "location": {
-              "x": 7,
-              "y": 9,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 9
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3434,10 +3398,10 @@
             "_id": "8d4b7f4606e222453de6f94a",
             "_tpl": "5c0e530286f7747fa1419862",
             "location": {
-              "x": 0,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3446,10 +3410,10 @@
             "_id": "77ff43680b9d049a81e94007",
             "_tpl": "5ed515f6915ec335206e4152",
             "location": {
-              "x": 1,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3463,10 +3427,10 @@
             "_id": "b6fd2f8b97d9056a4cfbd8fe",
             "_tpl": "5ed51652f6c34d2cc26336a1",
             "location": {
-              "x": 2,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3480,10 +3444,10 @@
             "_id": "259f15c36aec7f1da221a746",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 3,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3498,10 +3462,10 @@
             "_id": "6dee529a543d0071779540ef",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 4,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3515,10 +3479,10 @@
             "_id": "79eb40311a75b9b721967603",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 5,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3531,10 +3495,10 @@
             "_id": "8459bcae56de9c1a6f66ba8b",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 6,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3548,10 +3512,10 @@
             "_id": "98fea78875d6b8ed19bb6fd3",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 7,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3564,10 +3528,10 @@
             "_id": "bf039d4bda16496a2ea189dd",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 8,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3581,10 +3545,10 @@
             "_id": "cba585f47d9fb3a797ab5c4f",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 9,
-              "y": 10,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 10
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3597,10 +3561,10 @@
             "_id": "f4fcae45f2a56a6721e7d109",
             "_tpl": "544fb37f4bdc2dee738b4567",
             "location": {
-              "x": 0,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3613,10 +3577,10 @@
             "_id": "0f6852c4f1e6919b8f5fefd3",
             "_tpl": "544fb3f34bdc2d03748b456a",
             "location": {
-              "x": 1,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3625,10 +3589,10 @@
             "_id": "c7513e3cd528d8573199140a",
             "_tpl": "544fb3f34bdc2d03748b456a",
             "location": {
-              "x": 2,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3637,10 +3601,10 @@
             "_id": "e2f224f768bd956de13866b7",
             "_tpl": "5755383e24597772cb798966",
             "location": {
-              "x": 3,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3654,10 +3618,10 @@
             "_id": "a4f59667517c94081f0363cd",
             "_tpl": "590c695186f7741e566b64a2",
             "location": {
-              "x": 4,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3666,10 +3630,10 @@
             "_id": "bcf5c060c8a4947f926c20dc",
             "_tpl": "590c695186f7741e566b64a2",
             "location": {
-              "x": 5,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3678,10 +3642,10 @@
             "_id": "20e6d46032b4abf8b970701f",
             "_tpl": "544fb25a4bdc2dfb738b4567",
             "location": {
-              "x": 6,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3690,10 +3654,10 @@
             "_id": "a98b6f791baf70c3d1d90842",
             "_tpl": "544fb25a4bdc2dfb738b4567",
             "location": {
-              "x": 7,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3702,10 +3666,10 @@
             "_id": "afb94f352338aeb6907e9e16",
             "_tpl": "544fb25a4bdc2dfb738b4567",
             "location": {
-              "x": 8,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3714,10 +3678,10 @@
             "_id": "f91a0a8af271b2b7f1934647",
             "_tpl": "544fb25a4bdc2dfb738b4567",
             "location": {
-              "x": 9,
-              "y": 11,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 11
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3726,10 +3690,10 @@
             "_id": "6da40e09667d0df1d9c0dd13",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 0,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3742,10 +3706,10 @@
             "_id": "6f72b6ef3d42323115167ce3",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 1,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3755,25 +3719,13 @@
             }
           },
           {
-            "_id": "71cd304be22753ccfd334b5b",
-            "_tpl": "544fb3364bdc2d34748b456a",
-            "location": {
-              "x": 2,
-              "y": 12,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
             "_id": "8ed5bf739823b06168942ba6",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 3,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3785,10 +3737,10 @@
             "_id": "b6c6d9578364e7137697180e",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 4,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3801,10 +3753,10 @@
             "_id": "bc1f56cd78e0a027bc54c42e",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 5,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3813,10 +3765,10 @@
             "_id": "c41ba998b0b078949a05a5fa",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 6,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3825,10 +3777,10 @@
             "_id": "e33d299a5062400eb52290d4",
             "_tpl": "544fb3364bdc2d34748b456a",
             "location": {
-              "x": 7,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3841,10 +3793,10 @@
             "_id": "491ed57c07602cea377d1bdf",
             "_tpl": "5af0454c86f7746bf20992e8",
             "location": {
-              "x": 8,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3858,10 +3810,10 @@
             "_id": "5fb820a0ed2e410de5792d56",
             "_tpl": "5af0454c86f7746bf20992e8",
             "location": {
-              "x": 9,
-              "y": 12,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 12
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3875,10 +3827,10 @@
             "_id": "ee1afbe809fd15e6cbb753e7",
             "_tpl": "5d02778e86f774203e7dedbe",
             "location": {
-              "x": 0,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3892,22 +3844,10 @@
             "_id": "714c7dd6e57b1153f6392d10",
             "_tpl": "5e831507ea0a7c419c2f9bd9",
             "location": {
+              "isSearched": true,
+              "r": "Horizontal",
               "x": 2,
-              "y": 13,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
-            "_id": "b7fa1cb3b2d8d536d215cf84",
-            "_tpl": "5e831507ea0a7c419c2f9bd9",
-            "location": {
-              "x": 3,
-              "y": 13,
-              "r": "Horizontal",
-              "isSearched": true
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3916,10 +3856,10 @@
             "_id": "b8df7c1215add47ccc4b81d5",
             "_tpl": "5e831507ea0a7c419c2f9bd9",
             "location": {
-              "x": 4,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3928,10 +3868,10 @@
             "_id": "bd98e621f688ece7fd52296c",
             "_tpl": "5e831507ea0a7c419c2f9bd9",
             "location": {
-              "x": 5,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3943,10 +3883,10 @@
             "_id": "d1b35971ced68cacb6354f4f",
             "_tpl": "5e831507ea0a7c419c2f9bd9",
             "location": {
-              "x": 6,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -3955,10 +3895,10 @@
             "_id": "145cf26002570c94af522788",
             "_tpl": "5e8488fa988a8701445df1e4",
             "location": {
-              "x": 7,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3972,10 +3912,10 @@
             "_id": "eef0c471b92c29103afc98c6",
             "_tpl": "558032614bdc2de7118b4585",
             "location": {
-              "x": 8,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -3987,10 +3927,10 @@
             "_id": "06e24d20a1bedea140fad1a5",
             "_tpl": "55d5f46a4bdc2d1b198b4567",
             "location": {
-              "x": 9,
-              "y": 13,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 13
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4004,10 +3944,10 @@
             "_id": "a15e35bb61509d936162e237",
             "_tpl": "5ae30bad5acfc400185c2dc4",
             "location": {
-              "x": 0,
-              "y": 14,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 14
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4021,10 +3961,10 @@
             "_id": "0785506ce4b6164698e44b99",
             "_tpl": "57ee59b42459771c7b045da5",
             "location": {
-              "x": 1,
-              "y": 14,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 14
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4036,10 +3976,10 @@
             "_id": "6017145cd98802bf29886f6d",
             "_tpl": "5bfebc5e0db834001a6694e5",
             "location": {
-              "x": 2,
-              "y": 14,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 14
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -4048,10 +3988,10 @@
             "_id": "1c1a1a98db5040f6f0fe362b",
             "_tpl": "574d967124597745970e7c94",
             "location": {
-              "x": 4,
-              "y": 14,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 14
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4063,10 +4003,10 @@
             "_id": "3628a09fd5c04a979e890ce3",
             "_tpl": "574d967124597745970e7c94",
             "location": {
-              "x": 0,
-              "y": 15,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 15
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4082,10 +4022,10 @@
             "_id": "c8b1729a2ed20d5902fc4665",
             "_tpl": "5447a9cd4bdc2dbd208b4567",
             "location": {
-              "x": 5,
-              "y": 15,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 15
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4103,10 +4043,10 @@
             "_id": "f3e701673506c13c9dcc9913",
             "_tpl": "5a17f98cfcdbcb0980087290",
             "location": {
-              "x": 0,
-              "y": 57,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 57
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4125,10 +4065,10 @@
             "_id": "0adb9b127531486f0637fe4f",
             "_tpl": "5cadc190ae921500103bb3b6",
             "location": {
-              "x": 3,
-              "y": 16,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 16
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4146,10 +4086,10 @@
             "_id": "6bafd4174572f59e23d67f88",
             "_tpl": "5cadc190ae921500103bb3b6",
             "location": {
-              "x": 0,
-              "y": 17,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 17
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4167,10 +4107,10 @@
             "_id": "7472eb4f803c0a893f6f0b07",
             "_tpl": "5cadc190ae921500103bb3b6",
             "location": {
-              "x": 2,
-              "y": 17,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 17
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4188,10 +4128,10 @@
             "_id": "2b0fbe6a7538de9df803689b",
             "_tpl": "5e870397991fd70db46995c8",
             "location": {
-              "x": 4,
-              "y": 17,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 17
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4210,29 +4150,29 @@
             "_id": "be82550094e077141e097192",
             "_tpl": "57d14d2524597714373db789",
             "location": {
-              "x": 7,
-              "y": 66,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 66
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
             "upd": {
-              "SpawnedInSession": true,
-              "StackObjectsCount": 1,
               "Foldable": {
-                "Folded": false
-              }
+                "Folded": true
+              },
+              "SpawnedInSession": true,
+              "StackObjectsCount": 1
             }
           },
           {
             "_id": "6c116ae6e3e795d2e508a5f0",
             "_tpl": "5926bb2186f7744b1c6c6e60",
             "location": {
-              "x": 0,
-              "y": 66,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 66
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4250,14 +4190,8 @@
           {
             "_id": "bc177a8b3b1a1814773f6166",
             "_tpl": "5926bb2186f7744b1c6c6e60",
-            "location": {
-              "x": 4,
-              "y": 65,
-              "r": "Vertical",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout",
+            "parentId": "5fe49a0e2694b0755a50476c",
+            "slotId": "FirstPrimaryWeapon",
             "upd": {
               "FireMode": {
                 "FireMode": "single"
@@ -4265,17 +4199,18 @@
               "Repairable": {
                 "Durability": 100,
                 "MaxDurability": 100
-              }
+              },
+              "SpawnedInSession": true
             }
           },
           {
             "_id": "f3c377122d0d8eee1c3d2077",
             "_tpl": "5926bb2186f7744b1c6c6e60",
             "location": {
-              "x": 0,
-              "y": 20,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 20
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4293,10 +4228,10 @@
             "_id": "da4b255e3a62c12d5e774f92",
             "_tpl": "5bfea6e90db834001b7347f3",
             "location": {
-              "x": 0,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4314,10 +4249,10 @@
             "_id": "9391bb3b9f9e0dc8c2df2b6d",
             "_tpl": "5ab8f39486f7745cd93a1cca",
             "location": {
-              "x": 9,
-              "y": 14,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 14
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4332,10 +4267,10 @@
             "_id": "2754c704ab82df0ff2029a09",
             "_tpl": "5aa2a7e8e5b5b00016327c16",
             "location": {
-              "x": 9,
-              "y": 17,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 17
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4350,10 +4285,10 @@
             "_id": "a35d95950bef38bc7de41ca5",
             "_tpl": "5aa2a7e8e5b5b00016327c16",
             "location": {
-              "x": 3,
-              "y": 18,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 18
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4368,10 +4303,10 @@
             "_id": "ac0d890db3f11118df1a307f",
             "_tpl": "5aa2a7e8e5b5b00016327c16",
             "location": {
-              "x": 9,
-              "y": 18,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 18
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4386,42 +4321,43 @@
             "_id": "5dd14d97a0d645ac162b9f2a",
             "_tpl": "62a09cfe4f842e1bd12da3e4",
             "location": {
-              "x": 9,
-              "y": 19,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 19
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
             "upd": {
               "Resource": {
                 "Value": 0
-              }
+              },
+              "SpawnedInSession": true
             }
           },
           {
             "_id": "263407fa130946f9909ae347",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 6,
-              "y": 20,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 20
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
             "upd": {
-              "StackObjectsCount": 480108
+              "StackObjectsCount": 434654
             }
           },
           {
             "_id": "44598153427e1549ddccc620",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 7,
-              "y": 20,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 20
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4433,10 +4369,10 @@
             "_id": "7ce8a41d018eb7aebc0c0233",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 8,
-              "y": 20,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 20
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4448,10 +4384,10 @@
             "_id": "b3de981998a1e6f82175d24e",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 9,
-              "y": 20,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 20
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4463,10 +4399,10 @@
             "_id": "bbb718bf20eddd5c8f41d82a",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 5,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4478,10 +4414,10 @@
             "_id": "e10d9b909c1a5bea5294b278",
             "_tpl": "5449016a4bdc2d6f028b456f",
             "location": {
-              "x": 6,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4493,10 +4429,10 @@
             "_id": "66b207d7e958a3b396572e2f",
             "_tpl": "5696686a4bdc2da3298b456a",
             "location": {
-              "x": 7,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4508,10 +4444,10 @@
             "_id": "d1894c14003e8cf66715080e",
             "_tpl": "5696686a4bdc2da3298b456a",
             "location": {
-              "x": 8,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4523,25 +4459,25 @@
             "_id": "9439004942c76598fd2eb991",
             "_tpl": "569668774bdc2da2298b4568",
             "location": {
-              "x": 9,
-              "y": 21,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 21
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
             "upd": {
-              "StackObjectsCount": 500
+              "StackObjectsCount": 504
             }
           },
           {
             "_id": "93b354a8ab4fdde375b61d7f",
             "_tpl": "5734773724597737fd047c14",
             "location": {
-              "x": 0,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4556,10 +4492,10 @@
             "_id": "543f95c27c7acb0ff4d2e0b2",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 1,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4573,10 +4509,10 @@
             "_id": "5a1d4c44f7f110c678a47734",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 2,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4590,10 +4526,10 @@
             "_id": "ae77dd6be65371b3a5be6990",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 3,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4607,10 +4543,10 @@
             "_id": "d4e3787dcb7802c9a1bda873",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 4,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4624,10 +4560,10 @@
             "_id": "e316d927202548cd468880e9",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 5,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4641,10 +4577,10 @@
             "_id": "efc5dabf4b0057127d115e60",
             "_tpl": "57347da92459774491567cf5",
             "location": {
-              "x": 6,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4657,14 +4593,14 @@
           {
             "_id": "7c7b299432f6c8c591131994",
             "_tpl": "5751487e245977207e26a315",
+            "location": {
+              "isSearched": true,
+              "r": "Horizontal",
+              "x": 7,
+              "y": 22
+            },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
-            "location": {
-              "x": 7,
-              "y": 22,
-              "r": "Horizontal",
-              "isSearched": true
-            },
             "upd": {
               "FoodDrink": {
                 "HpPercent": 1
@@ -4675,10 +4611,10 @@
             "_id": "581a4983c2a23f0cfbaab958",
             "_tpl": "590c5f0d86f77413997acfab",
             "location": {
-              "x": 8,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4692,10 +4628,10 @@
             "_id": "69556d43421651aab41ff95c",
             "_tpl": "590c5f0d86f77413997acfab",
             "location": {
-              "x": 9,
-              "y": 22,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 9,
+              "y": 22
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4709,10 +4645,10 @@
             "_id": "86a1aeb99e27b4c3dc690aed",
             "_tpl": "590c5f0d86f77413997acfab",
             "location": {
-              "x": 0,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4726,10 +4662,10 @@
             "_id": "f3211c5c7937f88dcc6cc5b3",
             "_tpl": "5bc9b156d4351e00367fbce9",
             "location": {
-              "x": 1,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4744,10 +4680,10 @@
             "_id": "fa5a13b5117752746fe1bbad",
             "_tpl": "59f32c3b86f77472a31742f0",
             "location": {
-              "x": 2,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4775,10 +4711,10 @@
             "_id": "3c84c4f12cf28b444685baca",
             "_tpl": "59f32c3b86f77472a31742f0",
             "location": {
-              "x": 3,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4807,10 +4743,10 @@
             "_id": "7883789f4370d923c48cc6b2",
             "_tpl": "5e2af4a786f7746d3f3c3400",
             "location": {
-              "x": 4,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4824,10 +4760,10 @@
             "_id": "89aea0b6190558d7533af74b",
             "_tpl": "557ff21e4bdc2d89578b4586",
             "location": {
-              "x": 6,
-              "y": 23,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 6,
+              "y": 23
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -4836,10 +4772,10 @@
             "_id": "01e7560a4dc916751c3db239",
             "_tpl": "5448fee04bdc2dbc018b4567",
             "location": {
-              "x": 1,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 1,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4853,10 +4789,10 @@
             "_id": "c448a26a47d336f605751cd1",
             "_tpl": "5448fee04bdc2dbc018b4567",
             "location": {
-              "x": 2,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4870,10 +4806,10 @@
             "_id": "36a95e86bc8e8cc77370ea03",
             "_tpl": "5d403f9186f7743cac3f229b",
             "location": {
-              "x": 3,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 3,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4887,10 +4823,10 @@
             "_id": "cede650e48a17e6bc4be239a",
             "_tpl": "5d403f9186f7743cac3f229b",
             "location": {
-              "x": 4,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 4,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4905,10 +4841,10 @@
             "_id": "a71e4f8a014b72f038ee0e63",
             "_tpl": "57cd379a24597778e7682ecf",
             "location": {
-              "x": 5,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4920,28 +4856,13 @@
             }
           },
           {
-            "_id": "bab4d2e9decd1b0f3383fd4e",
-            "_tpl": "5b432b965acfc47a8774094e",
-            "location": {
-              "x": 6,
-              "y": 24,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout",
-            "upd": {
-              "StackObjectsCount": 1
-            }
-          },
-          {
             "_id": "62b326289dec5f93ba38fb11",
             "_tpl": "5d1b36a186f7742523398433",
             "location": {
-              "x": 8,
-              "y": 24,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 8,
+              "y": 24
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4955,10 +4876,10 @@
             "_id": "360bba490d30d82bf2526a6c",
             "_tpl": "5d1b371186f774253763a656",
             "location": {
-              "x": 0,
-              "y": 26,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 26
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4972,10 +4893,10 @@
             "_id": "22fec94e1487b32d83eae302",
             "_tpl": "544a5caa4bdc2d1a388b4568",
             "location": {
-              "x": 2,
-              "y": 26,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 2,
+              "y": 26
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -4990,22 +4911,10 @@
             "_id": "5e15770f00c303ef71f22c5b",
             "_tpl": "5c0e9f2c86f77432297fe0a3",
             "location": {
+              "isSearched": true,
+              "r": "Horizontal",
               "x": 5,
-              "y": 27,
-              "r": "Horizontal",
-              "isSearched": true
-            },
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout"
-          },
-          {
-            "_id": "b4412bf425d5abf2cc136753",
-            "_tpl": "5d5d85c586f774279a21cbdb",
-            "location": {
-              "x": 0,
-              "y": 30,
-              "r": "Horizontal",
-              "isSearched": true
+              "y": 27
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -5013,14 +4922,14 @@
           {
             "_id": "21ae3926cf267bfebb3fedc7",
             "_tpl": "5b7c710788a4506dec015957",
+            "location": {
+              "isSearched": true,
+              "r": "Horizontal",
+              "x": 3,
+              "y": 30
+            },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
-            "location": {
-              "x": 3,
-              "y": 30,
-              "r": "Horizontal",
-              "isSearched": true
-            },
             "upd": {
               "StackObjectsCount": 1
             }
@@ -5029,10 +4938,10 @@
             "_id": "d72de5007823e41e84b440a2",
             "_tpl": "5ab8ee7786f7742d8f33f0b9",
             "location": {
-              "x": 7,
-              "y": 30,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 7,
+              "y": 30
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
@@ -5044,10 +4953,10 @@
             "_id": "b685b440cb50a5a94ea5d33f",
             "_tpl": "5d5d940f86f7742797262046",
             "location": {
-              "x": 0,
-              "y": 34,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 0,
+              "y": 34
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
@@ -5056,120 +4965,26 @@
             "_id": "e7d8a69bdd2554dca61cd984",
             "_tpl": "5e9dcf5986f7746c417435b3",
             "location": {
-              "x": 5,
-              "y": 34,
+              "isSearched": true,
               "r": "Horizontal",
-              "isSearched": true
+              "x": 5,
+              "y": 34
             },
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout"
           },
           {
-            "_id": "6f98c424785ae262226c643c",
-            "_tpl": "5c0e655586f774045612eeb2",
+            "_id": "433dbb954fa17e07eadeae22",
+            "_tpl": "5755356824597772cb798962",
             "parentId": "5fe49a0e2694b0755a504876",
             "slotId": "hideout",
-            "upd": {
-              "Repairable": {
-                "Durability": 82.94,
-                "MaxDurability": 82.94
-              }
-            },
             "location": {
-              "x": 0,
-              "y": 39,
-              "r": "Horizontal",
-              "isSearched": true
-            }
-          },
-          {
-            "_id": "1a8fb6cad00d47ec98903f1c",
-            "_tpl": "5c48a2c22e221602b313fb6c",
-            "parentId": "41cb126b498dcea69e270d94",
-            "slotId": "mod_pistol_grip"
-          },
-          {
-            "_id": "dcfca75f1fb3ceeca2acaa32",
-            "_tpl": "5c18b90d2e2216152142466b",
-            "parentId": "1172628b864d79f07552e773",
-            "slotId": "mod_sight_front",
-            "upd": {
-              "Sight": {
-                "ScopesCurrentCalibPointIndexes": [
-                  0
-                ],
-                "ScopesSelectedModes": [
-                  0
-                ],
-                "SelectedScope": 0
-              }
-            }
-          },
-          {
-            "_id": "1172628b864d79f07552e773",
-            "_tpl": "5c48a14f2e2216152006edd7",
-            "parentId": "41cb126b498dcea69e270d94",
-            "slotId": "mod_handguard"
-          },
-          {
-            "_id": "f37874389a061e1d02a5d355",
-            "_tpl": "5c48a2852e221602b21d5923",
-            "parentId": "41cb126b498dcea69e270d94",
-            "slotId": "mod_barrel"
-          },
-          {
-            "_id": "8dbffa4888cb5a9d92061bb8",
-            "_tpl": "570fd6c2d2720bc6458b457f",
-            "parentId": "41cb126b498dcea69e270d94",
-            "slotId": "mod_scope",
-            "upd": {
-              "Sight": {
-                "ScopesCurrentCalibPointIndexes": [
-                  0
-                ],
-                "ScopesSelectedModes": [
-                  0
-                ],
-                "SelectedScope": 0
-              }
-            }
-          },
-          {
-            "_id": "98e3f9c982743252683eb242",
-            "_tpl": "5c18b9192e2216398b5a8104",
-            "parentId": "41cb126b498dcea69e270d94",
-            "slotId": "mod_sight_rear",
-            "upd": {
-              "Sight": {
-                "ScopesCurrentCalibPointIndexes": [
-                  0
-                ],
-                "ScopesSelectedModes": [
-                  0
-                ],
-                "SelectedScope": 0
-              }
-            }
-          },
-          {
-            "_id": "41cb126b498dcea69e270d94",
-            "_tpl": "5c488a752e221602b412af63",
-            "parentId": "5fe49a0e2694b0755a504876",
-            "slotId": "hideout",
-            "upd": {
-              "FireMode": {
-                "FireMode": "single"
-              },
-              "Repairable": {
-                "Durability": 98.47853,
-                "MaxDurability": 100
-              }
+              "x": 1,
+              "y": 5,
+              "r": 0
             },
-            "location": {
-              "x": 3,
-              "y": 39,
-              "r": "Horizontal",
-              "isSearched": true
+            "upd": {
+              "StackObjectsCount": 1
             }
           }
         ],
@@ -5380,6 +5195,36 @@
           },
           "completedConditions": [],
           "availableAfter": 0
+        },
+        {
+          "qid": "64e1fdd1155b875675000001",
+          "startTime": 0,
+          "status": 1,
+          "statusTimers": {
+            "1": 1692564965.678
+          },
+          "completedConditions": [],
+          "availableAfter": 0
+        },
+        {
+          "qid": "64e1fdd1155b875675000008",
+          "startTime": 0,
+          "status": 1,
+          "statusTimers": {
+            "1": 1692564965.678
+          },
+          "completedConditions": [],
+          "availableAfter": 0
+        },
+        {
+          "qid": "64e1fdd1155b87567500000f",
+          "startTime": 0,
+          "status": 1,
+          "statusTimers": {
+            "1": 1692564965.678
+          },
+          "completedConditions": [],
+          "availableAfter": 0
         }
       ],
       "RagfairInfo": {
@@ -5391,9 +5236,9 @@
         {
           "activeQuests": [
             {
-              "_id": "64df60239a9c90ba72000001",
+              "_id": "64e1fdd1155b875675000001",
               "traderId": "54cb57776803fa99248b456e",
-              "location": "56f40101d2720b2a4d8b45d6",
+              "location": "5704e4dad2720bb55b8b4567",
               "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
               "type": "Exploration",
               "isKey": false,
@@ -5405,34 +5250,34 @@
                 "Started": [],
                 "Success": [
                   {
-                    "value": 1256,
+                    "value": 1496,
                     "type": "Experience",
                     "index": 0
                   },
                   {
-                    "target": "64df60239a9c90ba72000007",
-                    "value": 3238,
+                    "target": "64e1fdd1155b875675000006",
+                    "value": 3059,
                     "type": "Item",
                     "index": 1,
                     "items": [
                       {
-                        "_id": "64df60239a9c90ba72000007",
+                        "_id": "64e1fdd1155b875675000006",
                         "_tpl": "5449016a4bdc2d6f028b456f",
                         "upd": {
-                          "StackObjectsCount": 3238
+                          "StackObjectsCount": 3059
                         }
                       }
                     ]
                   },
                   {
-                    "target": "64df60239a9c90ba72000008",
+                    "target": "64e1fdd1155b875675000007",
                     "value": 1,
                     "type": "Item",
                     "index": 2,
                     "items": [
                       {
-                        "_id": "64df60239a9c90ba72000008",
-                        "_tpl": "5b099b965acfc400186331e6",
+                        "_id": "64e1fdd1155b875675000007",
+                        "_tpl": "619d36da53b4d42ee724fae4",
                         "upd": {
                           "StackObjectsCount": 1
                         }
@@ -5447,7 +5292,7 @@
                 "AvailableForFinish": [
                   {
                     "_props": {
-                      "id": "64df60239a9c90ba72000005",
+                      "id": "64e1fdd1155b875675000005",
                       "parentId": "",
                       "dynamicLocale": true,
                       "index": 0,
@@ -5457,12 +5302,12 @@
                       "oneSessionOnly": false,
                       "doNotResetIfCounterCompleted": false,
                       "counter": {
-                        "id": "64df60239a9c90ba72000004",
+                        "id": "64e1fdd1155b875675000004",
                         "conditions": [
                           {
                             "_parent": "ExitStatus",
                             "_props": {
-                              "id": "64df60239a9c90ba72000002",
+                              "id": "64e1fdd1155b875675000002",
                               "dynamicLocale": true,
                               "status": [
                                 "Survived"
@@ -5472,19 +5317,11 @@
                           {
                             "_parent": "Location",
                             "_props": {
-                              "id": "64df60239a9c90ba72000003",
+                              "id": "64e1fdd1155b875675000003",
                               "dynamicLocale": true,
                               "target": [
-                                "bigmap"
+                                "Lighthouse"
                               ]
-                            }
-                          },
-                          {
-                            "_parent": "ExitName",
-                            "_props": {
-                              "exitName": "Old Gas Station",
-                              "id": "64df60239a9c90ba72000006",
-                              "dynamicLocale": true
                             }
                           }
                         ]
@@ -5514,8 +5351,123 @@
               "side": "Pmc"
             },
             {
-              "_id": "64df60239a9c90ba72000009",
-              "traderId": "5c0647fdd443bc2504c2d371",
+              "_id": "64e1fdd1155b875675000008",
+              "traderId": "5ac3b934156ae10c4430e83c",
+              "location": "5704e5fad2720bc05b8b4567",
+              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
+              "type": "Exploration",
+              "isKey": false,
+              "restartable": false,
+              "instantComplete": false,
+              "secretQuest": false,
+              "canShowNotificationsInGame": true,
+              "rewards": {
+                "Started": [],
+                "Success": [
+                  {
+                    "value": 2176,
+                    "type": "Experience",
+                    "index": 0
+                  },
+                  {
+                    "target": "64e1fdd1155b87567500000d",
+                    "value": 5783,
+                    "type": "Item",
+                    "index": 1,
+                    "items": [
+                      {
+                        "_id": "64e1fdd1155b87567500000d",
+                        "_tpl": "5449016a4bdc2d6f028b456f",
+                        "upd": {
+                          "StackObjectsCount": 5783
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "target": "64e1fdd1155b87567500000e",
+                    "value": 1,
+                    "type": "Item",
+                    "index": 2,
+                    "items": [
+                      {
+                        "_id": "64e1fdd1155b87567500000e",
+                        "_tpl": "60228924961b8d75ee233c32",
+                        "upd": {
+                          "StackObjectsCount": 1
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "Fail": []
+              },
+              "conditions": {
+                "AvailableForStart": [],
+                "AvailableForFinish": [
+                  {
+                    "_props": {
+                      "id": "64e1fdd1155b87567500000c",
+                      "parentId": "",
+                      "dynamicLocale": true,
+                      "index": 0,
+                      "visibilityConditions": [],
+                      "value": 2,
+                      "type": "Completion",
+                      "oneSessionOnly": false,
+                      "doNotResetIfCounterCompleted": false,
+                      "counter": {
+                        "id": "64e1fdd1155b87567500000b",
+                        "conditions": [
+                          {
+                            "_parent": "ExitStatus",
+                            "_props": {
+                              "id": "64e1fdd1155b875675000009",
+                              "dynamicLocale": true,
+                              "status": [
+                                "Survived"
+                              ]
+                            }
+                          },
+                          {
+                            "_parent": "Location",
+                            "_props": {
+                              "id": "64e1fdd1155b87567500000a",
+                              "dynamicLocale": true,
+                              "target": [
+                                "RezervBase"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "_parent": "CounterCreator",
+                    "dynamicLocale": true
+                  }
+                ],
+                "Fail": []
+              },
+              "name": "616041eb031af660100c9967 name 5ac3b934156ae10c4430e83c",
+              "note": "616041eb031af660100c9967 note 5ac3b934156ae10c4430e83c",
+              "description": "616041eb031af660100c9967 description 5ac3b934156ae10c4430e83c 0",
+              "successMessageText": "616041eb031af660100c9967 successMessageText 5ac3b934156ae10c4430e83c 0",
+              "failMessageText": "616041eb031af660100c9967 failMessageText 5ac3b934156ae10c4430e83c 0",
+              "startedMessageText": "616041eb031af660100c9967 startedMessageText 5ac3b934156ae10c4430e83c 0",
+              "changeQuestMessageText": "616041eb031af660100c9967 changeQuestMessageText 5ac3b934156ae10c4430e83c 0",
+              "templateId": "616041eb031af660100c9967",
+              "changeCost": [
+                {
+                  "templateId": "5449016a4bdc2d6f028b456f",
+                  "count": 5000
+                }
+              ],
+              "changeStandingCost": 0,
+              "side": "Pmc"
+            },
+            {
+              "_id": "64e1fdd1155b87567500000f",
+              "traderId": "5935c25fb3acc3127c3d8cd9",
               "location": "any",
               "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
               "type": "Elimination",
@@ -5528,34 +5480,34 @@
                 "Started": [],
                 "Success": [
                   {
-                    "value": 1537,
+                    "value": 1204,
                     "type": "Experience",
                     "index": 0
                   },
                   {
-                    "target": "64df60239a9c90ba7200000d",
-                    "value": 4874,
+                    "target": "64e1fdd1155b875675000013",
+                    "value": 28,
                     "type": "Item",
                     "index": 1,
                     "items": [
                       {
-                        "_id": "64df60239a9c90ba7200000d",
-                        "_tpl": "5449016a4bdc2d6f028b456f",
+                        "_id": "64e1fdd1155b875675000013",
+                        "_tpl": "5696686a4bdc2da3298b456a",
                         "upd": {
-                          "StackObjectsCount": 4874
+                          "StackObjectsCount": 28
                         }
                       }
                     ]
                   },
                   {
-                    "target": "64df60239a9c90ba7200000e",
+                    "target": "64e1fdd1155b875675000014",
                     "value": 1,
                     "type": "Item",
                     "index": 2,
                     "items": [
                       {
-                        "_id": "64df60239a9c90ba7200000e",
-                        "_tpl": "5d1340b3d7ad1a0b52682ed7",
+                        "_id": "64e1fdd1155b875675000014",
+                        "_tpl": "57347d3d245977448f7b7f61",
                         "upd": {
                           "StackObjectsCount": 1
                         }
@@ -5570,7 +5522,7 @@
                 "AvailableForFinish": [
                   {
                     "_props": {
-                      "id": "64df60239a9c90ba7200000c",
+                      "id": "64e1fdd1155b875675000012",
                       "parentId": "",
                       "dynamicLocale": true,
                       "index": 0,
@@ -5580,18 +5532,17 @@
                       "oneSessionOnly": false,
                       "doNotResetIfCounterCompleted": false,
                       "counter": {
-                        "id": "64df60239a9c90ba7200000a",
+                        "id": "64e1fdd1155b875675000010",
                         "conditions": [
                           {
                             "_props": {
                               "target": "Savage",
                               "value": 1,
-                              "id": "64df60239a9c90ba7200000b",
+                              "id": "64e1fdd1155b875675000011",
                               "dynamicLocale": true,
-                              "distance": {
-                                "compareMethod": ">=",
-                                "value": 80
-                              }
+                              "bodyPart": [
+                                "Chest"
+                              ]
                             },
                             "_parent": "Kills"
                           }
@@ -5604,114 +5555,14 @@
                 ],
                 "Fail": []
               },
-              "name": "616052ea3054fc0e2c24ce6e name 5c0647fdd443bc2504c2d371",
-              "note": "616052ea3054fc0e2c24ce6e note 5c0647fdd443bc2504c2d371",
-              "description": "616052ea3054fc0e2c24ce6e description 5c0647fdd443bc2504c2d371 0",
-              "successMessageText": "616052ea3054fc0e2c24ce6e successMessageText 5c0647fdd443bc2504c2d371 0",
-              "failMessageText": "616052ea3054fc0e2c24ce6e failMessageText 5c0647fdd443bc2504c2d371 0",
-              "startedMessageText": "616052ea3054fc0e2c24ce6e startedMessageText 5c0647fdd443bc2504c2d371 0",
-              "changeQuestMessageText": "616052ea3054fc0e2c24ce6e changeQuestMessageText 5c0647fdd443bc2504c2d371 0",
+              "name": "616052ea3054fc0e2c24ce6e name 5935c25fb3acc3127c3d8cd9",
+              "note": "616052ea3054fc0e2c24ce6e note 5935c25fb3acc3127c3d8cd9",
+              "description": "616052ea3054fc0e2c24ce6e description 5935c25fb3acc3127c3d8cd9 0",
+              "successMessageText": "616052ea3054fc0e2c24ce6e successMessageText 5935c25fb3acc3127c3d8cd9 0",
+              "failMessageText": "616052ea3054fc0e2c24ce6e failMessageText 5935c25fb3acc3127c3d8cd9 0",
+              "startedMessageText": "616052ea3054fc0e2c24ce6e startedMessageText 5935c25fb3acc3127c3d8cd9 0",
+              "changeQuestMessageText": "616052ea3054fc0e2c24ce6e changeQuestMessageText 5935c25fb3acc3127c3d8cd9 0",
               "templateId": "616052ea3054fc0e2c24ce6e",
-              "changeCost": [
-                {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
-                }
-              ],
-              "changeStandingCost": 0,
-              "side": "Pmc"
-            },
-            {
-              "_id": "64df60239a9c90ba7200000f",
-              "traderId": "5c0647fdd443bc2504c2d371",
-              "location": "any",
-              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
-              "type": "Completion",
-              "isKey": false,
-              "restartable": false,
-              "instantComplete": false,
-              "secretQuest": false,
-              "canShowNotificationsInGame": true,
-              "rewards": {
-                "Started": [],
-                "Success": [
-                  {
-                    "value": 3630,
-                    "type": "Experience",
-                    "index": 0
-                  },
-                  {
-                    "target": "64df60239a9c90ba72000011",
-                    "value": 10487,
-                    "type": "Item",
-                    "index": 1,
-                    "items": [
-                      {
-                        "_id": "64df60239a9c90ba72000011",
-                        "_tpl": "5449016a4bdc2d6f028b456f",
-                        "upd": {
-                          "StackObjectsCount": 10487
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "target": "64df60239a9c90ba72000012",
-                    "value": 1,
-                    "type": "Item",
-                    "index": 2,
-                    "items": [
-                      {
-                        "_id": "64df60239a9c90ba72000012",
-                        "_tpl": "5943eeeb86f77412d6384f6b",
-                        "upd": {
-                          "StackObjectsCount": 1
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "target": "5c0647fdd443bc2504c2d371",
-                    "value": 0.01,
-                    "type": "TraderStanding",
-                    "index": 3
-                  }
-                ],
-                "Fail": []
-              },
-              "conditions": {
-                "AvailableForStart": [],
-                "AvailableForFinish": [
-                  {
-                    "_props": {
-                      "id": "64df60239a9c90ba72000010",
-                      "parentId": "",
-                      "dynamicLocale": true,
-                      "index": 0,
-                      "visibilityConditions": [],
-                      "target": [
-                        "5734779624597737e04bf329"
-                      ],
-                      "value": 1,
-                      "minDurability": 0,
-                      "maxDurability": 100,
-                      "dogtagLevel": 0,
-                      "onlyFoundInRaid": true
-                    },
-                    "_parent": "HandoverItem",
-                    "dynamicLocale": true
-                  }
-                ],
-                "Fail": []
-              },
-              "name": "61604635c725987e815b1a46 name 5c0647fdd443bc2504c2d371",
-              "note": "61604635c725987e815b1a46 note 5c0647fdd443bc2504c2d371",
-              "description": "61604635c725987e815b1a46 description 5c0647fdd443bc2504c2d371 0",
-              "successMessageText": "61604635c725987e815b1a46 successMessageText 5c0647fdd443bc2504c2d371 0",
-              "failMessageText": "61604635c725987e815b1a46 failMessageText 5c0647fdd443bc2504c2d371 0",
-              "startedMessageText": "61604635c725987e815b1a46 startedMessageText 5c0647fdd443bc2504c2d371 0",
-              "changeQuestMessageText": "61604635c725987e815b1a46 changeQuestMessageText 5c0647fdd443bc2504c2d371 0",
-              "templateId": "61604635c725987e815b1a46",
               "changeCost": [
                 {
                   "templateId": "5449016a4bdc2d6f028b456f",
@@ -5753,8 +5604,8 @@
             "64ceb18be604894ab6000001": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5762,8 +5613,8 @@
             "64ceb18be604894ab6000005": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5771,8 +5622,8 @@
             "64ceb18be604894ab600000a": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5780,8 +5631,8 @@
             "64ddcaff5dd586ca78000001": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5789,8 +5640,8 @@
             "64ddcaff5dd586ca78000008": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5798,8 +5649,8 @@
             "64ddcaff5dd586ca7800000c": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
@@ -5807,13 +5658,31 @@
             "64df60239a9c90ba72000001": {
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
               "changeStandingCost": 0
             },
             "64df60239a9c90ba72000009": {
+              "changeCost": [
+                {
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
+                }
+              ],
+              "changeStandingCost": 0
+            },
+            "64df60239a9c90ba7200000f": {
+              "changeCost": [
+                {
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
+                }
+              ],
+              "changeStandingCost": 0
+            },
+            "64e1fdd1155b875675000001": {
               "changeCost": [
                 {
                   "templateId": "5449016a4bdc2d6f028b456f",
@@ -5822,7 +5691,16 @@
               ],
               "changeStandingCost": 0
             },
-            "64df60239a9c90ba7200000f": {
+            "64e1fdd1155b875675000008": {
+              "changeCost": [
+                {
+                  "templateId": "5449016a4bdc2d6f028b456f",
+                  "count": 5000
+                }
+              ],
+              "changeStandingCost": 0
+            },
+            "64e1fdd1155b87567500000f": {
               "changeCost": [
                 {
                   "templateId": "5449016a4bdc2d6f028b456f",
@@ -5832,82 +5710,31 @@
               "changeStandingCost": 0
             }
           },
-          "endTime": 1692447139,
+          "endTime": 1692618577,
           "inactiveQuests": [
             {
-              "_id": "64ddcaff5dd586ca78000001",
-              "traderId": "54cb50c76803fa8b248b4571",
-              "location": "5704e4dad2720bb55b8b4567",
-              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
-              "type": "Exploration",
-              "isKey": false,
-              "restartable": false,
-              "instantComplete": false,
-              "secretQuest": false,
+              "_id": "64df60239a9c90ba72000001",
               "canShowNotificationsInGame": true,
-              "rewards": {
-                "Started": [],
-                "Success": [
-                  {
-                    "value": 356,
-                    "type": "Experience",
-                    "index": 0
-                  },
-                  {
-                    "target": "64ddcaff5dd586ca78000006",
-                    "value": 999,
-                    "type": "Item",
-                    "index": 1,
-                    "items": [
-                      {
-                        "_id": "64ddcaff5dd586ca78000006",
-                        "_tpl": "5449016a4bdc2d6f028b456f",
-                        "upd": {
-                          "StackObjectsCount": 999
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "target": "64ddcaff5dd586ca78000007",
-                    "value": 1,
-                    "type": "Item",
-                    "index": 2,
-                    "items": [
-                      {
-                        "_id": "64ddcaff5dd586ca78000007",
-                        "_tpl": "60229948cacb6b0506369e27",
-                        "upd": {
-                          "StackObjectsCount": 1
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "Fail": []
-              },
+              "changeCost": [
+                {
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
+                }
+              ],
+              "changeQuestMessageText": "616041eb031af660100c9967 changeQuestMessageText 54cb57776803fa99248b456e 0",
+              "changeStandingCost": 0,
               "conditions": {
-                "AvailableForStart": [],
                 "AvailableForFinish": [
                   {
+                    "_parent": "CounterCreator",
                     "_props": {
-                      "id": "64ddcaff5dd586ca78000005",
-                      "parentId": "",
-                      "dynamicLocale": true,
-                      "index": 0,
-                      "visibilityConditions": [],
-                      "value": 1,
-                      "type": "Completion",
-                      "oneSessionOnly": false,
-                      "doNotResetIfCounterCompleted": false,
                       "counter": {
-                        "id": "64ddcaff5dd586ca78000004",
                         "conditions": [
                           {
                             "_parent": "ExitStatus",
                             "_props": {
-                              "id": "64ddcaff5dd586ca78000002",
                               "dynamicLocale": true,
+                              "id": "64df60239a9c90ba72000002",
                               "status": [
                                 "Survived"
                               ]
@@ -5916,242 +5743,305 @@
                           {
                             "_parent": "Location",
                             "_props": {
-                              "id": "64ddcaff5dd586ca78000003",
                               "dynamicLocale": true,
+                              "id": "64df60239a9c90ba72000003",
                               "target": [
-                                "Lighthouse"
+                                "bigmap"
                               ]
                             }
+                          },
+                          {
+                            "_parent": "ExitName",
+                            "_props": {
+                              "dynamicLocale": true,
+                              "exitName": "Old Gas Station",
+                              "id": "64df60239a9c90ba72000006"
+                            }
                           }
-                        ]
-                      }
-                    },
-                    "_parent": "CounterCreator",
-                    "dynamicLocale": true
-                  }
-                ],
-                "Fail": []
-              },
-              "name": "616041eb031af660100c9967 name 54cb50c76803fa8b248b4571",
-              "note": "616041eb031af660100c9967 note 54cb50c76803fa8b248b4571",
-              "description": "616041eb031af660100c9967 description 54cb50c76803fa8b248b4571 0",
-              "successMessageText": "616041eb031af660100c9967 successMessageText 54cb50c76803fa8b248b4571 0",
-              "failMessageText": "616041eb031af660100c9967 failMessageText 54cb50c76803fa8b248b4571 0",
-              "startedMessageText": "616041eb031af660100c9967 startedMessageText 54cb50c76803fa8b248b4571 0",
-              "changeQuestMessageText": "616041eb031af660100c9967 changeQuestMessageText 54cb50c76803fa8b248b4571 0",
-              "templateId": "616041eb031af660100c9967",
-              "changeCost": [
-                {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
-                }
-              ],
-              "changeStandingCost": 0,
-              "side": "Pmc"
-            },
-            {
-              "_id": "64ddcaff5dd586ca78000008",
-              "traderId": "5935c25fb3acc3127c3d8cd9",
-              "location": "any",
-              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
-              "type": "Completion",
-              "isKey": false,
-              "restartable": false,
-              "instantComplete": false,
-              "secretQuest": false,
-              "canShowNotificationsInGame": true,
-              "rewards": {
-                "Started": [],
-                "Success": [
-                  {
-                    "value": 3233,
-                    "type": "Experience",
-                    "index": 0
-                  },
-                  {
-                    "target": "64ddcaff5dd586ca7800000a",
-                    "value": 48,
-                    "type": "Item",
-                    "index": 1,
-                    "items": [
-                      {
-                        "_id": "64ddcaff5dd586ca7800000a",
-                        "_tpl": "5696686a4bdc2da3298b456a",
-                        "upd": {
-                          "StackObjectsCount": 48
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "target": "64ddcaff5dd586ca7800000b",
-                    "value": 1,
-                    "type": "Item",
-                    "index": 2,
-                    "items": [
-                      {
-                        "_id": "64ddcaff5dd586ca7800000b",
-                        "_tpl": "606587e18900dc2d9a55b65f",
-                        "upd": {
-                          "StackObjectsCount": 1
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "target": "5935c25fb3acc3127c3d8cd9",
-                    "value": 0.01,
-                    "type": "TraderStanding",
-                    "index": 3
-                  }
-                ],
-                "Fail": []
-              },
-              "conditions": {
-                "AvailableForStart": [],
-                "AvailableForFinish": [
-                  {
-                    "_props": {
-                      "id": "64ddcaff5dd586ca78000009",
-                      "parentId": "",
+                        ],
+                        "id": "64df60239a9c90ba72000004"
+                      },
+                      "doNotResetIfCounterCompleted": false,
                       "dynamicLocale": true,
+                      "id": "64df60239a9c90ba72000005",
                       "index": 0,
-                      "visibilityConditions": [],
-                      "target": [
-                        "5755356824597772cb798962"
-                      ],
-                      "value": 1,
-                      "minDurability": 0,
-                      "maxDurability": 100,
-                      "dogtagLevel": 0,
-                      "onlyFoundInRaid": true
+                      "oneSessionOnly": false,
+                      "parentId": "",
+                      "type": "Completion",
+                      "value": 2,
+                      "visibilityConditions": []
                     },
-                    "_parent": "HandoverItem",
                     "dynamicLocale": true
                   }
                 ],
+                "AvailableForStart": [],
                 "Fail": []
               },
-              "name": "61604635c725987e815b1a46 name 5935c25fb3acc3127c3d8cd9",
-              "note": "61604635c725987e815b1a46 note 5935c25fb3acc3127c3d8cd9",
-              "description": "61604635c725987e815b1a46 description 5935c25fb3acc3127c3d8cd9 0",
-              "successMessageText": "61604635c725987e815b1a46 successMessageText 5935c25fb3acc3127c3d8cd9 0",
-              "failMessageText": "61604635c725987e815b1a46 failMessageText 5935c25fb3acc3127c3d8cd9 0",
-              "startedMessageText": "61604635c725987e815b1a46 startedMessageText 5935c25fb3acc3127c3d8cd9 0",
-              "changeQuestMessageText": "61604635c725987e815b1a46 changeQuestMessageText 5935c25fb3acc3127c3d8cd9 0",
-              "templateId": "61604635c725987e815b1a46",
-              "changeCost": [
-                {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
-                }
-              ],
-              "changeStandingCost": 0,
-              "side": "Pmc"
-            },
-            {
-              "_id": "64ddcaff5dd586ca7800000c",
-              "traderId": "5ac3b934156ae10c4430e83c",
-              "location": "any",
+              "description": "616041eb031af660100c9967 description 54cb57776803fa99248b456e 0",
+              "failMessageText": "616041eb031af660100c9967 failMessageText 54cb57776803fa99248b456e 0",
               "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
-              "type": "Elimination",
-              "isKey": false,
-              "restartable": false,
               "instantComplete": false,
-              "secretQuest": false,
-              "canShowNotificationsInGame": true,
+              "isKey": false,
+              "location": "56f40101d2720b2a4d8b45d6",
+              "name": "616041eb031af660100c9967 name 54cb57776803fa99248b456e",
+              "note": "616041eb031af660100c9967 note 54cb57776803fa99248b456e",
+              "restartable": false,
               "rewards": {
+                "Fail": [],
                 "Started": [],
                 "Success": [
                   {
-                    "value": 791,
+                    "index": 0,
                     "type": "Experience",
-                    "index": 0
+                    "value": 1256
                   },
                   {
-                    "target": "64ddcb005dd586ca78000001",
-                    "value": 2142,
-                    "type": "Item",
                     "index": 1,
                     "items": [
                       {
-                        "_id": "64ddcb005dd586ca78000001",
+                        "_id": "64df60239a9c90ba72000007",
                         "_tpl": "5449016a4bdc2d6f028b456f",
                         "upd": {
-                          "StackObjectsCount": 2142
+                          "StackObjectsCount": 3238
                         }
                       }
-                    ]
+                    ],
+                    "target": "64df60239a9c90ba72000007",
+                    "type": "Item",
+                    "value": 3238
                   },
                   {
-                    "target": "64ddcb005dd586ca78000002",
-                    "value": 1,
-                    "type": "Item",
                     "index": 2,
                     "items": [
                       {
-                        "_id": "64ddcb005dd586ca78000002",
-                        "_tpl": "60337f5dce399e10262255d1",
+                        "_id": "64df60239a9c90ba72000008",
+                        "_tpl": "5b099b965acfc400186331e6",
                         "upd": {
                           "StackObjectsCount": 1
                         }
                       }
-                    ]
+                    ],
+                    "target": "64df60239a9c90ba72000008",
+                    "type": "Item",
+                    "value": 1
                   }
-                ],
-                "Fail": []
+                ]
               },
+              "secretQuest": false,
+              "side": "Pmc",
+              "startedMessageText": "616041eb031af660100c9967 startedMessageText 54cb57776803fa99248b456e 0",
+              "successMessageText": "616041eb031af660100c9967 successMessageText 54cb57776803fa99248b456e 0",
+              "templateId": "616041eb031af660100c9967",
+              "traderId": "54cb57776803fa99248b456e",
+              "type": "Exploration"
+            },
+            {
+              "_id": "64df60239a9c90ba72000009",
+              "canShowNotificationsInGame": true,
+              "changeCost": [
+                {
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
+                }
+              ],
+              "changeQuestMessageText": "616052ea3054fc0e2c24ce6e changeQuestMessageText 5c0647fdd443bc2504c2d371 0",
+              "changeStandingCost": 0,
               "conditions": {
-                "AvailableForStart": [],
                 "AvailableForFinish": [
                   {
+                    "_parent": "CounterCreator",
                     "_props": {
-                      "id": "64ddcaff5dd586ca7800000f",
-                      "parentId": "",
-                      "dynamicLocale": true,
-                      "index": 0,
-                      "visibilityConditions": [],
-                      "value": 3,
-                      "type": "Elimination",
-                      "oneSessionOnly": false,
-                      "doNotResetIfCounterCompleted": false,
                       "counter": {
-                        "id": "64ddcaff5dd586ca7800000d",
                         "conditions": [
                           {
+                            "_parent": "Kills",
                             "_props": {
+                              "distance": {
+                                "compareMethod": ">=",
+                                "value": 80
+                              },
+                              "dynamicLocale": true,
+                              "id": "64df60239a9c90ba7200000b",
                               "target": "Savage",
-                              "value": 1,
-                              "id": "64ddcaff5dd586ca7800000e",
-                              "dynamicLocale": true
-                            },
-                            "_parent": "Kills"
+                              "value": 1
+                            }
                           }
-                        ]
-                      }
+                        ],
+                        "id": "64df60239a9c90ba7200000a"
+                      },
+                      "doNotResetIfCounterCompleted": false,
+                      "dynamicLocale": true,
+                      "id": "64df60239a9c90ba7200000c",
+                      "index": 0,
+                      "oneSessionOnly": false,
+                      "parentId": "",
+                      "type": "Elimination",
+                      "value": 2,
+                      "visibilityConditions": []
                     },
-                    "_parent": "CounterCreator",
                     "dynamicLocale": true
                   }
                 ],
+                "AvailableForStart": [],
                 "Fail": []
               },
-              "name": "616052ea3054fc0e2c24ce6e name 5ac3b934156ae10c4430e83c",
-              "note": "616052ea3054fc0e2c24ce6e note 5ac3b934156ae10c4430e83c",
-              "description": "616052ea3054fc0e2c24ce6e description 5ac3b934156ae10c4430e83c 0",
-              "successMessageText": "616052ea3054fc0e2c24ce6e successMessageText 5ac3b934156ae10c4430e83c 0",
-              "failMessageText": "616052ea3054fc0e2c24ce6e failMessageText 5ac3b934156ae10c4430e83c 0",
-              "startedMessageText": "616052ea3054fc0e2c24ce6e startedMessageText 5ac3b934156ae10c4430e83c 0",
-              "changeQuestMessageText": "616052ea3054fc0e2c24ce6e changeQuestMessageText 5ac3b934156ae10c4430e83c 0",
+              "description": "616052ea3054fc0e2c24ce6e description 5c0647fdd443bc2504c2d371 0",
+              "failMessageText": "616052ea3054fc0e2c24ce6e failMessageText 5c0647fdd443bc2504c2d371 0",
+              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
+              "instantComplete": false,
+              "isKey": false,
+              "location": "any",
+              "name": "616052ea3054fc0e2c24ce6e name 5c0647fdd443bc2504c2d371",
+              "note": "616052ea3054fc0e2c24ce6e note 5c0647fdd443bc2504c2d371",
+              "restartable": false,
+              "rewards": {
+                "Fail": [],
+                "Started": [],
+                "Success": [
+                  {
+                    "index": 0,
+                    "type": "Experience",
+                    "value": 1537
+                  },
+                  {
+                    "index": 1,
+                    "items": [
+                      {
+                        "_id": "64df60239a9c90ba7200000d",
+                        "_tpl": "5449016a4bdc2d6f028b456f",
+                        "upd": {
+                          "StackObjectsCount": 4874
+                        }
+                      }
+                    ],
+                    "target": "64df60239a9c90ba7200000d",
+                    "type": "Item",
+                    "value": 4874
+                  },
+                  {
+                    "index": 2,
+                    "items": [
+                      {
+                        "_id": "64df60239a9c90ba7200000e",
+                        "_tpl": "5d1340b3d7ad1a0b52682ed7",
+                        "upd": {
+                          "StackObjectsCount": 1
+                        }
+                      }
+                    ],
+                    "target": "64df60239a9c90ba7200000e",
+                    "type": "Item",
+                    "value": 1
+                  }
+                ]
+              },
+              "secretQuest": false,
+              "side": "Pmc",
+              "startedMessageText": "616052ea3054fc0e2c24ce6e startedMessageText 5c0647fdd443bc2504c2d371 0",
+              "successMessageText": "616052ea3054fc0e2c24ce6e successMessageText 5c0647fdd443bc2504c2d371 0",
               "templateId": "616052ea3054fc0e2c24ce6e",
+              "traderId": "5c0647fdd443bc2504c2d371",
+              "type": "Elimination"
+            },
+            {
+              "_id": "64df60239a9c90ba7200000f",
+              "canShowNotificationsInGame": true,
               "changeCost": [
                 {
-                  "templateId": "5449016a4bdc2d6f028b456f",
-                  "count": 5000
+                  "count": 5000,
+                  "templateId": "5449016a4bdc2d6f028b456f"
                 }
               ],
+              "changeQuestMessageText": "61604635c725987e815b1a46 changeQuestMessageText 5c0647fdd443bc2504c2d371 0",
               "changeStandingCost": 0,
-              "side": "Pmc"
+              "conditions": {
+                "AvailableForFinish": [
+                  {
+                    "_parent": "HandoverItem",
+                    "_props": {
+                      "dogtagLevel": 0,
+                      "dynamicLocale": true,
+                      "id": "64df60239a9c90ba72000010",
+                      "index": 0,
+                      "maxDurability": 100,
+                      "minDurability": 0,
+                      "onlyFoundInRaid": true,
+                      "parentId": "",
+                      "target": [
+                        "5734779624597737e04bf329"
+                      ],
+                      "value": 1,
+                      "visibilityConditions": []
+                    },
+                    "dynamicLocale": true
+                  }
+                ],
+                "AvailableForStart": [],
+                "Fail": []
+              },
+              "description": "61604635c725987e815b1a46 description 5c0647fdd443bc2504c2d371 0",
+              "failMessageText": "61604635c725987e815b1a46 failMessageText 5c0647fdd443bc2504c2d371 0",
+              "image": "/files/quest/icon/616d993bc8c5ad2ab30ff6ba.jpg",
+              "instantComplete": false,
+              "isKey": false,
+              "location": "any",
+              "name": "61604635c725987e815b1a46 name 5c0647fdd443bc2504c2d371",
+              "note": "61604635c725987e815b1a46 note 5c0647fdd443bc2504c2d371",
+              "restartable": false,
+              "rewards": {
+                "Fail": [],
+                "Started": [],
+                "Success": [
+                  {
+                    "index": 0,
+                    "type": "Experience",
+                    "value": 3630
+                  },
+                  {
+                    "index": 1,
+                    "items": [
+                      {
+                        "_id": "64df60239a9c90ba72000011",
+                        "_tpl": "5449016a4bdc2d6f028b456f",
+                        "upd": {
+                          "StackObjectsCount": 10487
+                        }
+                      }
+                    ],
+                    "target": "64df60239a9c90ba72000011",
+                    "type": "Item",
+                    "value": 10487
+                  },
+                  {
+                    "index": 2,
+                    "items": [
+                      {
+                        "_id": "64df60239a9c90ba72000012",
+                        "_tpl": "5943eeeb86f77412d6384f6b",
+                        "upd": {
+                          "StackObjectsCount": 1
+                        }
+                      }
+                    ],
+                    "target": "64df60239a9c90ba72000012",
+                    "type": "Item",
+                    "value": 1
+                  },
+                  {
+                    "index": 3,
+                    "target": "5c0647fdd443bc2504c2d371",
+                    "type": "TraderStanding",
+                    "value": 0.01
+                  }
+                ]
+              },
+              "secretQuest": false,
+              "side": "Pmc",
+              "startedMessageText": "61604635c725987e815b1a46 startedMessageText 5c0647fdd443bc2504c2d371 0",
+              "successMessageText": "61604635c725987e815b1a46 successMessageText 5c0647fdd443bc2504c2d371 0",
+              "templateId": "61604635c725987e815b1a46",
+              "traderId": "5c0647fdd443bc2504c2d371",
+              "type": "Completion"
             }
           ],
           "name": "Daily"
@@ -6187,9 +6077,9 @@
           },
           {
             "Id": "Endurance",
-            "Progress": 332.9943,
+            "Progress": 346.359161,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267950
+            "LastAccess": 1692565435
           },
           {
             "Id": "Strength",
@@ -6199,21 +6089,21 @@
           },
           {
             "Id": "Vitality",
-            "Progress": 119.800125,
+            "Progress": 121.933083,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565438
           },
           {
             "Id": "Health",
-            "Progress": 214.205673,
+            "Progress": 223.247452,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565438
           },
           {
             "Id": "StressResistance",
-            "Progress": 133.851761,
+            "Progress": 136.348541,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565438
           },
           {
             "Id": "Metabolism",
@@ -6229,15 +6119,15 @@
           },
           {
             "Id": "Perception",
-            "Progress": 155.872223,
+            "Progress": 156.740616,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691099490
+            "LastAccess": 1692565348
           },
           {
             "Id": "Intellect",
-            "Progress": 11.5488186,
+            "Progress": 12.5488186,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691098392
+            "LastAccess": 1692532411
           },
           {
             "Id": "Attention",
@@ -6247,15 +6137,15 @@
           },
           {
             "Id": "Charisma",
-            "Progress": 76.81307,
+            "Progress": 77.16043,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691099490
+            "LastAccess": 1692565348
           },
           {
             "Id": "Memory",
-            "Progress": 166.93605,
+            "Progress": 168.0137,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565438
           },
           {
             "Id": "Pistol",
@@ -6277,9 +6167,9 @@
           },
           {
             "Id": "Assault",
-            "Progress": 63.924984,
+            "Progress": 65.22498,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565248
           },
           {
             "Id": "Shotgun",
@@ -6337,15 +6227,15 @@
           },
           {
             "Id": "RecoilControl",
-            "Progress": 120.770294,
+            "Progress": 120.893532,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565248
           },
           {
             "Id": "AimDrills",
-            "Progress": 66.72002,
+            "Progress": 67.76002,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565248
           },
           {
             "Id": "TroubleShooting",
@@ -6373,9 +6263,9 @@
           },
           {
             "Id": "MagDrills",
-            "Progress": 34.9440155,
+            "Progress": 35.72401,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267539
+            "LastAccess": 1692565134
           },
           {
             "Id": "Sniping",
@@ -6403,9 +6293,9 @@
           },
           {
             "Id": "LightVests",
-            "Progress": 38.0445747,
+            "Progress": 46.06467,
             "PointsEarnedDuringSession": 0,
-            "LastAccess": 1691267952
+            "LastAccess": 1692565438
           },
           {
             "Id": "HeavyVests",
@@ -6509,7 +6399,7 @@
           },
           {
             "Id": "MDR",
-            "Progress": 35
+            "Progress": 36
           },
           {
             "Id": "M4",
@@ -6524,103 +6414,81 @@
           "Items": [
             {
               "Key": [
-                "Exp",
-                "ExpLooting",
-                "ExpTrigger"
-              ],
-              "Value": 0
-            },
-            {
-              "Key": [
-                "BodyPartDamage",
-                "RightArm"
-              ],
-              "Value": 5999
-            },
-            {
-              "Key": [
-                "CombatDamage"
-              ],
-              "Value": 26781
-            },
-            {
-              "Key": [
-                "Fractures"
+                "HeadShots"
               ],
               "Value": 1
             },
             {
               "Key": [
-                "BodyPartsDestroyed"
+                "Kills",
+                "Pmc"
               ],
-              "Value": 3
+              "Value": 1
             },
             {
               "Key": [
-                "BodyPartDamage",
-                "Chest"
+                "Kills"
               ],
-              "Value": 8498
+              "Value": 1
             },
             {
               "Key": [
-                "BodyPartDamage",
-                "Head"
+                "KilledLevel0010"
               ],
-              "Value": 450
+              "Value": 1
             },
             {
               "Key": [
-                "BodyPartDamage",
-                "LeftArm"
+                "KilledBear"
               ],
-              "Value": 5996
+              "Value": 1
             },
             {
               "Key": [
-                "BodyPartDamage",
-                "LeftLeg"
+                "KilledPmc"
               ],
-              "Value": 633
-            },
-            {
-              "Key": [
-                "BodyPartDamage",
-                "RightLeg"
-              ],
-              "Value": 633
-            },
-            {
-              "Key": [
-                "BodyPartDamage",
-                "Stomach"
-              ],
-              "Value": 666
-            },
-            {
-              "Key": [
-                "BloodLoss"
-              ],
-              "Value": 1680
+              "Value": 1
             },
             {
               "Key": [
                 "Exp",
-                "ExpHeal"
+                "ExpKill",
+                "ExpKillBase"
               ],
-              "Value": 55
+              "Value": 175
             },
             {
               "Key": [
-                "Medicines"
+                "Exp",
+                "ExpKill",
+                "ExpKillBodyPartBonus"
+              ],
+              "Value": 210
+            },
+            {
+              "Key": [
+                "KilledWithAssaultRifle"
               ],
               "Value": 1
+            },
+            {
+              "Key": [
+                "KilledWithTemplate",
+                "5c488a752e221602b412af63"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LongestKillShot"
+              ],
+              "Value": 3961
             },
             {
               "Key": [
                 "CauseBodyDamage"
               ],
-              "Value": 5390
+              "Value": 3500
             },
             {
               "Key": [
@@ -6632,19 +6500,216 @@
               "Key": [
                 "HitCount"
               ],
-              "Value": 4
+              "Value": 1
             },
             {
               "Key": [
                 "AmmoReached"
               ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "BodyPartDamage",
+                "Stomach"
+              ],
+              "Value": 4048
+            },
+            {
+              "Key": [
+                "CombatDamage"
+              ],
+              "Value": 16912
+            },
+            {
+              "Key": [
+                "Heal"
+              ],
+              "Value": 4928
+            },
+            {
+              "Key": [
+                "BodiesLooted"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "55d7217a4bdc2d86028b456d"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "Exp",
+                "ExpLooting",
+                "ExpItemLooting"
+              ],
+              "Value": 164
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5580223e4bdc2d1c128b457f"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5580169d4bdc2d9d138b4585"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "611a31ce5b7ffe001b4649d1"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5d6e68d1a4b93622fe60e845"
+              ],
+              "Value": 23
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5bffdc370db834001d23eca8"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5a7c4850e899ef00150be885"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "Equipments"
+              ],
               "Value": 2
+            },
+            {
+              "Key": [
+                "LootItem",
+                "60a3c70cde5f453f634816a3"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5e8488fa988a8701445df1e4"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5c0a794586f77461c458f892"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "MobContainers"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "590c657e86f77412b013051d"
+              ],
+              "Value": 2
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5d02797c86f774203f38e30a"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "544fb3f34bdc2d03748b456a"
+              ],
+              "Value": 3
+            },
+            {
+              "Key": [
+                "LootItem",
+                "60098ad7c2240c0fe85c570a"
+              ],
+              "Value": 2
+            },
+            {
+              "Key": [
+                "LootItem",
+                "557ffd194bdc2d28148b457f"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "59e35ef086f7741777737012"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "LootItem",
+                "59f32bb586f774757e1e8442"
+              ],
+              "Value": 2
+            },
+            {
+              "Key": [
+                "LootItem",
+                "5b3f16c486f7747c327f55f7"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "BartItems"
+              ],
+              "Value": 1
+            },
+            {
+              "Key": [
+                "BodyPartDamage",
+                "Chest"
+              ],
+              "Value": 9379
+            },
+            {
+              "Key": [
+                "BodyPartsDestroyed"
+              ],
+              "Value": 1
             },
             {
               "Key": [
                 "Deaths"
               ],
               "Value": 1
+            },
+            {
+              "Key": [
+                "Exp",
+                "ExpHeal"
+              ],
+              "Value": 49
             },
             {
               "Key": [
@@ -6657,19 +6722,25 @@
               "Key": [
                 "Pedometer"
               ],
-              "Value": 1922
+              "Value": 1207
+            },
+            {
+              "Key": [
+                "LongestKillStreak"
+              ],
+              "Value": 1
             },
             {
               "Key": [
                 "ExpKill"
               ],
-              "Value": 0
+              "Value": 385
             },
             {
               "Key": [
                 "ExpLooting"
               ],
-              "Value": 0
+              "Value": 164
             }
           ]
         },
@@ -6687,7 +6758,7 @@
                 "Sessions",
                 "Pmc"
               ],
-              "Value": 19
+              "Value": 20
             },
             {
               "Key": [
@@ -6695,21 +6766,21 @@
                 "Killed",
                 "Pmc"
               ],
-              "Value": 16
+              "Value": 17
             },
             {
               "Key": [
                 "LifeTime",
                 "Pmc"
               ],
-              "Value": 4904
+              "Value": 5189
             },
             {
               "Key": [
                 "Exp",
                 "ExpHeal"
               ],
-              "Value": 1005
+              "Value": 1054
             },
             {
               "Key": [
@@ -6722,19 +6793,19 @@
               "Key": [
                 "Kills"
               ],
-              "Value": 25
+              "Value": 26
             },
             {
               "Key": [
                 "Deaths"
               ],
-              "Value": 16
+              "Value": 17
             },
             {
               "Key": [
                 "KilledLevel0010"
               ],
-              "Value": 10
+              "Value": 11
             },
             {
               "Key": [
@@ -6770,7 +6841,7 @@
               "Key": [
                 "KilledBear"
               ],
-              "Value": 6
+              "Value": 7
             },
             {
               "Key": [
@@ -6788,7 +6859,7 @@
               "Key": [
                 "KilledPmc"
               ],
-              "Value": 16
+              "Value": 17
             },
             {
               "Key": [
@@ -6824,7 +6895,7 @@
               "Key": [
                 "KilledWithAssaultRifle"
               ],
-              "Value": 10
+              "Value": 11
             },
             {
               "Key": [
@@ -6880,14 +6951,14 @@
                 "BodyPartDamage",
                 "Chest"
               ],
-              "Value": 139926
+              "Value": 149305
             },
             {
               "Key": [
                 "BodyPartDamage",
                 "Stomach"
               ],
-              "Value": 33979
+              "Value": 38027
             },
             {
               "Key": [
@@ -6921,7 +6992,7 @@
               "Key": [
                 "HeadShots"
               ],
-              "Value": 8
+              "Value": 9
             },
             {
               "Key": [
@@ -6933,13 +7004,13 @@
               "Key": [
                 "BodyPartsDestroyed"
               ],
-              "Value": 31
+              "Value": 32
             },
             {
               "Key": [
                 "Heal"
               ],
-              "Value": 51331
+              "Value": 56259
             },
             {
               "Key": [
@@ -6987,13 +7058,13 @@
               "Key": [
                 "Pedometer"
               ],
-              "Value": 12328
+              "Value": 13535
             },
             {
               "Key": [
                 "BodiesLooted"
               ],
-              "Value": 14
+              "Value": 15
             },
             {
               "Key": [
@@ -7059,25 +7130,25 @@
               "Key": [
                 "BartItems"
               ],
-              "Value": 29
+              "Value": 30
             },
             {
               "Key": [
                 "MobContainers"
               ],
-              "Value": 14
+              "Value": 15
             },
             {
               "Key": [
                 "Equipments"
               ],
-              "Value": 39
+              "Value": 41
             },
             {
               "Key": [
                 "CauseBodyDamage"
               ],
-              "Value": 614180
+              "Value": 617680
             },
             {
               "Key": [
@@ -7089,7 +7160,7 @@
               "Key": [
                 "HitCount"
               ],
-              "Value": 233
+              "Value": 234
             },
             {
               "Key": [
@@ -7101,13 +7172,13 @@
               "Key": [
                 "ExpKill"
               ],
-              "Value": 5614
+              "Value": 5999
             },
             {
               "Key": [
                 "ExpLooting"
               ],
-              "Value": 4178
+              "Value": 4342
             },
             {
               "Key": [
@@ -7140,7 +7211,7 @@
               "Key": [
                 "AmmoReached"
               ],
-              "Value": 123
+              "Value": 124
             },
             {
               "Key": [
@@ -7152,7 +7223,7 @@
               "Key": [
                 "CombatDamage"
               ],
-              "Value": 380785
+              "Value": 397697
             },
             {
               "Key": [
@@ -7283,230 +7354,77 @@
         "SessionExperienceMult": 1,
         "ExperienceBonusMult": 0.97,
         "TotalSessionExperience": 0,
-        "LastSessionDate": 1691267539,
+        "LastSessionDate": 1692565134,
         "Aggressor": {
           "AccountId": null,
           "ProfileId": null,
           "MainProfileNickname": null,
-          "Name": "Knight",
-          "Side": "Savage",
+          "Name": "Роман Большаков",
+          "Side": "Bear",
           "BodyPart": "Chest",
           "HeadSegment": null,
-          "WeaponName": "6165ac306ef05c2ce828ef74 ShortName",
+          "WeaponName": "5bfd297f0db834001a669119 ShortName",
           "Category": "Default"
         },
         "DroppedItems": [],
         "FoundInRaidItems": [],
-        "Victims": [],
+        "Victims": [
+          {
+            "AccountId": "c652265af76fd7b8997a59da",
+            "ProfileId": "c652265af76fd7b8997a59da",
+            "Name": "aleves",
+            "Side": "Bear",
+            "Time": "00:01:53.7610000",
+            "Level": 6,
+            "BodyPart": "Head",
+            "Weapon": "5c488a752e221602b412af63 ShortName",
+            "Distance": 39.61886,
+            "Role": "sptBear"
+          }
+        ],
         "CarriedQuestItems": [],
         "DamageHistory": {
           "LethalDamagePart": "Chest",
           "LethalDamage": {
-            "Amount": 69.9323349,
+            "Amount": 55.85546,
             "Type": "Bullet",
-            "SourceId": "5a608bf24f39f98ffc77720e",
+            "SourceId": "5887431f2459777e1612938f",
             "OverDamageFrom": null,
             "Blunt": false,
             "ImpactsCount": 1
           },
           "BodyParts": {
-            "Head": [
-              {
-                "Amount": 0.943477631,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.39999771,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 1.19223022,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": "LeftArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ],
+            "Head": [],
             "Chest": [
               {
-                "Amount": 2.291298,
+                "Amount": 63.9961128,
                 "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.40000916,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 38.764,
-                "Type": "Bullet",
-                "SourceId": "56dff4ecd2720b5f5a8b4568",
+                "SourceId": "5887431f2459777e1612938f",
                 "OverDamageFrom": null,
                 "Blunt": false,
                 "ImpactsCount": 1
               },
               {
-                "Amount": 2.89542,
+                "Amount": 21.0038872,
                 "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": "LeftArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 38.6492729,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
+                "SourceId": "5887431f2459777e1612938f",
                 "OverDamageFrom": null,
                 "Blunt": false,
                 "ImpactsCount": 1
               }
             ],
-            "Stomach": [
-              {
-                "Amount": 1.88695526,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.40000916,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 2.38446045,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": "LeftArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ],
-            "LeftArm": [
-              {
-                "Amount": 1.61738968,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.39999771,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 55.9826126,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ],
-            "RightArm": [
-              {
-                "Amount": 40.4532776,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 19.5467224,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ],
-            "LeftLeg": [
-              {
-                "Amount": 1.75217056,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.39999771,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 2.21414185,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": "LeftArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ],
-            "RightLeg": [
-              {
-                "Amount": 1.75217056,
-                "Type": "Bullet",
-                "SourceId": "5d6e6806a4b936088465b17e",
-                "OverDamageFrom": "RightArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              },
-              {
-                "Amount": 2.39999771,
-                "Type": "LightBleeding",
-                "SourceId": null,
-                "OverDamageFrom": null,
-                "Blunt": false,
-                "ImpactsCount": 3
-              },
-              {
-                "Amount": 2.21414185,
-                "Type": "Bullet",
-                "SourceId": "5a608bf24f39f98ffc77720e",
-                "OverDamageFrom": "LeftArm",
-                "Blunt": false,
-                "ImpactsCount": 1
-              }
-            ]
+            "Stomach": [],
+            "LeftArm": [],
+            "RightArm": [],
+            "LeftLeg": [],
+            "RightLeg": []
           }
         },
         "DeathCause": {
           "DamageType": "Bullet",
-          "Side": "Savage",
-          "Role": "bossKnight",
-          "WeaponId": "6165ac306ef05c2ce828ef74"
+          "Side": "Bear",
+          "Role": "sptBear",
+          "WeaponId": "5bfd297f0db834001a669119"
         },
         "LastPlayerState": null,
         "TotalInGameTime": 597,
@@ -7526,7 +7444,7 @@
           "disabled": false,
           "loyaltyLevel": 1,
           "nextResupply": 1691006722,
-          "salesSum": 1126030,
+          "salesSum": 1148840,
           "standing": 0.23,
           "unlocked": true
         },
@@ -7566,7 +7484,7 @@
           "disabled": false,
           "loyaltyLevel": 1,
           "nextResupply": 1691006722,
-          "salesSum": 262386,
+          "salesSum": 285030,
           "standing": 0.2,
           "unlocked": true
         },
@@ -8220,39 +8138,39 @@
         },
         {
           "_id": "cfbc1d059dfee44418c92db3",
-          "uid": "54cb50c76803fa8b248b4571",
-          "type": 2,
           "dt": 1691099654,
-          "text": "",
-          "templateId": "5914450f86f7744bb83be8a2 0",
           "hasRewards": false,
-          "rewardCollected": false,
           "items": {},
           "maxStorageTime": 345600,
+          "profileChangeEvents": [],
+          "rewardCollected": false,
           "systemData": {
             "date": "03.08.2023",
-            "time": "23:54",
-            "location": "Woods"
+            "location": "Woods",
+            "time": "23:54"
           },
-          "profileChangeEvents": []
+          "templateId": "5914450f86f7744bb83be8a2 0",
+          "text": "",
+          "type": 2,
+          "uid": "54cb50c76803fa8b248b4571"
         },
         {
           "_id": "6e62e57f8d0eca8443414737",
-          "uid": "54cb50c76803fa8b248b4571",
-          "type": 8,
           "dt": 1691267423,
-          "text": "",
-          "templateId": "58fe0e4586f774728248ca13 4",
           "hasRewards": true,
-          "rewardCollected": false,
           "items": {},
           "maxStorageTime": 345600,
+          "profileChangeEvents": [],
+          "rewardCollected": false,
           "systemData": {
             "date": "03.08.2023",
-            "time": "23:54",
-            "location": "Woods"
+            "location": "Woods",
+            "time": "23:54"
           },
-          "profileChangeEvents": []
+          "templateId": "58fe0e4586f774728248ca13 4",
+          "text": "",
+          "type": 8,
+          "uid": "54cb50c76803fa8b248b4571"
         }
       ],
       "new": 0,
@@ -8569,11 +8487,11 @@
   ],
   "traderPurchases": {
     "54cb50c76803fa8b248b4571": {},
+    "54cb57776803fa99248b456e": {},
     "58330581ace78e27b8b10cee": {},
     "5935c25fb3acc3127c3d8cd9": {},
     "5a7c2eca46aef81a7ca2145d": {},
-    "5c0647fdd443bc2504c2d371": {},
-    "54cb57776803fa99248b456e": {}
+    "5c0647fdd443bc2504c2d371": {}
   },
   "vitality": {
     "effects": {

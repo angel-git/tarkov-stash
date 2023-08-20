@@ -217,7 +217,7 @@ fn calculate_item_size(
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
     let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
 
-    let out_x = parsed_parent_item._props.width;
+    let mut out_x = parsed_parent_item._props.width;
     let out_y = parsed_parent_item._props.height;
     let mut size_up = 0;
     let mut size_down = 0;
@@ -227,6 +227,18 @@ fn calculate_item_size(
     let mut forced_down = 0;
     let mut forced_left = 0;
     let mut forced_right = 0;
+
+    let foldable = parsed_parent_item._props.foldable;
+    let folded_slot = parsed_parent_item._props.folded_slot;
+    if foldable.is_some()
+        && foldable.unwrap()
+        && folded_slot.is_some()
+        && folded_slot.unwrap() == ""
+        && item.upd.as_ref().unwrap().foldable.is_some()
+        && item.upd.as_ref().unwrap().foldable.as_ref().unwrap().folded
+    {
+        out_x -= parsed_parent_item._props.size_reduced_right.unwrap();
+    }
 
     all_children.iter().for_each(|c| {
         let bsg_item = bsg_items_root.get(c).unwrap();
@@ -296,7 +308,7 @@ fn get_bsg_item(
 
 #[cfg(test)]
 mod tests {
-    use crate::spt::spt_profile_serializer::{load_profile, Item};
+    use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
     use crate::ui_profile::ui_profile_serializer::calculate_item_size;
     use serde_json::Value;
     use std::collections::HashMap;
@@ -335,6 +347,52 @@ mod tests {
             &bsg_items_root,
         );
         assert_eq!(size_x, 3);
+        assert_eq!(size_y, 2);
+    }
+
+    #[test]
+    fn should_calculate_size_folded() {
+        let item = Item {
+            _id: "be82550094e077141e097192".to_string(),
+            _tpl: "57d14d2524597714373db789".to_string(),
+            parent_id: None,
+            location: None,
+            slot_id: None,
+            upd: Some(UPD {
+                stack_objects_count: None,
+                spawned_in_session: None,
+                food_drink: None,
+                med_kit: None,
+                resource: None,
+                repairable: None,
+                key: None,
+                foldable: Some(Foldable { folded: true }),
+            }),
+        };
+
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        // folded weapon
+        let (size_x, size_y) = calculate_item_size(
+            &item,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(size_x, 2);
         assert_eq!(size_y, 2);
     }
 }

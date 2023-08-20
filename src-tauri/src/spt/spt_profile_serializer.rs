@@ -89,6 +89,8 @@ pub struct UPD {
     pub repairable: Option<Repairable>,
     #[serde(rename = "Key")]
     pub key: Option<Key>,
+    #[serde(rename = "Foldable")]
+    pub foldable: Option<Foldable>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -113,6 +115,12 @@ pub struct Resource {
 pub struct Key {
     #[serde(rename = "NumberOfUsages")]
     pub number_of_usages: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Foldable {
+    #[serde(rename = "Folded")]
+    pub folded: bool,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
