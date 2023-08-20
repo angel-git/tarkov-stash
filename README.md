@@ -35,6 +35,14 @@ Never run any `.exe` file that you have downloaded from internet. Including this
 
 See the [releases](https://github.com/angel-git/tarkov-stash/releases) page.
 
+### Development notes
+
+To run on local development mode:
+
+```shell
+pnpm tauri dev
+```
+
 #### Release
 
 - Update version in `tauri.conf.json`
