@@ -85,6 +85,8 @@ pub struct UPD {
     pub med_kit: Option<MedKit>,
     #[serde(rename = "Resource")]
     pub resource: Option<Resource>,
+    #[serde(rename = "Repairable")]
+    pub repairable: Option<Repairable>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -105,6 +107,16 @@ pub struct Resource {
     pub value: u16,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Repairable {
+    #[serde(rename = "Durability")]
+    #[serde(deserialize_with = "deserialize_to_integer")]
+    pub durability: u16,
+    #[serde(rename = "MaxDurability")]
+    #[serde(deserialize_with = "deserialize_to_integer")]
+    pub max_durability: u16,
+}
+
 fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: Deserializer<'de>,
@@ -116,6 +128,14 @@ where
         serde_json::Value::Number(num) if num.as_u64() == Some(1) => Ok("Vertical".to_string()),
         _ => Ok(rotation_value.as_str().unwrap().to_string()),
     }
+}
+
+fn deserialize_to_integer<'de, D>(deserializer: D) -> Result<u16, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value: f64 = Deserialize::deserialize(deserializer)?;
+    Ok(value as u16)
 }
 
 impl<'de> Deserialize<'de> for Item {

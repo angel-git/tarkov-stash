@@ -99,9 +99,16 @@ pub fn convert_profile_to_ui(
             panic!("oh no, wrong item: {}", item._id);
         };
 
+        let bsg_item = get_bsg_item(item, &bsg_items_root);
+
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
+
+        let mut max_resource = bsg_item
+            ._props
+            .max_resource
+            .or(bsg_item._props.max_hp_resource);
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
@@ -120,6 +127,10 @@ pub fn convert_profile_to_ui(
                 if udp.resource.is_some() {
                     resource = Some(udp.resource.as_ref().unwrap().value);
                 }
+                if udp.repairable.is_some() {
+                    resource = Some(udp.repairable.as_ref().unwrap().durability);
+                    max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
+                }
             }
         }
 
@@ -129,13 +140,7 @@ pub fn convert_profile_to_ui(
             &bsg_items_root,
         );
 
-        let bsg_item = get_bsg_item(item, &bsg_items_root);
         let stack_max_size = bsg_item._props.stack_max_size;
-        let max_resource = bsg_item
-            ._props
-            .max_resource
-            .or(bsg_item._props.max_hp_resource);
-
         let background_color = bsg_item._props.background_color;
 
         let i = Item {
