@@ -24,12 +24,22 @@
 	});
 
 	function handleOptionClicked(option: Option, item: Item) {
-		if (option === 'fir') {
-			invokeWithLoader('change_fir', { item }).catch((e) => goto(`/error?message=${e}`));
-			handleCloseModal();
-		} else {
-			selectedOption = option;
-			selectedItem = item;
+		switch (option) {
+			case 'fir': {
+				invokeWithLoader('change_fir', { item }).catch((e) => goto(`/error?message=${e}`));
+				handleCloseModal();
+				break;
+			}
+			case 'resource': {
+				invokeWithLoader('restore_durability', { item }).catch((e) => goto(`/error?message=${e}`));
+				handleCloseModal();
+				break;
+			}
+			default: {
+				selectedOption = option;
+				selectedItem = item;
+				break;
+			}
 		}
 	}
 

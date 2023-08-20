@@ -27,6 +27,16 @@ pub struct Props {
     pub extra_size_down: u16,
     #[serde(rename = "StackMaxSize")]
     pub stack_max_size: u32,
+    #[serde(rename = "MaxResource")]
+    pub max_resource: Option<u16>,
+    #[serde(rename = "MaxHpResource")]
+    pub max_hp_resource: Option<u16>,
+    #[serde(rename = "MaximumNumberOfUsage")]
+    pub maximum_number_of_usages: Option<u16>,
+    #[serde(rename = "MaxDurability")]
+    pub max_durability: Option<u16>,
+    #[serde(rename = "BackgroundColor")]
+    pub background_color: String,
 }
 
 pub fn load_item(item_json: &str) -> Result<Item, Error> {

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Item, Profile, Option, BsgItem } from '../../types';
+	import StashItem from './item/stash-item.svelte';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
 	let orderedItems: Array<Item | undefined>;
-	let bsgItems: { [key: string]: BsgItem };
+	let bsgItems: Record<string, BsgItem>;
 	$: orderedItems = [];
 	$: bsgItems = {};
 
@@ -68,43 +69,13 @@
 		itemOpenId = '-1';
 		onOptionClicked(option, item);
 	}
-
-	function calculateBackgroundStyle(item: Item) {
-		return `position: absolute; background-image: url(https://assets.tarkov.dev/${
-			item.tpl
-		}-base-image.png); background-size: ${item.sizeX * 64}px ${item.sizeY * 64}px`;
-	}
-
-	function calculateSizeStyle(item: Item) {
-		return `z-index: 2; position: relative; height: ${item.sizeY * 64}px; width: ${
-			item.sizeX * 64
-		}px;`;
-	}
 </script>
 
 <div class="grid">
 	{#each orderedItems as item}
 		<div class="grid-item">
 			{#if item}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div
-					tabindex="-1"
-					role="button"
-					class="item-clickable"
-					style={calculateSizeStyle(item)}
-					on:click={() => handleOpenClick(item)}
-				>
-					<div class="item-image" style={calculateBackgroundStyle(item)} />
-					<div class="short-name">{bsgItems[item.tpl].shortName}</div>
-					<div class="item-data">
-						{#if item.isFir}
-							<div class="fir" />
-						{/if}
-						{#if item.isStockable}
-							<div class="amount">{item.amount}</div>
-						{/if}
-					</div>
-				</div>
+				<StashItem {bsgItems} {handleOpenClick} {item} />
 			{:else}
 				<div class="empty" />
 			{/if}
@@ -133,6 +104,17 @@
 							Set fir
 						</div>
 					{/if}
+					{#if item.maxResource && item.maxResource !== 1 && item.resource !== item.maxResource}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="option"
+							tabindex="-1"
+							role="button"
+							on:click={() => handleOptionClicked('resource', item)}
+						>
+							Restore durability
+						</div>
+					{/if}
 				</div>
 			{/if}
 		</div>
@@ -152,48 +134,6 @@
 		width: 64px;
 		position: relative;
 		background-image: url($lib/images/empty.png);
-	}
-
-	.item-clickable {
-		cursor: pointer;
-	}
-
-	.item-clickable:hover {
-		filter: brightness(120%);
-	}
-
-	.fir {
-		height: 12px;
-		width: 12px;
-		background-image: url($lib/images/fir.png);
-		background-size: 12px 12px;
-	}
-
-	.amount {
-		font-size: 13px;
-		z-index: 2;
-	}
-
-	.item-image {
-		width: 100%;
-		height: 100%;
-	}
-
-	.item-data {
-		height: 100%;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		justify-content: flex-end;
-	}
-
-	.short-name {
-		font-size: 11px;
-		position: absolute;
-		right: 2px;
-		top: 2px;
-		z-index: 2;
 	}
 
 	.empty {

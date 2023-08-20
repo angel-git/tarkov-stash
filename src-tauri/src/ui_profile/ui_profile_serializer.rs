@@ -40,6 +40,13 @@ pub struct Item {
     pub is_fir: bool,
     #[serde(rename = "rotation")]
     pub r: String,
+    pub resource: Option<u16>,
+    #[serde(rename = "maxResource")]
+    pub max_resource: Option<u16>,
+    // #[serde(rename = "originalMaxResource")]
+    // pub original_max_resource: Option<u16>,
+    #[serde(rename = "backgroundColor")]
+    pub background_color: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -52,11 +59,9 @@ pub struct BsgItem {
 
 pub fn convert_profile_to_ui(
     tarkov_profile: TarkovProfile,
-    bsg_items: &str,
-    locale: &str,
+    bsg_items_root: &HashMap<String, Value>,
+    locale_root: &HashMap<String, Value>,
 ) -> UIProfile {
-    let bsg_items_root: HashMap<String, Value> = serde_json::from_str(bsg_items).unwrap();
-    let locale_root: HashMap<String, Value> = serde_json::from_str(locale).unwrap();
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -94,8 +99,17 @@ pub fn convert_profile_to_ui(
             panic!("oh no, wrong item: {}", item._id);
         };
 
+        let bsg_item = get_bsg_item(item, bsg_items_root);
+
         let mut amount = 1;
         let mut spawned_in_session = false;
+        let mut resource = None;
+
+        let max_resource = None
+            .or(bsg_item._props.max_resource)
+            .or(bsg_item._props.max_hp_resource)
+            .or(bsg_item._props.maximum_number_of_usages)
+            .or(bsg_item._props.max_durability);
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
@@ -105,16 +119,37 @@ pub fn convert_profile_to_ui(
                 if udp.spawned_in_session.is_some() {
                     spawned_in_session = udp.spawned_in_session.unwrap();
                 }
+                if udp.food_drink.is_some() {
+                    resource = Some(udp.food_drink.as_ref().unwrap().hp_percent);
+                }
+                if udp.med_kit.is_some() {
+                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource);
+                }
+                if udp.resource.is_some() {
+                    resource = Some(udp.resource.as_ref().unwrap().value);
+                }
+                if udp.repairable.is_some() {
+                    resource = Some(udp.repairable.as_ref().unwrap().durability);
+                    // we are showing the real max durability, not the current repaired one, uncomment the following code to show that
+                    // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
+                }
+                if udp.key.is_some() {
+                    resource = Some(
+                        bsg_item._props.maximum_number_of_usages.unwrap()
+                            - udp.key.as_ref().unwrap().number_of_usages,
+                    );
+                }
             }
         }
 
         let (size_x, size_y) = calculate_item_size(
             item,
             &tarkov_profile.characters.pmc.inventory.items,
-            &bsg_items_root,
+            bsg_items_root,
         );
 
-        let stack_max_size = get_item_stack_max_size(item, &bsg_items_root);
+        let stack_max_size = bsg_item._props.stack_max_size;
+        let background_color = bsg_item._props.background_color;
 
         let i = Item {
             id: item._id.to_string(),
@@ -128,6 +163,9 @@ pub fn convert_profile_to_ui(
             stack_max_size,
             is_fir: spawned_in_session,
             r: location_in_stash.r.to_string(),
+            max_resource,
+            resource,
+            background_color,
         };
         items.push(i)
     }
@@ -248,13 +286,12 @@ fn find_all_items_from_parent(
     result
 }
 
-fn get_item_stack_max_size(
+fn get_bsg_item(
     item: &spt::spt_profile_serializer::Item,
     bsg_items_root: &HashMap<String, Value>,
-) -> u32 {
+) -> spt::spt_bsg_items_serializer::Item {
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
-    let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
-    parsed_parent_item._props.stack_max_size
+    load_item(parent_item.to_string().as_str()).unwrap()
 }
 
 #[cfg(test)]
