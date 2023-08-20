@@ -105,10 +105,10 @@ pub fn convert_profile_to_ui(
         let mut spawned_in_session = false;
         let mut resource = None;
 
-        let mut max_resource = bsg_item
-            ._props
-            .max_resource
-            .or(bsg_item._props.max_hp_resource);
+        let mut max_resource = None
+            .or(bsg_item._props.max_resource)
+            .or(bsg_item._props.max_hp_resource)
+            .or(bsg_item._props.maximum_number_of_usages);
 
         if udp_option.is_some() {
             if let Some(udp) = udp_option {
@@ -130,6 +130,16 @@ pub fn convert_profile_to_ui(
                 if udp.repairable.is_some() {
                     resource = Some(udp.repairable.as_ref().unwrap().durability);
                     max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
+                }
+                if udp.repairable.is_some() {
+                    resource = Some(udp.repairable.as_ref().unwrap().durability);
+                    max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
+                }
+                if udp.key.is_some() {
+                    resource = Some(
+                        bsg_item._props.maximum_number_of_usages.unwrap()
+                            - udp.key.as_ref().unwrap().number_of_usages,
+                    );
                 }
             }
         }

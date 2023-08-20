@@ -87,6 +87,8 @@ pub struct UPD {
     pub resource: Option<Resource>,
     #[serde(rename = "Repairable")]
     pub repairable: Option<Repairable>,
+    #[serde(rename = "Key")]
+    pub key: Option<Key>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -105,6 +107,12 @@ pub struct MedKit {
 pub struct Resource {
     #[serde(rename = "Value")]
     pub value: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Key {
+    #[serde(rename = "NumberOfUsages")]
+    pub number_of_usages: u16,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

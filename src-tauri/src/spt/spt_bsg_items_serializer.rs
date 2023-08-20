@@ -31,6 +31,8 @@ pub struct Props {
     pub max_resource: Option<u16>,
     #[serde(rename = "MaxHpResource")]
     pub max_hp_resource: Option<u16>,
+    #[serde(rename = "MaximumNumberOfUsage")]
+    pub maximum_number_of_usages: Option<u16>,
     #[serde(rename = "BackgroundColor")]
     pub background_color: String,
 }
