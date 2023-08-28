@@ -10,6 +10,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Set _found in raid_ to items
 - Increase stock of items (currency, ammo)
 - Restore durability, usage etc from armors, keys, meds...
+- Open containers and backpacks (internal layout might be wrong)
 
 ### Limitations
 
@@ -21,11 +22,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 - Compatible with 0.3.15 (v1)
 - Duplicate items (v1)
-- Open containers (future...)
 
 ### Screenshots
 
 ![screen-0.1.4.png](screen-0.1.4.png)
+
+![gif-container.gif](gif-container.gif)
 
 ### Download
 

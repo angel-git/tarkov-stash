@@ -224,6 +224,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let updated = update_item_amount(json, &item, &HashMap::new()).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
@@ -316,6 +318,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let item_3eb9393a58f797c0c5f0e38e = Item {
             id: "3eb9393a58f797c0c5f0e38e".to_string(),
@@ -332,6 +336,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         // update both items
         let update_41d413738e53a1eaa78d3112 =
@@ -415,6 +421,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -490,6 +498,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -565,6 +575,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -641,6 +653,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -722,6 +736,8 @@ mod tests {
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
         };
 
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(

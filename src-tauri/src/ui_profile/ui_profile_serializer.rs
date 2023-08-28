@@ -47,6 +47,21 @@ pub struct Item {
     // pub original_max_resource: Option<u16>,
     #[serde(rename = "backgroundColor")]
     pub background_color: String,
+    #[serde(rename = "isContainer")]
+    pub is_container: bool,
+    #[serde(rename = "gridItems")]
+    pub grid_items: Option<Vec<GridItem>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct GridItem {
+    #[serde(rename = "name")]
+    pub _name: String,
+    #[serde(rename = "cellsH")]
+    pub cells_h: u16,
+    #[serde(rename = "cellsV")]
+    pub cells_v: u16,
+    pub items: Vec<Item>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -80,17 +95,67 @@ pub fn convert_profile_to_ui(
         68
     };
 
+    let items: Vec<Item> = parse_items(
+        tarkov_profile.characters.pmc.inventory.items,
+        bsg_items_root,
+        stash.as_str(),
+        "hideout",
+    );
+
+    let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
+    bsg_items_root.keys().for_each(|k| {
+        let item = bsg_items_root.get(k).unwrap();
+        let id = item.get("_id").unwrap().as_str().unwrap();
+        if let Some(props) = item.get("_props") {
+            if let Some(short_name) = props.get("ShortName") {
+                let maybe_name = locale_root.get(format!("{} Name", id).as_str());
+                let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
+                let name = maybe_name
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_else(|| short_name.as_str().unwrap());
+                let short_name = maybe_short_name
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_else(|| short_name.as_str().unwrap());
+
+                bsg_items.insert(
+                    id.to_string(),
+                    BsgItem {
+                        id: id.to_string(),
+                        name: name.to_string(),
+                        short_name: short_name.to_string(),
+                    },
+                );
+            }
+        }
+    });
+
+    UIProfile {
+        name: tarkov_profile.characters.pmc.info.nickname,
+        size_x: 10,
+        size_y: stash_size_y,
+        items,
+        bsg_items,
+        spt_version: None,
+    }
+}
+
+fn parse_items(
+    profile_items: Vec<spt::spt_profile_serializer::Item>,
+    bsg_items_root: &HashMap<String, Value>,
+    parent_slot: &str,
+    parent_item_slot: &str,
+) -> Vec<Item> {
     let mut items: Vec<Item> = Vec::new();
 
-    for item in tarkov_profile.characters.pmc.inventory.items.iter() {
+    for item in profile_items.iter() {
         let parent_id = item.parent_id.as_ref();
         let item_slot = item.slot_id.as_ref();
         let location = item.location.as_ref();
         let udp_option = item.upd.as_ref();
-        if parent_id.is_none() || parent_id.unwrap() != stash {
+        if parent_id.is_none() || parent_id.unwrap() != parent_slot {
             continue;
         };
-        if item_slot.is_none() || item_slot.unwrap() != "hideout" {
+        if item_slot.is_none() || item_slot.unwrap() != parent_item_slot {
             continue;
         };
         let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
@@ -100,6 +165,40 @@ pub fn convert_profile_to_ui(
         };
 
         let bsg_item = get_bsg_item(item, bsg_items_root);
+
+        // if it's a container
+        let mut grid_items: Option<Vec<GridItem>> = None;
+        let is_container =
+            bsg_item._props.grids.is_some() && !bsg_item._props.grids.as_ref().unwrap().is_empty();
+        if is_container {
+            grid_items = Some(Vec::new());
+
+            bsg_item._props.grids.unwrap().iter().for_each(|grid| {
+                let grid_name = &grid._name;
+                let all_children =
+                    find_all_ids_and_tpl_from_parent(item._id.as_str(), &profile_items, grid_name);
+                let all_children_items: Vec<spt::spt_profile_serializer::Item> = all_children
+                    .iter()
+                    .map(|(id, _tpl)| profile_items.iter().find(|item| item._id == *id))
+                    .filter(|item| item.is_some())
+                    .map(|item| item.unwrap().clone())
+                    .collect();
+
+                let grid_item = GridItem {
+                    _name: grid_name.clone(),
+                    cells_v: grid._props.cells_v,
+                    cells_h: grid._props.cells_h,
+                    items: parse_items(
+                        all_children_items,
+                        bsg_items_root,
+                        item._id.as_str(),
+                        grid_name,
+                    ),
+                };
+
+                grid_items.as_mut().unwrap().insert(0, grid_item);
+            })
+        }
 
         let mut amount = 1;
         let mut spawned_in_session = false;
@@ -142,11 +241,7 @@ pub fn convert_profile_to_ui(
             }
         }
 
-        let (size_x, size_y) = calculate_item_size(
-            item,
-            &tarkov_profile.characters.pmc.inventory.items,
-            bsg_items_root,
-        );
+        let (size_x, size_y) = calculate_item_size(item, &profile_items, bsg_items_root);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
@@ -166,45 +261,12 @@ pub fn convert_profile_to_ui(
             max_resource,
             resource,
             background_color,
+            is_container,
+            grid_items,
         };
         items.push(i)
     }
-
-    let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
-    bsg_items_root.keys().for_each(|k| {
-        let item = bsg_items_root.get(k).unwrap();
-        let id = item.get("_id").unwrap().as_str().unwrap();
-        if let Some(props) = item.get("_props") {
-            if let Some(short_name) = props.get("ShortName") {
-                let maybe_name = locale_root.get(format!("{} Name", id).as_str());
-                let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
-                let name = maybe_name
-                    .and_then(|v| v.as_str())
-                    .unwrap_or_else(|| short_name.as_str().unwrap());
-                let short_name = maybe_short_name
-                    .and_then(|v| v.as_str())
-                    .unwrap_or_else(|| short_name.as_str().unwrap());
-
-                bsg_items.insert(
-                    id.to_string(),
-                    BsgItem {
-                        id: id.to_string(),
-                        name: name.to_string(),
-                        short_name: short_name.to_string(),
-                    },
-                );
-            }
-        }
-    });
-
-    UIProfile {
-        name: tarkov_profile.characters.pmc.info.nickname,
-        size_x: 10,
-        size_y: stash_size_y,
-        items,
-        bsg_items,
-        spt_version: None,
-    }
+    items
 }
 
 fn calculate_item_size(
@@ -212,7 +274,7 @@ fn calculate_item_size(
     items: &[spt::spt_profile_serializer::Item],
     bsg_items_root: &HashMap<String, Value>,
 ) -> (u16, u16) {
-    let all_children = find_all_items_from_parent(item._id.as_str(), items);
+    let all_children = find_all_ids_and_tpl_from_parent(item._id.as_str(), items, "mod_");
     // copied from InventoryHelper.getSizeByInventoryItemHash
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
     let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
@@ -240,8 +302,8 @@ fn calculate_item_size(
         out_x -= parsed_parent_item._props.size_reduced_right.unwrap();
     }
 
-    all_children.iter().for_each(|c| {
-        let bsg_item = bsg_items_root.get(c).unwrap();
+    all_children.iter().for_each(|(_id, tpl)| {
+        let bsg_item = bsg_items_root.get(tpl).unwrap();
         let parsed_bsg_item = load_item(bsg_item.to_string().as_str()).unwrap();
 
         if parsed_bsg_item._props.extra_size_force_add {
@@ -278,19 +340,20 @@ fn calculate_item_size(
     (size_x, size_y)
 }
 
-fn find_all_items_from_parent(
+fn find_all_ids_and_tpl_from_parent(
     parent_id: &str,
     items: &[spt::spt_profile_serializer::Item],
-) -> Vec<String> {
-    let mut result = Vec::new();
+    slot_id: &str,
+) -> Vec<(String, String)> {
+    let mut result: Vec<(String, String)> = Vec::new();
 
     for i in items {
         if i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == parent_id {
-            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with("mod_") {
-                result.push(i._tpl.to_string());
+            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with(slot_id) {
+                result.push((i._id.to_string(), i._tpl.to_string()));
             }
 
-            let sub_items = find_all_items_from_parent(&i._id, items);
+            let sub_items = find_all_ids_and_tpl_from_parent(&i._id, items, slot_id);
             result.extend(sub_items);
         }
     }
@@ -309,7 +372,7 @@ fn get_bsg_item(
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
-    use crate::ui_profile::ui_profile_serializer::calculate_item_size;
+    use crate::ui_profile::ui_profile_serializer::{calculate_item_size, parse_items};
     use serde_json::Value;
     use std::collections::HashMap;
 
@@ -394,5 +457,43 @@ mod tests {
         );
         assert_eq!(size_x, 2);
         assert_eq!(size_y, 2);
+    }
+
+    #[test]
+    fn should_handle_backpack_within_backpack() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let stash = &tarkov_profile.characters.pmc.inventory.stash;
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            stash.as_str(),
+            "hideout",
+        );
+
+        let backpack = items
+            .iter()
+            .find(|i| i.id == "e7d8a69bdd2554dca61cd984")
+            .unwrap();
+        assert!(backpack.is_container);
+        let backpack_content = backpack.grid_items.as_ref().unwrap().get(0).unwrap();
+        assert_eq!(backpack_content.cells_v, 5);
+        assert_eq!(backpack_content.cells_h, 4);
+
+        let nested_backpack = backpack_content.items.get(0).unwrap();
+        assert!(nested_backpack.is_container);
     }
 }

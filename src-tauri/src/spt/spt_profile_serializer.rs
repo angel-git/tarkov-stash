@@ -40,7 +40,7 @@ pub struct Inventory {
     pub stash: String,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Item {
     pub _id: String,
     pub _tpl: String,
@@ -58,14 +58,14 @@ pub struct Bonuses {
     pub t: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(untagged)]
 pub enum Location {
     Number(u16),
     LocationInStash(LocationInStash),
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct LocationInStash {
     pub x: u16,
     pub y: u16,
@@ -73,7 +73,7 @@ pub struct LocationInStash {
     pub r: String, // "Horizontal" | "Vertical" | u16
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct UPD {
     #[serde(rename = "StackObjectsCount")]
     pub stack_objects_count: Option<u32>,
@@ -93,37 +93,37 @@ pub struct UPD {
     pub foldable: Option<Foldable>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct FoodDrink {
     #[serde(rename = "HpPercent")]
     pub hp_percent: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MedKit {
     #[serde(rename = "HpResource")]
     pub hp_resource: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Resource {
     #[serde(rename = "Value")]
     pub value: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Key {
     #[serde(rename = "NumberOfUsages")]
     pub number_of_usages: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Foldable {
     #[serde(rename = "Folded")]
     pub folded: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Repairable {
     #[serde(rename = "Durability")]
     #[serde(deserialize_with = "deserialize_to_integer")]

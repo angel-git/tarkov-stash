@@ -41,6 +41,22 @@ pub struct Props {
     pub foldable: Option<bool>,
     #[serde(rename = "FoldedSlot")]
     pub folded_slot: Option<String>,
+    #[serde(rename = "Grids")]
+    pub grids: Option<Vec<Grids>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Grids {
+    pub _name: String,
+    pub _props: GridsProps,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct GridsProps {
+    #[serde(rename = "cellsH")]
+    pub cells_h: u16,
+    #[serde(rename = "cellsV")]
+    pub cells_v: u16,
 }
 
 pub fn load_item(item_json: &str) -> Result<Item, Error> {

@@ -3,7 +3,7 @@ export interface Profile {
 	sizeX: number;
 	sizeY: number;
 	items: Array<Item>;
-	bsgItems: { [key: string]: BsgItem };
+	bsgItems: Record<string, BsgItem>;
 	sptVersion: string;
 }
 
@@ -22,6 +22,15 @@ export interface Item {
 	backgroundColor: string;
 	resource: number | null;
 	maxResource: number | null;
+	isContainer: boolean;
+	gridItems: Array<GridItem> | null;
+}
+
+export interface GridItem {
+	name: string;
+	cellsH: number;
+	cellsV: number;
+	items: Array<Item>;
 }
 
 export interface BsgItem {
@@ -30,4 +39,4 @@ export interface BsgItem {
 	shortName: string;
 }
 
-export type Option = 'amount' | 'fir' | 'resource';
+export type Option = 'amount' | 'fir' | 'resource' | 'open';
