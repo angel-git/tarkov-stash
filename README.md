@@ -27,6 +27,8 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ![screen-0.1.4.png](screen-0.1.4.png)
 
+![gif-container.gif](gif-container.gif)
+
 ### Download
 
 > Backup your profile before running this.
