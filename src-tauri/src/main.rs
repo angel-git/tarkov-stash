@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use log::{info, LevelFilter};
 use std::collections::HashMap;
 use std::fs;
 use std::net::TcpStream;
@@ -10,6 +11,7 @@ use std::sync::Mutex;
 use serde_json::{Error, Value};
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
+use tauri_plugin_log::LogTarget;
 
 use crate::spt::spt_profile_serializer::load_profile;
 use crate::stash::stash_utils::{update_durability, update_item_amount, update_spawned_in_session};
@@ -39,6 +41,13 @@ fn main() {
         .add_submenu(submenu);
 
     tauri::Builder::default()
+            .plugin(tauri_plugin_log::Builder::default()
+                .targets([
+                         LogTarget::LogDir,
+                         LogTarget::Stdout,
+                ])
+                .level(LevelFilter::Debug)
+                .build())
         .menu(menu)
         .manage(TarkovStashState {
             state: Mutex::new(MutexState {
@@ -117,16 +126,19 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
 
 #[tauri::command]
 fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    info!("Changing amount to item {}", item.id.as_str());
     with_state_do(item, app, update_item_amount)
 }
 
 #[tauri::command]
 fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    info!("Setting fir to item {}", item.id.as_str());
     with_state_do(item, app, update_spawned_in_session)
 }
 
 #[tauri::command]
 fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    info!("Restoring durability to item {}", item.id.as_str());
     with_state_do(item, app, update_durability)
 }
 
@@ -206,11 +218,12 @@ fn load_bsg_items(file: &String) -> String {
     items.try_exists().expect(
         "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
     );
+    info!("Reading bsg_items from {}", items.display());
     fs::read_to_string(items).unwrap()
 }
 
 fn load_locale(file: &String) -> String {
-    let items = Path::new(file)
+    let locale = Path::new(file)
         .ancestors()
         .nth(3)
         .unwrap()
@@ -220,8 +233,9 @@ fn load_locale(file: &String) -> String {
         .join("locales")
         .join("global")
         .join("en.json");
-    items.try_exists().expect(
+    locale.try_exists().expect(
         "Can't find `en.json` in your `SPT\\Aki_Data\\Server\\database\\locales\\global` folder",
     );
-    fs::read_to_string(items).unwrap()
+    info!("Reading locale from {}", locale.display());
+    fs::read_to_string(locale).unwrap()
 }
