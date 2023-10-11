@@ -20,7 +20,6 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Future features
 
-- Compatible with 0.3.15 (v1)
 - Duplicate items (v1)
 
 ### Screenshots
