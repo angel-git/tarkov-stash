@@ -18,7 +18,7 @@
 	<div on:click|stopPropagation>
 		<slot name="header" />
 		<slot />
-		<div class="container container-flex">
+		<div class="controls">
 			<button class="secondary" on:click={() => (showModal = false)}>Cancel</button>
 			<button class="primary" on:click={onConfirm}>Update</button>
 		</div>
@@ -67,6 +67,12 @@
 		to {
 			opacity: 1;
 		}
+	}
+
+	.controls {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 2em;
 	}
 
 	button {
