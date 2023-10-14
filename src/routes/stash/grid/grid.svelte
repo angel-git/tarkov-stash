@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import type { BsgItem, Item, Option } from '../../../types';
 	import StashItem from '../item/stash-item.svelte';
 	import Grid from './grid.svelte';
@@ -9,6 +10,18 @@
 	export let nestedLevel: number;
 	export let bsgItems: Record<string, BsgItem>;
 	export let onOptionClicked: (option: Option, item: Item) => void;
+
+	onMount(() => {
+		window.addEventListener('scroll', onScroll);
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('scroll', onScroll);
+	});
+
+	const onScroll = () => {
+		localStorage.setItem('scrollY', window.scrollY.toString());
+	};
 
 	let secondaryItemMenuId = '-1';
 	let containerOpenId = '-1';
@@ -55,6 +68,10 @@
 			}
 
 			orderedItems = [...tempItems];
+			// restore scroll position after items have been reloaded
+			if (localStorage.getItem('scrollY')) {
+				window.scrollTo(0, Number(localStorage.getItem('scrollY')));
+			}
 		}
 	}
 
