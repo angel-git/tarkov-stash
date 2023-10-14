@@ -20,7 +20,7 @@
 		<slot />
 		<div class="controls">
 			<button class="secondary" on:click={() => (showModal = false)}>Cancel</button>
-			<button class="primary" on:click={onConfirm}>Update</button>
+			<button class="primary" on:click={onConfirm}>Confirm</button>
 		</div>
 	</div>
 </dialog>
@@ -29,7 +29,7 @@
 	dialog {
 		color: var(--color-text);
 		background-color: var(--color-background);
-		max-width: 32em;
+		width: 32em;
 		border-radius: 0.2em;
 		border: none;
 		padding: 0;
