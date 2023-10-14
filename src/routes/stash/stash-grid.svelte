@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { Item, Profile, Option } from '../../types';
 	import Grid from './grid/grid.svelte';
+	import NewItemModal from './modal/modal-item.svelte';
 
 	export let profile: Profile;
 	export let onOptionClicked: (option: Option, item: Item) => void;
 	let filteredItems: Array<Item | undefined>;
 	$: filteredItems = [];
 	let searchTerm = '';
+	let isNewItemModalOpen = false;
 
 	$: {
 		if (profile) {
@@ -18,12 +20,20 @@
 			});
 		}
 	}
+
+	function openNewItemModal() {
+		isNewItemModalOpen = true;
+	}
 </script>
 
 <div class="filter">
 	<input placeholder="Type to filter" bind:value={searchTerm} />
+	<button on:click={openNewItemModal}>Add item</button>
 </div>
 
+{#if isNewItemModalOpen}
+	<NewItemModal allItems={profile.bsgItems} onClose={() => (isNewItemModalOpen = false)} />
+{/if}
 <Grid
 	nestedLevel={1}
 	bsgItems={profile.bsgItems}
