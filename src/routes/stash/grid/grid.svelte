@@ -98,6 +98,7 @@
 	}
 
 	function openNewItemModal() {
+		secondaryItemMenuId = '-1';
 		isNewItemModalOpen = true;
 	}
 </script>
