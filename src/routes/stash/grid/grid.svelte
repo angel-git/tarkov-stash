@@ -3,6 +3,7 @@
 	import type { BsgItem, Item, Option } from '../../../types';
 	import StashItem from '../item/stash-item.svelte';
 	import Grid from './grid.svelte';
+	import NewItemModal from '../modal/modal-item.svelte';
 
 	export let items: Array<Item>;
 	export let sizeY: number;
@@ -23,17 +24,19 @@
 		localStorage.setItem('scrollY', window.scrollY.toString());
 	};
 
+	let isNewItemModalOpen = false;
 	let secondaryItemMenuId = '-1';
 	let containerOpenId = '-1';
 	let orderedItems: Array<Item | undefined>;
 	$: orderedItems = [];
+	let grid: Array<Array<Item | undefined>>;
+	$: grid = [];
 
 	$: {
 		if (items) {
+			grid = Array.from({ length: sizeY }, () => Array(sizeX).fill(null));
 			const addedItems = new Set();
 			const tempItems: Array<Item | undefined> = [];
-
-			const grid = Array.from({ length: sizeY }, () => Array(sizeX).fill(null));
 
 			items.forEach((item) => {
 				const rotatedItem =
@@ -93,8 +96,16 @@
 			onOptionClicked(option, item);
 		}
 	}
+
+	function openNewItemModal() {
+		isNewItemModalOpen = true;
+	}
 </script>
 
+<button on:click={openNewItemModal}>Add item</button>
+{#if isNewItemModalOpen}
+	<NewItemModal {grid} allItems={bsgItems} onClose={() => (isNewItemModalOpen = false)} />
+{/if}
 <div class="grid" style={`grid-template-columns: repeat(${sizeX}, 64px); width: ${sizeX * 64}px;`}>
 	{#each orderedItems as item}
 		<div class="grid-item">

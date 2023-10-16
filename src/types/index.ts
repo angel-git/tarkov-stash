@@ -43,8 +43,15 @@ export interface BsgItem {
 	width: number;
 	hideEntrails: boolean;
 	unlootable: boolean;
+	unbuyable: boolean;
 	type: BsgItemType;
 	backgroundColor: string;
 }
 
 export type Option = 'amount' | 'fir' | 'resource' | 'open';
+
+export interface NewItem {
+	id: string;
+	locationX: number;
+	locationY: number;
+}

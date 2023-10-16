@@ -1,18 +1,18 @@
 <script lang="ts">
-	// import type { Item } from '../../../types';
-	// import { goto } from '$app/navigation';
-
+	import { goto } from '$app/navigation';
 	import Modal from './modal.svelte';
-	import type { BsgItem } from '../../../types';
+	import type { BsgItem, Item, NewItem } from '../../../types';
 	import { calculateBackgroundColor } from '../../../helper';
-	// import { invokeWithLoader } from '../../../helper';
+	import { invokeWithLoader } from '../../../helper';
 
 	export let onClose: () => void;
 	export let allItems: Record<string, BsgItem>;
+	export let grid: Array<Array<Item | undefined>>;
 
 	let showModal = true;
 	let parsedItems: Array<BsgItem>;
 	let selectedItem: BsgItem | undefined;
+	let notEnoughSpaceError = false;
 
 	let filter = '';
 
@@ -24,6 +24,7 @@
 				.map((i) => allItems[i])
 				.filter((i) => i.type === 'Item')
 				.filter((i) => !i.unlootable)
+				.filter((i) => !i.unbuyable)
 				.filter(
 					(i) =>
 						i.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -33,21 +34,63 @@
 	}
 
 	function handleConfirm() {
-		showModal = false;
+		if (!selectedItem) {
+			return;
+		}
 
-		// invokeWithLoader('change_amount', { item: { ...item, amount } }).catch((e) =>
-		// 	goto(`/error?message=${e}`),
-		// );
+		const location = findNewItemLocation(selectedItem);
+		if (!location) {
+			notEnoughSpaceError = true;
+			return;
+		}
+
+		showModal = false;
+		invokeWithLoader<NewItem>('add_item', {
+			item: {
+				id: selectedItem.id,
+				locationX: location?.x,
+				locationY: location?.y,
+			},
+		}).catch((e) => goto(`/error?message=${e}`));
 	}
 
 	function selectItem(item: BsgItem) {
 		console.log('selectItem', item);
 		selectedItem = item;
 	}
+
+	function findNewItemLocation(item: BsgItem) {
+		const { width, height } = item;
+
+		const sizeY = grid.length;
+		const sizeX = grid[0].length;
+
+		for (let row = 0; row <= sizeY - height; row++) {
+			for (let col = 0; col <= sizeX - width; col++) {
+				let hasSpace = true;
+				for (let i = 0; i < height && hasSpace; i++) {
+					for (let j = 0; j < width; j++) {
+						if (grid[row + i][col + j]) {
+							hasSpace = false;
+							break;
+						}
+					}
+				}
+
+				if (hasSpace) {
+					return { x: col, y: row };
+				}
+			}
+		}
+		return null;
+	}
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm}>
-	<h2 slot="header">Add item into stash</h2>
+	{#if notEnoughSpaceError}
+		<h3>You don't have enough space for this item</h3>
+	{/if}
+	<h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
 
 	<div>
 		<div>
@@ -80,6 +123,9 @@
 </Modal>
 
 <style>
+	h3 {
+		color: orangered;
+	}
 	input {
 		padding: 8px;
 		background-color: var(--color-background);
@@ -91,7 +137,7 @@
 		border: 2px solid var(--color-highlight);
 	}
 	ul {
-		height: 400px;
+		max-height: 300px;
 		overflow-y: auto;
 	}
 
