@@ -98,35 +98,39 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
     let binding = b_clone.as_ref();
     match binding {
         Some(profile_file_path) => {
-            create_backup(profile_file_path);
-            // save to state internal data
-            let locale = load_locale(profile_file_path);
-            let bsg_items = load_bsg_items(profile_file_path);
-            let globals = load_globals(profile_file_path);
-            let bsg_items_root: HashMap<String, Value> =
-                serde_json::from_str(bsg_items.as_str()).unwrap();
-            let locale_root: HashMap<String, Value> =
-                serde_json::from_str(locale.as_str()).unwrap();
-            let globals_root: HashMap<String, Value> =
-                serde_json::from_str(globals.as_str()).unwrap();
+            if verify_spt_folder(profile_file_path) {
+                create_backup(profile_file_path);
+                // save to state internal data
+                let locale = load_locale(profile_file_path);
+                let bsg_items = load_bsg_items(profile_file_path);
+                let globals = load_globals(profile_file_path);
+                let bsg_items_root: HashMap<String, Value> =
+                    serde_json::from_str(bsg_items.as_str()).unwrap();
+                let locale_root: HashMap<String, Value> =
+                    serde_json::from_str(locale.as_str()).unwrap();
+                let globals_root: HashMap<String, Value> =
+                    serde_json::from_str(globals.as_str()).unwrap();
 
-            internal_state.locale = Some(locale_root);
-            internal_state.bsg_items = Some(bsg_items_root);
-            internal_state.globals = Some(globals_root);
+                internal_state.locale = Some(locale_root);
+                internal_state.bsg_items = Some(bsg_items_root);
+                internal_state.globals = Some(globals_root);
 
-            let content = fs::read_to_string(profile_file_path).unwrap();
-            let tarkov_profile = load_profile(content.as_str());
-            match tarkov_profile {
-                Ok(p) => {
-                    let mut ui_profile = convert_profile_to_ui(
-                        p,
-                        internal_state.bsg_items.as_ref().unwrap(),
-                        internal_state.locale.as_ref().unwrap(),
-                    );
-                    ui_profile.spt_version = Some(get_server_version(profile_file_path));
-                    Ok(ui_profile)
+                let content = fs::read_to_string(profile_file_path).unwrap();
+                let tarkov_profile = load_profile(content.as_str());
+                match tarkov_profile {
+                    Ok(p) => {
+                        let mut ui_profile = convert_profile_to_ui(
+                            p,
+                            internal_state.bsg_items.as_ref().unwrap(),
+                            internal_state.locale.as_ref().unwrap(),
+                        );
+                        ui_profile.spt_version = Some(get_server_version(profile_file_path));
+                        Ok(ui_profile)
+                    }
+                    Err(e) => Err(e.to_string()),
                 }
-                Err(e) => Err(e.to_string()),
+            } else {
+                Err("I can't load your SPT files, your profile file must be located under SPT\\user\\profiles for me to work fine".to_string())
             }
         }
         None => Err("Could not file loaded into memory".to_string()),
@@ -296,4 +300,13 @@ fn load_locale(file: &String) -> String {
     );
     info!("Reading locale from {}", locale.display());
     fs::read_to_string(locale).unwrap()
+}
+
+fn verify_spt_folder(profile_file_path: &String) -> bool {
+    Path::new(profile_file_path)
+        .ancestors()
+        .nth(3)
+        .unwrap()
+        .join("Aki_Data")
+        .exists()
 }
