@@ -76,21 +76,35 @@ pub struct LocationInStash {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct UPD {
     #[serde(rename = "StackObjectsCount")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub stack_objects_count: Option<u32>,
     #[serde(rename = "SpawnedInSession")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spawned_in_session: Option<bool>,
     #[serde(rename = "FoodDrink")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub food_drink: Option<FoodDrink>,
     #[serde(rename = "MedKit")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub med_kit: Option<MedKit>,
     #[serde(rename = "Resource")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub resource: Option<Resource>,
     #[serde(rename = "Repairable")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub repairable: Option<Repairable>,
     #[serde(rename = "Key")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub key: Option<Key>,
     #[serde(rename = "Foldable")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub foldable: Option<Foldable>,
+    #[serde(rename = "Togglable")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub togglable: Option<Togglable>,
+    #[serde(rename = "FireMode")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fire_mode: Option<FireMode>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -121,6 +135,18 @@ pub struct Key {
 pub struct Foldable {
     #[serde(rename = "Folded")]
     pub folded: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Togglable {
+    #[serde(rename = "On")]
+    pub on: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct FireMode {
+    #[serde(rename = "FireMode")]
+    pub fire_mode: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

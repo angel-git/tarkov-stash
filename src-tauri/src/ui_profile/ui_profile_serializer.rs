@@ -75,6 +75,7 @@ pub struct BsgItem {
     #[serde(rename = "hideEntrails")]
     pub hide_entrails: Option<Value>,
     pub unlootable: Option<Value>,
+    pub unbuyable: Option<Value>,
     #[serde(rename = "type")]
     pub r#type: Option<Value>,
     #[serde(rename = "backgroundColor")]
@@ -135,6 +136,7 @@ pub fn convert_profile_to_ui(
                         width: props.get("Width").cloned(),
                         height: props.get("Height").cloned(),
                         unlootable: props.get("Unlootable").cloned(),
+                        unbuyable: props.get("IsUnbuyable").cloned(),
                         hide_entrails: props.get("HideEntrails").cloned(),
                         r#type: item.get("_type").cloned(),
                         background_color: props.get("BackgroundColor").cloned(),
@@ -445,6 +447,8 @@ mod tests {
                 repairable: None,
                 key: None,
                 foldable: Some(Foldable { folded: true }),
+                togglable: None,
+                fire_mode: None,
             }),
         };
 
