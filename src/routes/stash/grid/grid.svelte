@@ -106,7 +106,10 @@
 {#if isNewItemModalOpen}
 	<NewItemModal {grid} allItems={bsgItems} onClose={() => (isNewItemModalOpen = false)} />
 {/if}
-<div class="grid" style={`grid-template-columns: repeat(${sizeX}, 64px); width: ${sizeX * 64}px;`}>
+<div
+	class="grid"
+	style={`grid-template-columns: repeat(${sizeX}, 64px); width: ${sizeX * 64 + 20}px;`}
+>
 	{#each orderedItems as item}
 		<div class="grid-item">
 			{#if item}
@@ -189,6 +192,8 @@
 	.grid {
 		display: grid;
 		margin: 16px auto;
+		max-height: calc(100vh - 300px);
+		overflow-y: auto;
 	}
 
 	.grid-item {
