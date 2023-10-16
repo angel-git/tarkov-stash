@@ -20,22 +20,4 @@
 </div>
 
 <style>
-	button {
-		background-color: var(--color-background);
-		color: var(--color-text);
-		border: 1px solid;
-		border-radius: 2px;
-		cursor: pointer;
-		transition-duration: 0.2s;
-	}
-
-	button.primary {
-		color: var(--color-highlight);
-		border-color: var(--color-highlight);
-	}
-
-	button.primary:hover {
-		background-color: var(--color-highlight);
-		color: var(--color-background);
-	}
 </style>

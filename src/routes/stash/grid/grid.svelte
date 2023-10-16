@@ -102,7 +102,7 @@
 	}
 </script>
 
-<button on:click={openNewItemModal}>Add item</button>
+<button class="primary" on:click={openNewItemModal}>Add item</button>
 {#if isNewItemModalOpen}
 	<NewItemModal {grid} allItems={bsgItems} onClose={() => (isNewItemModalOpen = false)} />
 {/if}
@@ -188,7 +188,7 @@
 <style>
 	.grid {
 		display: grid;
-		margin: 0 auto;
+		margin: 16px auto;
 	}
 
 	.grid-item {
