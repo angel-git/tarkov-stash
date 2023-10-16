@@ -70,6 +70,16 @@ pub struct BsgItem {
     pub name: String,
     #[serde(rename = "shortName")]
     pub short_name: String,
+    pub width: Option<Value>,
+    pub height: Option<Value>,
+    #[serde(rename = "hideEntrails")]
+    pub hide_entrails: Option<Value>,
+    pub unlootable: Option<Value>,
+    pub unbuyable: Option<Value>,
+    #[serde(rename = "type")]
+    pub r#type: Option<Value>,
+    #[serde(rename = "backgroundColor")]
+    pub background_color: Option<Value>,
 }
 
 pub fn convert_profile_to_ui(
@@ -123,6 +133,13 @@ pub fn convert_profile_to_ui(
                         id: id.to_string(),
                         name: name.to_string(),
                         short_name: short_name.to_string(),
+                        width: props.get("Width").cloned(),
+                        height: props.get("Height").cloned(),
+                        unlootable: props.get("Unlootable").cloned(),
+                        unbuyable: props.get("IsUnbuyable").cloned(),
+                        hide_entrails: props.get("HideEntrails").cloned(),
+                        r#type: item.get("_type").cloned(),
+                        background_color: props.get("BackgroundColor").cloned(),
                     },
                 );
             }
@@ -430,6 +447,8 @@ mod tests {
                 repairable: None,
                 key: None,
                 foldable: Some(Foldable { folded: true }),
+                togglable: None,
+                fire_mode: None,
             }),
         };
 

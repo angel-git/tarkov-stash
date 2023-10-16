@@ -20,7 +20,7 @@
 		<slot />
 		<div class="controls">
 			<button class="secondary" on:click={() => (showModal = false)}>Cancel</button>
-			<button class="primary" on:click={onConfirm}>Update</button>
+			<button class="primary" on:click={onConfirm}>Confirm</button>
 		</div>
 	</div>
 </dialog>
@@ -29,7 +29,7 @@
 	dialog {
 		color: var(--color-text);
 		background-color: var(--color-background);
-		max-width: 32em;
+		width: 32em;
 		border-radius: 0.2em;
 		border: none;
 		padding: 0;
@@ -73,35 +73,5 @@
 		display: flex;
 		justify-content: space-between;
 		margin-top: 2em;
-	}
-
-	button {
-		display: block;
-		background-color: var(--color-background);
-		color: var(--color-text);
-		border: 1px solid;
-		border-radius: 2px;
-		cursor: pointer;
-		transition-duration: 0.2s;
-	}
-
-	button.primary {
-		color: var(--color-highlight);
-		border-color: var(--color-highlight);
-	}
-
-	button.primary:hover {
-		background-color: var(--color-highlight);
-		color: var(--color-background);
-	}
-
-	button.secondary {
-		color: var(--color-text);
-		border-color: var(--color-text);
-	}
-
-	button.secondary:hover {
-		background-color: var(--color-text);
-		color: var(--color-background);
 	}
 </style>

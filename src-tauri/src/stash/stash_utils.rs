@@ -1,6 +1,18 @@
 use crate::ui_profile::ui_profile_serializer::Item;
+use crate::utils::hash_utils::generate;
+use crate::utils::item_utils::get_upd_props_from_item;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Error, Value};
 use std::collections::HashMap;
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct NewItem {
+    pub id: String,
+    #[serde(rename = "locationX")]
+    pub location_x: u16,
+    #[serde(rename = "locationY")]
+    pub location_y: u16,
+}
 
 pub fn update_item_amount(
     file_content: &str,
@@ -138,6 +150,55 @@ pub fn update_durability(
                     }
                 }
             }
+        }
+    }
+
+    serde_json::to_string(&root)
+}
+
+pub fn add_new_item(
+    profile_content: &str,
+    template_id: &str,
+    location_x: u16,
+    location_y: u16,
+    bsg_items: &HashMap<String, Value>,
+) -> Result<String, Error> {
+    let mut root: Value = serde_json::from_str(profile_content).unwrap();
+
+    let stash = root
+        .pointer("/characters/pmc/Inventory/stash")
+        .expect("Stash missing");
+    let items_option = root
+        .pointer("/characters/pmc/Inventory/items")
+        .expect("Items missing");
+
+    if let Some(items) = items_option.as_array() {
+        // Clone the items array to make it mutable
+        let mut cloned_items = items.clone();
+
+        let item_id = generate();
+        // TODO check if id already exists
+
+        let bsg_item = bsg_items.get(template_id).expect("No item!");
+        let upd = get_upd_props_from_item(bsg_item);
+        let new_item_json = json!(
+            {
+                "_id": item_id,
+                "_tpl": template_id,
+                "location": {
+                    "isSearched": true,
+                    "r": "Horizontal",
+                    "x": location_x,
+                    "y": location_y,
+                },
+                "upd": upd,
+                "parentId": stash,
+                "slotId": "hideout"
+            }
+        );
+        cloned_items.push(new_item_json);
+        if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
+            *root_items = Value::Array(cloned_items);
         }
     }
 

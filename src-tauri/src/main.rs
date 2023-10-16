@@ -14,12 +14,15 @@ use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 use tauri_plugin_log::LogTarget;
 
 use crate::spt::spt_profile_serializer::load_profile;
-use crate::stash::stash_utils::{update_durability, update_item_amount, update_spawned_in_session};
+use crate::stash::stash_utils::{
+    add_new_item, update_durability, update_item_amount, update_spawned_in_session, NewItem,
+};
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
 pub mod spt;
 pub mod stash;
 pub mod ui_profile;
+pub mod utils;
 
 struct TarkovStashState {
     pub state: Mutex<MutexState>,
@@ -28,6 +31,7 @@ struct TarkovStashState {
 struct MutexState {
     pub profile_file_path: Option<String>,
     pub bsg_items: Option<HashMap<String, Value>>,
+    pub globals: Option<HashMap<String, Value>>,
     pub locale: Option<HashMap<String, Value>>,
 }
 
@@ -51,9 +55,10 @@ fn main() {
         .menu(menu)
         .manage(TarkovStashState {
             state: Mutex::new(MutexState {
-                profile_file_path: None,
                 bsg_items: None,
+                globals: None,
                 locale: None,
+                profile_file_path: None,
             })
 
         })
@@ -80,7 +85,7 @@ fn main() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability])
+        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -97,13 +102,17 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
             // save to state internal data
             let locale = load_locale(profile_file_path);
             let bsg_items = load_bsg_items(profile_file_path);
+            let globals = load_globals(profile_file_path);
             let bsg_items_root: HashMap<String, Value> =
                 serde_json::from_str(bsg_items.as_str()).unwrap();
             let locale_root: HashMap<String, Value> =
                 serde_json::from_str(locale.as_str()).unwrap();
+            let globals_root: HashMap<String, Value> =
+                serde_json::from_str(globals.as_str()).unwrap();
 
             internal_state.locale = Some(locale_root);
             internal_state.bsg_items = Some(bsg_items_root);
+            internal_state.globals = Some(globals_root);
 
             let content = fs::read_to_string(profile_file_path).unwrap();
             let tarkov_profile = load_profile(content.as_str());
@@ -140,6 +149,39 @@ fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
 fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Restoring durability to item {}", item.id.as_str());
     with_state_do(item, app, update_durability)
+}
+
+#[tauri::command]
+fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+    info!(
+        "Adding item {} on [{},{}]",
+        item.id.as_str(),
+        item.location_x,
+        item.location_y
+    );
+    let state: State<TarkovStashState> = app.state();
+    let internal_state = state.state.lock().unwrap();
+    let profile_file_path_option = &internal_state.profile_file_path;
+    let profile_file_path = profile_file_path_option.as_ref().unwrap();
+    let profile_content = fs::read_to_string(profile_file_path).unwrap();
+    let bsg_items_option = &internal_state.bsg_items;
+    let bsg_items = bsg_items_option.as_ref().unwrap();
+    let response = add_new_item(
+        profile_content.as_str(),
+        item.id.as_str(),
+        item.location_x,
+        item.location_y,
+        bsg_items,
+    );
+    match response {
+        Ok(new_content) => {
+            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            app.emit_all("profile_loaded", "")
+                .expect("Can't emit event to window!");
+            Ok("done".to_string())
+        }
+        Err(e) => Err(e.to_string()),
+    }
 }
 
 type UpdateFunction = fn(
@@ -219,6 +261,22 @@ fn load_bsg_items(file: &String) -> String {
         "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
     );
     info!("Reading bsg_items from {}", items.display());
+    fs::read_to_string(items).unwrap()
+}
+
+fn load_globals(file: &String) -> String {
+    let items = Path::new(file)
+        .ancestors()
+        .nth(3)
+        .unwrap()
+        .join("Aki_Data")
+        .join("Server")
+        .join("database")
+        .join("globals.json");
+    items
+        .try_exists()
+        .expect("Can't find `globals.json` in your `SPT\\Aki_Data\\Server\\database` folder");
+    info!("Reading globals from {}", items.display());
     fs::read_to_string(items).unwrap()
 }
 
