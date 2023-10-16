@@ -11,6 +11,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Increase stock of items (currency, ammo)
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
+- Add items into your stash (beta)
 
 ### Limitations
 
@@ -20,9 +21,15 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Future features
 
-- Duplicate items (v1)
+- Nothing is planned for now, submit an issue with your ideas!
 
 ### Screenshots
+
+#### 0.2.x
+
+![add-item-0.2.0.mp4](add-item-0.2.0.mp4)
+
+#### 0.1.x
 
 ![screen-0.1.4.png](screen-0.1.4.png)
 
