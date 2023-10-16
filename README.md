@@ -27,7 +27,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 #### 0.2.x
 
-![add-item-0.2.0.mp4](add-item-0.2.0.mp4)
+![add-item-0.2.0.mp4](https://github.com/angel-git/tarkov-stash/assets/1565058/ab814b9e-d31d-4bd6-aee6-0ad9bc352647)
 
 #### 0.1.x
 
