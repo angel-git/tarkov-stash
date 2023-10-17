@@ -175,6 +175,9 @@ fn parse_items(
         if item_slot.is_none() || item_slot.unwrap() != parent_item_slot {
             continue;
         };
+        if location.is_none() {
+            continue;
+        }
         let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
             xy
         } else {
