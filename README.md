@@ -15,9 +15,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Limitations
 
+- Right now custom items like https://hub.sp-tarkov.com/files/file/488-holtzman-shield/ won't work
+- Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
 - Rotated items don't look nice
 - Some items show wrong duration (like USEC baseball cap)
+- Check the https://github.com/angel-git/tarkov-stash/issues for more
 
 ### Future features
 
