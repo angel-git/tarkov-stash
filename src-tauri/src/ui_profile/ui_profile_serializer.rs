@@ -176,7 +176,10 @@ fn parse_items(
             continue;
         };
         if location.is_none() {
-            continue;
+            return Err(format!(
+                "Item with id [{}] has no location, can't parse this profile :(",
+                item._id
+            ));
         }
         let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
             xy
