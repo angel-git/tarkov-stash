@@ -119,13 +119,19 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
                 let tarkov_profile = load_profile(content.as_str());
                 match tarkov_profile {
                     Ok(p) => {
-                        let mut ui_profile = convert_profile_to_ui(
+                        let ui_profile_result = convert_profile_to_ui(
                             p,
                             internal_state.bsg_items.as_ref().unwrap(),
                             internal_state.locale.as_ref().unwrap(),
                         );
-                        ui_profile.spt_version = Some(get_server_version(profile_file_path));
-                        Ok(ui_profile)
+                        match ui_profile_result {
+                            Ok(mut ui_profile) => {
+                                ui_profile.spt_version =
+                                    Some(get_server_version(profile_file_path));
+                                Ok(ui_profile)
+                            }
+                            Err(e) => Err(e),
+                        }
                     }
                     Err(e) => Err(e.to_string()),
                 }

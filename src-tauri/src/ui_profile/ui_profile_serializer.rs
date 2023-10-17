@@ -86,7 +86,7 @@ pub fn convert_profile_to_ui(
     tarkov_profile: TarkovProfile,
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
-) -> UIProfile {
+) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
         .characters
@@ -110,7 +110,7 @@ pub fn convert_profile_to_ui(
         bsg_items_root,
         stash.as_str(),
         "hideout",
-    );
+    )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
     bsg_items_root.keys().for_each(|k| {
@@ -146,14 +146,14 @@ pub fn convert_profile_to_ui(
         }
     });
 
-    UIProfile {
+    Ok(UIProfile {
         name: tarkov_profile.characters.pmc.info.nickname,
         size_x: 10,
         size_y: stash_size_y,
         items,
         bsg_items,
         spt_version: None,
-    }
+    })
 }
 
 fn parse_items(
@@ -161,7 +161,7 @@ fn parse_items(
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
-) -> Vec<Item> {
+) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
     for item in profile_items.iter() {
@@ -181,7 +181,14 @@ fn parse_items(
             panic!("oh no, wrong item: {}", item._id);
         };
 
-        let bsg_item = get_bsg_item(item, bsg_items_root);
+        let bsg_item_option = get_bsg_item(item, bsg_items_root);
+        if bsg_item_option.is_none() {
+            return Err(format!(
+                "Item with id [{}] and template [{}] can't be read",
+                item._id, item._tpl
+            ));
+        }
+        let bsg_item = bsg_item_option.unwrap();
 
         // if it's a container
         let mut grid_items: Option<Vec<GridItem>> = None;
@@ -190,7 +197,7 @@ fn parse_items(
         if is_container {
             grid_items = Some(Vec::new());
 
-            bsg_item._props.grids.unwrap().iter().for_each(|grid| {
+            for grid in &bsg_item._props.grids.unwrap() {
                 let grid_name = &grid._name;
                 let all_children =
                     find_all_ids_and_tpl_from_parent(item._id.as_str(), &profile_items, grid_name);
@@ -201,20 +208,22 @@ fn parse_items(
                     .map(|item| item.unwrap().clone())
                     .collect();
 
+                let items_inside_container = parse_items(
+                    all_children_items,
+                    bsg_items_root,
+                    item._id.as_str(),
+                    grid_name,
+                )?;
+
                 let grid_item = GridItem {
                     _name: grid_name.clone(),
                     cells_v: grid._props.cells_v,
                     cells_h: grid._props.cells_h,
-                    items: parse_items(
-                        all_children_items,
-                        bsg_items_root,
-                        item._id.as_str(),
-                        grid_name,
-                    ),
+                    items: items_inside_container,
                 };
 
                 grid_items.as_mut().unwrap().insert(0, grid_item);
-            })
+            }
         }
 
         let mut amount = 1;
@@ -283,7 +292,7 @@ fn parse_items(
         };
         items.push(i)
     }
-    items
+    Ok(items)
 }
 
 fn calculate_item_size(
@@ -381,17 +390,42 @@ fn find_all_ids_and_tpl_from_parent(
 fn get_bsg_item(
     item: &spt::spt_profile_serializer::Item,
     bsg_items_root: &HashMap<String, Value>,
-) -> spt::spt_bsg_items_serializer::Item {
-    let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
-    load_item(parent_item.to_string().as_str()).unwrap()
+) -> Option<spt::spt_bsg_items_serializer::Item> {
+    let parent_item = bsg_items_root.get(item._tpl.as_str())?;
+    load_item(parent_item.to_string().as_str()).ok()
 }
 
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
-    use crate::ui_profile::ui_profile_serializer::{calculate_item_size, parse_items};
+    use crate::ui_profile::ui_profile_serializer::{
+        calculate_item_size, get_bsg_item, parse_items,
+    };
     use serde_json::Value;
     use std::collections::HashMap;
+
+    #[test]
+    fn should_not_crash_if_template_is_not_found() {
+        let item = Item {
+            _id: "6c116ae6e3e795d2e508a5f0".to_string(),
+            _tpl: "FAKE".to_string(),
+            parent_id: None,
+            location: None,
+            slot_id: None,
+            upd: None,
+        };
+
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let bsg_item = get_bsg_item(&item, &bsg_items_root);
+        assert!(bsg_item.is_none())
+    }
 
     #[test]
     fn should_calculate_size_with_attachments() {
@@ -501,7 +535,9 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
-        );
+        )
+        .ok()
+        .unwrap();
 
         let backpack = items
             .iter()
