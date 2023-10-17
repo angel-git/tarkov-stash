@@ -103,7 +103,9 @@
 	}
 </script>
 
-<button class="primary" on:click={openNewItemModal}>Add item</button>
+{#if nestedLevel === 1}
+	<button class="primary" on:click={openNewItemModal}>Add item</button>
+{/if}
 {#if isNewItemModalOpen}
 	<NewItemModal {grid} allItems={bsgItems} onClose={() => (isNewItemModalOpen = false)} />
 {/if}
