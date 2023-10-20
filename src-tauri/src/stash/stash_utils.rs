@@ -205,6 +205,34 @@ pub fn add_new_item(
     serde_json::to_string(&root)
 }
 
+pub fn delete_item(
+    file_content: &str,
+    item: &Item,
+    _bsg_items: &HashMap<String, Value>,
+) -> Result<String, Error> {
+    let item_id = item.id.as_str();
+    let mut root: Value = serde_json::from_str(file_content).unwrap();
+
+    if let Some(inventory_items) = get_inventory_items(&mut root) {
+        inventory_items.retain(|i| {
+            let id = i.get("_id").and_then(|v| v.as_str());
+            let parent_id = i.get("parentId").and_then(|v| v.as_str());
+            // Keep items where the id is not equal to item_id and parent_id is not equal to item_id
+            id != Some(item_id) && parent_id != Some(item_id)
+        });
+    }
+
+    if let Some(insured_items) = get_insured_items(&mut root) {
+        insured_items.retain(|i| {
+            let id = i.get("itemId").and_then(|v| v.as_str());
+            // Keep items where the id is not equal to item_id
+            id != Some(item_id)
+        });
+    }
+
+    serde_json::to_string(&root)
+}
+
 fn get_inventory_items(root: &mut Value) -> Option<&mut Vec<Value>> {
     root.get_mut("characters")
         .and_then(|v| v.get_mut("pmc"))
@@ -213,10 +241,18 @@ fn get_inventory_items(root: &mut Value) -> Option<&mut Vec<Value>> {
         .and_then(|v| v.as_array_mut())
 }
 
+fn get_insured_items(root: &mut Value) -> Option<&mut Vec<Value>> {
+    root.get_mut("characters")
+        .and_then(|v| v.get_mut("pmc"))
+        .and_then(|v| v.get_mut("Inventory"))
+        .and_then(|v| v.get_mut("InsuredItems"))
+        .and_then(|v| v.as_array_mut())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::stash::stash_utils::{
-        update_durability, update_item_amount, update_spawned_in_session,
+        delete_item, update_durability, update_item_amount, update_spawned_in_session,
     };
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
@@ -823,5 +859,81 @@ mod tests {
             .and_then(|v| v.get("NumberOfUsages").unwrap().as_u64());
 
         assert_eq!(usages.unwrap(), 0);
+    }
+
+    #[test]
+    fn should_delete_item() {
+        let json = r#"
+            {
+  "characters": {
+    "pmc": {
+      "Inventory": {
+        "InsuredItems": [
+            {
+			    "tid": "54cb50c76803fa8b248b4571",
+				"itemId": "e87f54571e3fd5233c878f75"
+            }
+        ],
+        "items": [
+        {
+            "_id": "random item",
+            "_tpl": "",
+            "parentId": "",
+            "slotId": ""
+          },
+          {
+            "_id": "e87f54571e3fd5233c878f75",
+            "_tpl": "5ba26586d4351e44f824b340",
+            "parentId": "1a0a1821a961b3f54ba4edaf",
+            "slotId": "mod_magazine"
+          },
+          {
+			"_id": "b3d6147f5f858786cd1f3e89",
+			"_tpl": "5ba26844d4351e00334c9475",
+			"parentId": "e87f54571e3fd5233c878f75",
+			"slotId": "cartridges",
+			"location": 0,
+			"upd": {
+				"StackObjectsCount": 27
+				}
+			}
+        ]
+      }
+    }
+  }
+}"#;
+
+        let item = Item {
+            id: "e87f54571e3fd5233c878f75".to_string(),
+            tpl: "".to_string(),
+            x: 0,
+            y: 0,
+            size_x: 0,
+            size_y: 0,
+            amount: 0,
+            stack_max_size: 0,
+            is_stockable: false,
+            is_fir: false,
+            r: "".to_string(),
+            resource: None,
+            max_resource: None,
+            background_color: "".to_string(),
+            is_container: false,
+            grid_items: None,
+        };
+
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let updated = delete_item(json, &item, &bsg_items_root).unwrap();
+
+        assert_eq!(
+            updated,
+            r#"{"characters":{"pmc":{"Inventory":{"InsuredItems":[],"items":[{"_id":"random item","_tpl":"","parentId":"","slotId":""}]}}}}"#
+        );
     }
 }

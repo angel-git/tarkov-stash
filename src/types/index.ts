@@ -48,7 +48,7 @@ export interface BsgItem {
 	backgroundColor: string;
 }
 
-export type Option = 'amount' | 'fir' | 'resource' | 'open';
+export type Option = 'amount' | 'fir' | 'resource' | 'open' | 'delete';
 
 export interface NewItem {
 	id: string;

@@ -15,7 +15,8 @@ use tauri_plugin_log::LogTarget;
 
 use crate::spt::spt_profile_serializer::load_profile;
 use crate::stash::stash_utils::{
-    add_new_item, update_durability, update_item_amount, update_spawned_in_session, NewItem,
+    add_new_item, delete_item, update_durability, update_item_amount, update_spawned_in_session,
+    NewItem,
 };
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
@@ -85,7 +86,7 @@ fn main() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item])
+        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item, remove_item])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -159,6 +160,12 @@ fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
 fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Restoring durability to item {}", item.id.as_str());
     with_state_do(item, app, update_durability)
+}
+
+#[tauri::command]
+fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    info!("Deleting item {}", item.id.as_str());
+    with_state_do(item, app, delete_item)
 }
 
 #[tauri::command]
