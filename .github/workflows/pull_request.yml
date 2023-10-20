@@ -30,6 +30,10 @@ jobs:
         run: |
           cd src-tauri
           cargo fmt --check
+      - name: check cargo clippy
+        run: |
+          cd src-tauri
+          cargo clippy -- -D warnings
       - name: rust tests
         run: |
           cd src-tauri
