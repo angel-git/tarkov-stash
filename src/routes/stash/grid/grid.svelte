@@ -167,6 +167,17 @@
 							Restore durability
 						</div>
 					{/if}
+					{#if !item.isContainer}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<div
+							class="option destructive"
+							tabindex="-1"
+							role="button"
+							on:click={() => handleOptionClicked('delete', item)}
+						>
+							Delete item
+						</div>
+					{/if}
 				</div>
 			{/if}
 			{#if item?.id === containerOpenId}
@@ -238,6 +249,15 @@
 
 	.options .option {
 		padding: 8px 4px;
+	}
+
+	.options .option.destructive {
+		color: var(--color-destructive);
+	}
+
+	.options .option.destructive:hover {
+		color: var(--color-background);
+		background-color: var(--color-destructive);
 	}
 
 	.options .title {
