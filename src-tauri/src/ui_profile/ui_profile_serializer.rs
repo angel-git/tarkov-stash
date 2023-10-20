@@ -205,17 +205,9 @@ fn parse_items(
 
             for grid in &bsg_item._props.grids.unwrap() {
                 let grid_name = &grid._name;
-                let all_children =
-                    find_all_ids_and_tpl_from_parent(item._id.as_str(), &profile_items, grid_name);
-                let all_children_items: Vec<spt::spt_profile_serializer::Item> = all_children
-                    .iter()
-                    .map(|(id, _tpl)| profile_items.iter().find(|item| item._id == *id))
-                    .filter(|item| item.is_some())
-                    .map(|item| item.unwrap().clone())
-                    .collect();
 
                 let items_inside_container = parse_items(
-                    all_children_items,
+                    profile_items.clone(),
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
