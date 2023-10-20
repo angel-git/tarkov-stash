@@ -1,5 +1,6 @@
 use chrono::Utc;
 use ring::digest;
+use std::fmt::Write;
 
 fn get_timestamp() -> i64 {
     Utc::now().timestamp()
@@ -10,11 +11,10 @@ pub fn generate() -> String {
 
     let digest = digest::digest(&digest::SHA256, time.to_string().as_bytes());
 
-    let result: String = digest
-        .as_ref()
-        .iter()
-        .map(|byte| format!("{:02x}", byte))
-        .collect();
+    let result: String = digest.as_ref().iter().fold(String::new(), |mut output, b| {
+        let _ = write!(output, "{b:02x}");
+        output
+    });
 
     result.chars().take(24).collect()
 }
