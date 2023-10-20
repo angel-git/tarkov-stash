@@ -160,8 +160,8 @@ mod tests {
         assert_eq!(upd.spawned_in_session, Some(false));
         assert_eq!(upd.repairable.as_ref().unwrap().durability, 100);
         assert_eq!(upd.repairable.as_ref().unwrap().max_durability, 100);
-        assert_eq!(upd.foldable.as_ref().unwrap().folded, false);
-        assert_eq!(upd.togglable.as_ref().unwrap().on, true);
+        assert!(!upd.foldable.as_ref().unwrap().folded);
+        assert!(upd.togglable.as_ref().unwrap().on);
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
         assert_eq!(upd.med_kit.unwrap().hp_resource, 50);
         assert_eq!(upd.food_drink.unwrap().hp_percent, 100);
