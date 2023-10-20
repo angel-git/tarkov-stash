@@ -23,7 +23,6 @@
 			parsedItems = Object.keys(allItems)
 				.map((i) => allItems[i])
 				.filter((i) => i.type === 'Item')
-				.filter((i) => !i.unlootable)
 				.filter((i) => !i.unbuyable)
 				.filter(
 					(i) =>
