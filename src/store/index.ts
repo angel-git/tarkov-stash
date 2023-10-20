@@ -2,8 +2,8 @@ import { writable } from 'svelte/store';
 import type { Profile, BsgItem } from '../types';
 
 interface AddNewItem {
-	input: string;
-	item?: BsgItem;
+  input: string;
+  item?: BsgItem;
 }
 
 export const profile = writable<Profile | undefined>();
