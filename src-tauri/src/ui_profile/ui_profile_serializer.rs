@@ -551,7 +551,7 @@ mod tests {
         )
         .unwrap();
 
-        // mp5 with large magazine and silencer
+        // thicc weapon case with weapons inside
         let (size_x, size_y) = calculate_item_size(
             &item,
             &tarkov_profile.characters.pmc.inventory.items,
