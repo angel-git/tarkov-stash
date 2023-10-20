@@ -25,7 +25,6 @@ mod tests {
 
     #[test]
     fn should_create_a_new_hash() {
-        println!("{}", generate().as_str());
         assert_eq!(generate().len(), 24);
     }
 }
