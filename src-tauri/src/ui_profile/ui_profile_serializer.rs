@@ -328,8 +328,6 @@ fn calculate_item_size(
     let mut forced_left = 0;
     let mut forced_right = 0;
 
-    let a = "";
-
     let foldable = parsed_parent_item._props.foldable;
     let folded_slot = parsed_parent_item._props.folded_slot;
     if foldable.is_some()
