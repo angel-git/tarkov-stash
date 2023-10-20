@@ -273,7 +273,8 @@ fn parse_items(
             }
         }
 
-        let (size_x, size_y) = calculate_item_size(item, &profile_items, bsg_items_root);
+        let (size_x, size_y) =
+            calculate_item_size(item, &profile_items, bsg_items_root, is_container);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
@@ -305,8 +306,13 @@ fn calculate_item_size(
     item: &spt::spt_profile_serializer::Item,
     items: &[spt::spt_profile_serializer::Item],
     bsg_items_root: &HashMap<String, Value>,
+    is_container: bool,
 ) -> (u16, u16) {
-    let all_children = find_all_ids_and_tpl_from_parent(item._id.as_str(), items, "mod_");
+    let all_children: Vec<(String, String)> = if !is_container {
+        find_all_ids_and_tpl_from_parent(item._id.as_str(), items, "mod_")
+    } else {
+        Vec::new()
+    };
     // copied from InventoryHelper.getSizeByInventoryItemHash
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
     let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
@@ -465,6 +471,7 @@ mod tests {
             &item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
+            false,
         );
         assert_eq!(size_x, 3);
         assert_eq!(size_y, 2);
@@ -513,8 +520,45 @@ mod tests {
             &item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
+            false,
         );
         assert_eq!(size_x, 2);
+        assert_eq!(size_y, 2);
+    }
+
+    #[test]
+    fn should_calculate_size_for_containers_with_attachments_inside() {
+        let item = Item {
+            _id: "fa17c8765e58fb25a97d7bba".to_string(),
+            _tpl: "5b6d9ce188a4501afc1b2b25".to_string(),
+            parent_id: None,
+            location: None,
+            slot_id: None,
+            upd: None,
+        };
+
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/thicc.json"))
+                .as_ref(),
+        )
+        .unwrap();
+
+        // mp5 with large magazine and silencer
+        let (size_x, size_y) = calculate_item_size(
+            &item,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            true,
+        );
+        assert_eq!(size_x, 5);
         assert_eq!(size_y, 2);
     }
 
