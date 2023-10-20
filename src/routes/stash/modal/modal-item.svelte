@@ -4,6 +4,7 @@
 	import type { BsgItem, Item, NewItem } from '../../../types';
 	import { calculateBackgroundColor } from '../../../helper';
 	import { invokeWithLoader } from '../../../helper';
+	import { addNewItem } from '../../../store';
 
 	export let onClose: () => void;
 	export let allItems: Record<string, BsgItem>;
@@ -11,10 +12,7 @@
 
 	let showModal = true;
 	let parsedItems: Array<BsgItem>;
-	let selectedItem: BsgItem | undefined;
 	let notEnoughSpaceError = false;
-
-	let filter = '';
 
 	$: if (!showModal) onClose();
 
@@ -26,18 +24,19 @@
 				.filter((i) => !i.unbuyable)
 				.filter(
 					(i) =>
-						i.name.toLowerCase().includes(filter.toLowerCase()) ||
-						i.shortName.toLowerCase().includes(filter.toLowerCase()),
+						i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
+						i.shortName.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
+						$addNewItem.item?.id === i.id,
 				);
 		}
 	}
 
 	function handleConfirm() {
-		if (!selectedItem) {
+		if (!$addNewItem.item) {
 			return;
 		}
 
-		const location = findNewItemLocation(selectedItem);
+		const location = findNewItemLocation($addNewItem.item);
 		if (!location) {
 			notEnoughSpaceError = true;
 			return;
@@ -46,7 +45,7 @@
 		showModal = false;
 		invokeWithLoader<NewItem>('add_item', {
 			item: {
-				id: selectedItem.id,
+				id: $addNewItem.item.id,
 				locationX: location?.x,
 				locationY: location?.y,
 			},
@@ -54,8 +53,11 @@
 	}
 
 	function selectItem(item: BsgItem) {
-		console.log('selectItem', item);
-		selectedItem = item;
+		if (item.id === $addNewItem.item?.id) {
+			addNewItem.set({ item: undefined, input: $addNewItem.input });
+		} else {
+			addNewItem.set({ item, input: $addNewItem.input });
+		}
 	}
 
 	function findNewItemLocation(item: BsgItem) {
@@ -93,13 +95,14 @@
 
 	<div>
 		<div>
-			<input placeholder="Filter..." bind:value={filter} />
+			<!-- svelte-ignore a11y-autofocus -->
+			<input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
 			<div>
 				<ul>
 					{#each parsedItems as item}
 						<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 						<li
-							class={item.id === selectedItem?.id ? 'selected' : ''}
+							class={item.id === $addNewItem.item?.id ? 'selected' : ''}
 							on:click={() => selectItem(item)}
 						>
 							{item.name}
@@ -108,14 +111,14 @@
 				</ul>
 			</div>
 		</div>
-		{#if selectedItem}
+		{#if $addNewItem.item}
 			<div
 				class="selected-item"
-				style={`background-color: ${calculateBackgroundColor(selectedItem.backgroundColor)}`}
+				style={`background-color: ${calculateBackgroundColor($addNewItem.item.backgroundColor)}`}
 			>
-				<div>{selectedItem.shortName}</div>
-				<div>{selectedItem.width}X{selectedItem.height}</div>
-				<img alt="item" src={`https://assets.tarkov.dev/${selectedItem.id}-base-image.png`} />
+				<div>{$addNewItem.item.shortName}</div>
+				<div>{$addNewItem.item.width}X{$addNewItem.item.height}</div>
+				<img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
 			</div>
 		{/if}
 	</div>
@@ -138,6 +141,7 @@
 	ul {
 		max-height: 300px;
 		overflow-y: auto;
+		padding: 0;
 	}
 
 	li {
