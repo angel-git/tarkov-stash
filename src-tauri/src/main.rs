@@ -52,7 +52,7 @@ fn main() {
     let locale_po = CustomMenuItem::new("locale_po".to_string(), "Portugal");
     let locale_sk = CustomMenuItem::new("locale_sk".to_string(), "Slovak");
     let locale_es = CustomMenuItem::new("locale_es".to_string(), "Spanish");
-    let locale_es_mx = CustomMenuItem::new("locale_es_mx".to_string(), "Spanish Mexico");
+    let locale_es_mx = CustomMenuItem::new("locale_es-mx".to_string(), "Spanish Mexico");
     let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
     let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
     let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
@@ -120,7 +120,7 @@ fn main() {
                             }
                     });
             }
-            "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it" | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es" | "locale_es_mx" | "locale_tu" | "locale_ru" => {
+            "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it" | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es" | "locale_es-mx" | "locale_tu" | "locale_ru" => {
                 let window = event.window();
                 let menu_handle = window.menu_handle();
                 let state: State<TarkovStashState>  = window.state();
@@ -146,7 +146,7 @@ fn main() {
                     menu_handle.get_item("locale_po").set_selected(false).expect("Can't find menu item for locale_po");
                     menu_handle.get_item("locale_sk").set_selected(false).expect("Can't find menu item for locale_sk");
                     menu_handle.get_item("locale_es").set_selected(false).expect("Can't find menu item for locale_es");
-                    menu_handle.get_item("locale_es_mx").set_selected(false).expect("Can't find menu item for locale_es_mx");
+                    menu_handle.get_item("locale_es-mx").set_selected(false).expect("Can't find menu item for locale_es-mx");
                     menu_handle.get_item("locale_tu").set_selected(false).expect("Can't find menu item for locale_tu");
                     menu_handle.get_item("locale_ru").set_selected(false).expect("Can't find menu item for locale_ru");
                     menu_handle.get_item(&menu_item_id).set_selected(true).expect("Can't find selected menu item");
