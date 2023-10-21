@@ -12,6 +12,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
 - Add items into your stash (beta)
+- Delete items
 
 ### Limitations
 
@@ -29,7 +30,19 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Screenshots
 
+#### 0.3.x
+
+Keyboard navigation:
+
+![0.3.1-keyboard.gif](0.3.1-keyboard.gif)
+
+Delete item:
+
+![0.3.0-delete.gif](0.3.0-delete.gif)
+
 #### 0.2.x
+
+Add item:
 
 ![add-item-0.2.0.mp4](https://github.com/angel-git/tarkov-stash/assets/1565058/ab814b9e-d31d-4bd6-aee6-0ad9bc352647)
 
