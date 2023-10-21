@@ -95,7 +95,7 @@ fn main() {
                 globals: None,
                 locale: None,
                 profile_file_path: None,
-                locale_lang: "locale_en".to_string(),
+                locale_lang: "en".to_string(),
             })
 
         })
@@ -125,7 +125,7 @@ fn main() {
                 let menu_handle = window.menu_handle();
                 let state: State<TarkovStashState>  = window.state();
                 let mut internal_state = state.state.lock().unwrap();
-                internal_state.locale_lang = event.menu_item_id().to_string();
+                internal_state.locale_lang = event.menu_item_id().replace("locale_", "").to_string();
                 let menu_item_id = event.menu_item_id().to_string();
 
                 if internal_state.profile_file_path.is_some() {
@@ -171,12 +171,15 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
                 create_backup(profile_file_path);
                 // save to state internal data
                 let locale = load_locale(profile_file_path, internal_state.locale_lang.clone());
+                if locale.is_err() {
+                    return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", internal_state.locale_lang.clone()));
+                }
                 let bsg_items = load_bsg_items(profile_file_path);
                 let globals = load_globals(profile_file_path);
                 let bsg_items_root: HashMap<String, Value> =
                     serde_json::from_str(bsg_items.as_str()).unwrap();
                 let locale_root: HashMap<String, Value> =
-                    serde_json::from_str(locale.as_str()).unwrap();
+                    serde_json::from_str(locale.unwrap().as_str()).unwrap();
                 let globals_root: HashMap<String, Value> =
                     serde_json::from_str(globals.as_str()).unwrap();
 
@@ -365,8 +368,8 @@ fn load_globals(file: &String) -> String {
     fs::read_to_string(items).unwrap()
 }
 
-fn load_locale(file: &String, locale_menu_item: String) -> String {
-    let locale_id = format!("{}.json", locale_menu_item.replace("locale_", ""));
+fn load_locale(file: &String, locale_menu_item: String) -> std::io::Result<String> {
+    let locale_id = format!("{}.json", locale_menu_item);
     let locale = Path::new(file)
         .ancestors()
         .nth(3)
@@ -377,15 +380,7 @@ fn load_locale(file: &String, locale_menu_item: String) -> String {
         .join("locales")
         .join("global")
         .join(locale_id.clone());
-    locale.try_exists().expect(
-        format!(
-            "Can't find {} in your `SPT\\Aki_Data\\Server\\database\\locales\\global` folder",
-            locale_id
-        )
-        .as_str(),
-    );
-    info!("Reading locale from {}", locale.display());
-    fs::read_to_string(locale).unwrap()
+    fs::read_to_string(locale)
 }
 
 fn verify_spt_folder(profile_file_path: &String) -> bool {
