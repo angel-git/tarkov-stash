@@ -100,12 +100,8 @@
       <div>
         <ul>
           {#each parsedItems as item}
-            <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-            <li
-              class={item.id === $addNewItem.item?.id ? 'selected' : ''}
-              on:click={() => selectItem(item)}
-            >
-              {item.name}
+            <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
+              <button on:click={() => selectItem(item)}>{item.name}</button>
             </li>
           {/each}
         </ul>
@@ -128,6 +124,7 @@
   h3 {
     color: orangered;
   }
+
   input {
     padding: 8px;
     background-color: var(--color-background);
@@ -138,6 +135,7 @@
     outline: none;
     border: 2px solid var(--color-highlight);
   }
+
   ul {
     max-height: 300px;
     overflow-y: auto;
@@ -150,11 +148,15 @@
     margin: 8px 0;
   }
 
-  li.selected {
+  li.selected button {
     color: var(--color-highlight);
   }
 
-  li:hover {
+  li button {
+    border: none;
+  }
+
+  li button:hover {
     color: var(--color-highlight);
   }
 
