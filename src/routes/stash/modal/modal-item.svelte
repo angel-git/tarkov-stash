@@ -14,6 +14,16 @@
   let parsedItems: Array<BsgItem>;
   let notEnoughSpaceError = false;
 
+  const sortByName = (a: BsgItem, b: BsgItem) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  };
+
   $: if (!showModal) onClose();
 
   $: {
@@ -27,7 +37,8 @@
             i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
             i.shortName.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
             $addNewItem.item?.id === i.id,
-        );
+        )
+        .sort(sortByName);
     }
   }
 
