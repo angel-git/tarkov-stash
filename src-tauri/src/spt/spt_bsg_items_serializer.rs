@@ -5,6 +5,7 @@ use serde_json::Error;
 pub struct Item {
     pub _id: String,
     pub _props: Props,
+    pub _parent: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

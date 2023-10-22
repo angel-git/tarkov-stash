@@ -68,6 +68,8 @@ pub struct GridItem {
 pub struct BsgItem {
     pub id: String,
     pub name: String,
+    #[serde(rename = "parentId")]
+    pub parent_id: Option<Value>,
     #[serde(rename = "shortName")]
     pub short_name: String,
     pub width: Option<Value>,
@@ -132,6 +134,7 @@ pub fn convert_profile_to_ui(
                     BsgItem {
                         id: id.to_string(),
                         name: name.to_string(),
+                        parent_id: item.get("_parent").cloned(),
                         short_name: short_name.to_string(),
                         width: props.get("Width").cloned(),
                         height: props.get("Height").cloned(),
