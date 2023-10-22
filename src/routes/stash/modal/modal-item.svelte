@@ -10,24 +10,56 @@
   export let allItems: Record<string, BsgItem>;
   export let grid: Array<Array<Item | undefined>>;
 
+  type OrderType = 'alpha' | 'parent';
+
   let showModal = true;
   let parsedItems: Array<BsgItem>;
+  let parsedNodes: Record<string, BsgItem>;
   let notEnoughSpaceError = false;
+  let order: OrderType = 'alpha';
+
+  const sortByName = (a: BsgItem, b: BsgItem) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  };
 
   $: if (!showModal) onClose();
 
   $: {
+    parsedNodes = Object.keys(allItems)
+      .map((i) => allItems[i])
+      .filter((i) => i.type === 'Node')
+      .reduce((acc, i) => {
+        acc[i.id] = i;
+        return acc;
+      }, {} as Record<string, BsgItem>);
+
     if (allItems) {
       parsedItems = Object.keys(allItems)
         .map((i) => allItems[i])
         .filter((i) => i.type === 'Item')
         .filter((i) => !i.unbuyable)
+        .filter((i) => i.name)
+        .filter((i) => !i.name.includes('!!!DO_NOT_USE!!'))
+        .map((i) => {
+          if (order === 'alpha') {
+            return { ...i, name: `${i.name} - [${getParentNode(i)}]` };
+          } else {
+            return { ...i, name: `[${getParentNode(i)}] - ${i.name}` };
+          }
+        })
         .filter(
           (i) =>
             i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
             i.shortName.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
             $addNewItem.item?.id === i.id,
-        );
+        )
+        .sort(sortByName);
     }
   }
 
@@ -85,6 +117,14 @@
     }
     return null;
   }
+
+  function getParentNode(item: BsgItem) {
+    return parsedNodes[item.parentId]?.name || '??';
+  }
+
+  function onOrderChange(event: { currentTarget: HTMLInputElement }) {
+    order = event.currentTarget.value as OrderType;
+  }
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm}>
@@ -95,6 +135,26 @@
 
   <div>
     <div>
+      <fieldset>
+        <input
+          type="radio"
+          id="alpha"
+          name="alpha"
+          value="alpha"
+          checked={order === 'alpha'}
+          on:change={onOrderChange}
+        />
+        <label for="alpha">Alpha ordering</label>
+        <input
+          type="radio"
+          id="parent"
+          name="parent"
+          value="parent"
+          checked={order === 'parent'}
+          on:change={onOrderChange}
+        />
+        <label for="parent">Parent ordering</label>
+      </fieldset>
       <!-- svelte-ignore a11y-autofocus -->
       <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
       <div>
@@ -146,6 +206,7 @@
     list-style-type: none;
     cursor: pointer;
     margin: 8px 0;
+    text-align: left;
   }
 
   li.selected button {
@@ -158,6 +219,10 @@
 
   li button:hover {
     color: var(--color-highlight);
+  }
+
+  fieldset {
+    border: none;
   }
 
   .selected-item {

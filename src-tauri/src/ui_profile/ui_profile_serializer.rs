@@ -68,6 +68,8 @@ pub struct GridItem {
 pub struct BsgItem {
     pub id: String,
     pub name: String,
+    #[serde(rename = "parentId")]
+    pub parent_id: Option<Value>,
     #[serde(rename = "shortName")]
     pub short_name: String,
     pub width: Option<Value>,
@@ -116,34 +118,31 @@ pub fn convert_profile_to_ui(
     bsg_items_root.keys().for_each(|k| {
         let item = bsg_items_root.get(k).unwrap();
         let id = item.get("_id").unwrap().as_str().unwrap();
-        if let Some(props) = item.get("_props") {
-            if let Some(short_name) = props.get("ShortName") {
-                let maybe_name = locale_root.get(format!("{} Name", id).as_str());
-                let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
-                let name = maybe_name
-                    .and_then(|v| v.as_str())
-                    .unwrap_or_else(|| short_name.as_str().unwrap());
-                let short_name = maybe_short_name
-                    .and_then(|v| v.as_str())
-                    .unwrap_or_else(|| short_name.as_str().unwrap());
-
-                bsg_items.insert(
-                    id.to_string(),
-                    BsgItem {
-                        id: id.to_string(),
-                        name: name.to_string(),
-                        short_name: short_name.to_string(),
-                        width: props.get("Width").cloned(),
-                        height: props.get("Height").cloned(),
-                        unlootable: props.get("Unlootable").cloned(),
-                        unbuyable: props.get("IsUnbuyable").cloned(),
-                        hide_entrails: props.get("HideEntrails").cloned(),
-                        r#type: item.get("_type").cloned(),
-                        background_color: props.get("BackgroundColor").cloned(),
-                    },
-                );
-            }
-        }
+        let maybe_name = locale_root.get(format!("{} Name", id).as_str());
+        let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
+        let name = maybe_name
+            .and_then(|v| v.as_str())
+            .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
+        let short_name = maybe_short_name
+            .and_then(|v| v.as_str())
+            .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
+        let props = item.get("_props");
+        bsg_items.insert(
+            id.to_string(),
+            BsgItem {
+                id: id.to_string(),
+                name: name.to_string(),
+                parent_id: item.get("_parent").cloned(),
+                short_name: short_name.to_string(),
+                width: props.and_then(|p| p.get("Width")).cloned(),
+                height: props.and_then(|p| p.get("Height")).cloned(),
+                unlootable: props.and_then(|p| p.get("Unlootable")).cloned(),
+                unbuyable: props.and_then(|p| p.get("IsUnbuyable")).cloned(),
+                hide_entrails: props.and_then(|p| p.get("HideEntrails")).cloned(),
+                r#type: item.get("_type").cloned(),
+                background_color: props.and_then(|p| p.get("BackgroundColor")).cloned(),
+            },
+        );
     });
 
     Ok(UIProfile {

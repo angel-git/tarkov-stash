@@ -38,6 +38,7 @@ type BsgItemType = 'Node' | 'Item';
 export interface BsgItem {
   id: string;
   name: string;
+  parentId: string;
   shortName: string;
   height: number;
   width: number;
