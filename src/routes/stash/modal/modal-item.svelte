@@ -12,6 +12,7 @@
 
   let showModal = true;
   let parsedItems: Array<BsgItem>;
+  let parsedNodes: Record<string, BsgItem>;
   let notEnoughSpaceError = false;
 
   const sortByName = (a: BsgItem, b: BsgItem) => {
@@ -27,11 +28,20 @@
   $: if (!showModal) onClose();
 
   $: {
+    parsedNodes = Object.keys(allItems)
+      .map((i) => allItems[i])
+      .filter((i) => i.type === 'Node')
+      .reduce((acc, i) => {
+        acc[i.id] = i;
+        return acc;
+      }, {} as Record<string, BsgItem>);
+
     if (allItems) {
       parsedItems = Object.keys(allItems)
         .map((i) => allItems[i])
         .filter((i) => i.type === 'Item')
         .filter((i) => !i.unbuyable)
+        .map((i) => ({ ...i, name: `${i.name} - [${getParentNode(i)}]` }))
         .filter(
           (i) =>
             i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
@@ -95,6 +105,10 @@
       }
     }
     return null;
+  }
+
+  function getParentNode(item: BsgItem) {
+    return parsedNodes[item.parentId]?.name || '??';
   }
 </script>
 
