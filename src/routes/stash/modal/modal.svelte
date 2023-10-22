@@ -29,7 +29,7 @@
   dialog {
     color: var(--color-text);
     background-color: var(--color-background);
-    width: 32em;
+    width: 90%;
     border-radius: 0.2em;
     border: none;
     padding: 0;
