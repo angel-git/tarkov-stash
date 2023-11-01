@@ -185,6 +185,7 @@ pub fn convert_profile_to_ui(
                                     .to_uppercase()
                                     .as_str(),
                             )
+                            .or(s.get("_name"))
                             .cloned(),
                     })
                     .collect::<Vec<_>>() // Collect the results into a new Vec
