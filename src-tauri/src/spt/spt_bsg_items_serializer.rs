@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Error;
+use serde_json::{Error, Value};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Item {
+pub struct BsgItem {
     pub _id: String,
     pub _props: Props,
     pub _parent: String,
@@ -44,6 +44,16 @@ pub struct Props {
     pub folded_slot: Option<String>,
     #[serde(rename = "Grids")]
     pub grids: Option<Vec<Grids>>,
+    #[serde(rename = "Slots")]
+    pub slots: Option<Vec<Slots>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Slots {
+    pub _id: String,
+    pub _name: String,
+    pub _parent: String,
+    pub _props: Option<Value>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -60,6 +70,6 @@ pub struct GridsProps {
     pub cells_v: u16,
 }
 
-pub fn load_item(item_json: &str) -> Result<Item, Error> {
+pub fn load_item(item_json: &str) -> Result<BsgItem, Error> {
     serde_json::from_str(item_json)
 }

@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use crate::spt;
-use crate::spt::spt_bsg_items_serializer::load_item;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use crate::spt;
+use crate::spt::spt_bsg_items_serializer::load_item;
 use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -25,6 +25,8 @@ pub struct UIProfile {
 pub struct Item {
     pub id: String,
     pub tpl: String,
+    #[serde(rename = "parentId")]
+    pub parent_id: Option<String>,
     pub x: u16,
     pub y: u16,
     #[serde(rename = "sizeX")]
@@ -51,6 +53,16 @@ pub struct Item {
     pub is_container: bool,
     #[serde(rename = "gridItems")]
     pub grid_items: Option<Vec<GridItem>>,
+    #[serde(rename = "slotItems")]
+    pub slot_items: Option<Vec<SlotItem>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct SlotItem {
+    pub id: String,
+    pub tpl: String,
+    #[serde(rename = "slotId")]
+    pub slot_id: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -72,6 +84,7 @@ pub struct BsgItem {
     pub parent_id: Option<Value>,
     #[serde(rename = "shortName")]
     pub short_name: String,
+    pub description: Option<Value>,
     pub width: Option<Value>,
     pub height: Option<Value>,
     #[serde(rename = "hideEntrails")]
@@ -82,6 +95,16 @@ pub struct BsgItem {
     pub r#type: Option<Value>,
     #[serde(rename = "backgroundColor")]
     pub background_color: Option<Value>,
+    #[serde(rename = "Slots")]
+    pub slots: Option<Vec<BsgItemSlot>>,
+}
+#[derive(Deserialize, Serialize, Debug)]
+pub struct BsgItemSlot {
+    pub _id: Option<Value>,
+    pub _name: Option<Value>,
+    pub name: Option<Value>,
+    pub _parent: Option<Value>,
+    pub _props: Option<Value>,
 }
 
 pub fn convert_profile_to_ui(
@@ -120,6 +143,7 @@ pub fn convert_profile_to_ui(
         let id = item.get("_id").unwrap().as_str().unwrap();
         let maybe_name = locale_root.get(format!("{} Name", id).as_str());
         let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
+        let maybe_description = locale_root.get(format!("{} Description", id).as_str());
         let name = maybe_name
             .and_then(|v| v.as_str())
             .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
@@ -127,6 +151,30 @@ pub fn convert_profile_to_ui(
             .and_then(|v| v.as_str())
             .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
         let props = item.get("_props");
+        let slots: Option<Vec<BsgItemSlot>> = props
+            .and_then(|p| p.get("Slots"))
+            .and_then(|s| s.as_array())
+            .map(|array| {
+                array
+                    .iter()
+                    .map(|s| BsgItemSlot {
+                        _id: s.get("_id").cloned(),
+                        _name: s.get("_name").cloned(),
+                        _parent: s.get("_parent").cloned(),
+                        _props: s.get("_props").cloned(),
+                        name: locale_root
+                            .get(
+                                s.get("_name")
+                                    .unwrap()
+                                    .as_str()
+                                    .unwrap()
+                                    .to_uppercase()
+                                    .as_str(),
+                            )
+                            .cloned(),
+                    })
+                    .collect::<Vec<_>>() // Collect the results into a new Vec
+            });
         bsg_items.insert(
             id.to_string(),
             BsgItem {
@@ -134,6 +182,7 @@ pub fn convert_profile_to_ui(
                 name: name.to_string(),
                 parent_id: item.get("_parent").cloned(),
                 short_name: short_name.to_string(),
+                description: maybe_description.cloned(),
                 width: props.and_then(|p| p.get("Width")).cloned(),
                 height: props.and_then(|p| p.get("Height")).cloned(),
                 unlootable: props.and_then(|p| p.get("Unlootable")).cloned(),
@@ -141,6 +190,7 @@ pub fn convert_profile_to_ui(
                 hide_entrails: props.and_then(|p| p.get("HideEntrails")).cloned(),
                 r#type: item.get("_type").cloned(),
                 background_color: props.and_then(|p| p.get("BackgroundColor")).cloned(),
+                slots,
             },
         );
     });
@@ -223,6 +273,29 @@ fn parse_items(
             }
         }
 
+        let has_slots =
+            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
+
+        let mut slot_items: Option<Vec<SlotItem>> = None;
+        if has_slots {
+            slot_items = Some(Vec::new());
+            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
+                let id_and_tpl_vec = find_all_ids_and_tpl_from_parent(
+                    item._id.as_str(),
+                    &profile_items,
+                    bsg_t._name.as_str(),
+                );
+
+                id_and_tpl_vec.iter().for_each(|(id, tpl)| {
+                    slot_items.as_mut().unwrap().push(SlotItem {
+                        id: id.to_string(),
+                        tpl: tpl.to_string(),
+                        slot_id: bsg_t._name.to_string(),
+                    })
+                })
+            })
+        }
+
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
@@ -273,6 +346,7 @@ fn parse_items(
         let i = Item {
             id: item._id.to_string(),
             tpl: item._tpl.to_string(),
+            parent_id: item.parent_id.clone(),
             x: location_in_stash.x,
             y: location_in_stash.y,
             size_x,
@@ -287,6 +361,7 @@ fn parse_items(
             background_color,
             is_container,
             grid_items,
+            slot_items,
         };
         items.push(i)
     }
@@ -393,19 +468,21 @@ fn find_all_ids_and_tpl_from_parent(
 fn get_bsg_item(
     item: &spt::spt_profile_serializer::Item,
     bsg_items_root: &HashMap<String, Value>,
-) -> Option<spt::spt_bsg_items_serializer::Item> {
+) -> Option<spt::spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
     load_item(parent_item.to_string().as_str()).ok()
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
+    use serde_json::Value;
+
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
     use crate::ui_profile::ui_profile_serializer::{
         calculate_item_size, get_bsg_item, parse_items,
     };
-    use serde_json::Value;
-    use std::collections::HashMap;
 
     #[test]
     fn should_not_crash_if_template_is_not_found() {
