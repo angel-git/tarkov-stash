@@ -57,6 +57,15 @@ export interface BsgItem {
   type: BsgItemType;
   backgroundColor: string;
   Slots: Array<Slot>;
+  ergonomics: number;
+  accuracy: number;
+  deviationMax: number;
+  sightingRange: number;
+  recoil: number;
+  recoilForceBack: number;
+  recoilForceUp: number;
+  muzzleVelocity: number;
+  velocity: number;
 }
 
 export interface Slot {
@@ -138,4 +147,13 @@ export interface NewItem {
   id: string;
   locationX: number;
   locationY: number;
+}
+
+export interface Stats {
+  ergonomics: number;
+  accuracy: number;
+  sightingRange: number;
+  verticalRecoil: number;
+  horizontalRecoil: number;
+  muzzleVelocity: number;
 }

@@ -97,6 +97,20 @@ pub struct BsgItem {
     pub background_color: Option<Value>,
     #[serde(rename = "Slots")]
     pub slots: Option<Vec<BsgItemSlot>>,
+    pub ergonomics: Option<Value>,
+    pub accuracy: Option<Value>,
+    #[serde(rename = "deviationMax")]
+    pub deviation_max: Option<Value>,
+    #[serde(rename = "sightingRange")]
+    pub sighting_range: Option<Value>,
+    pub recoil: Option<Value>,
+    #[serde(rename = "recoilForceBack")]
+    pub recoil_force_back: Option<Value>,
+    #[serde(rename = "recoilForceUp")]
+    pub recoil_force_up: Option<Value>,
+    #[serde(rename = "muzzleVelocity")]
+    pub muzzle_velocity: Option<Value>,
+    pub velocity: Option<Value>,
 }
 #[derive(Deserialize, Serialize, Debug)]
 pub struct BsgItemSlot {
@@ -191,6 +205,15 @@ pub fn convert_profile_to_ui(
                 r#type: item.get("_type").cloned(),
                 background_color: props.and_then(|p| p.get("BackgroundColor")).cloned(),
                 slots,
+                ergonomics: props.and_then(|p| p.get("Ergonomics")).cloned(),
+                accuracy: props.and_then(|p| p.get("Accuracy")).cloned(),
+                deviation_max: props.and_then(|p| p.get("DeviationMax")).cloned(),
+                sighting_range: props.and_then(|p| p.get("SightingRange")).cloned(),
+                recoil: props.and_then(|p| p.get("Recoil")).cloned(),
+                recoil_force_back: props.and_then(|p| p.get("RecoilForceBack")).cloned(),
+                recoil_force_up: props.and_then(|p| p.get("RecoilForceUp")).cloned(),
+                muzzle_velocity: props.and_then(|p| p.get("SingleFireRate")).cloned(),
+                velocity: props.and_then(|p| p.get("Velocity")).cloned(),
             },
         );
     });
