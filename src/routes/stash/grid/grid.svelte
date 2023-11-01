@@ -123,6 +123,15 @@
       {#if item?.id === secondaryItemMenuId}
         <div class="options">
           <div class="title">{bsgItems[item.tpl].name}</div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            class="option"
+            tabindex="-1"
+            role="button"
+            on:click={() => handleOptionClicked('details', item)}
+          >
+            See details
+          </div>
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
