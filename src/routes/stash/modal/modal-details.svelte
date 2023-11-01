@@ -136,24 +136,29 @@
     {/if}
     <div class="slots">
       <div class="slots-grid">
-        {#each bsgItems[item.tpl].Slots as slot}
-          {@const itemInSlot = findItemInSlot(slot._name)}
-          {#if itemInSlot}
-            <div
-              class="slots-grid-item with-item"
-              style={`background-color: ${calculateBackgroundColor(
-                bsgItems[itemInSlot.tpl].backgroundColor,
-              )}`}
-            >
-              <div class="slots-grid-item-name">{bsgItems[itemInSlot.tpl].shortName}</div>
-              <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`} />
-            </div>
-          {:else}
-            <div class="slots-grid-item">
-              <div class="slots-grid-item-name">{slot.name}</div>
-            </div>
-          {/if}
-        {/each}
+        {#if bsgItems[item.tpl].Slots}
+          {#each bsgItems[item.tpl].Slots as slot}
+            {@const itemInSlot = findItemInSlot(slot._name)}
+            {#if itemInSlot}
+              <div
+                class="slots-grid-item with-item"
+                style={`background-color: ${calculateBackgroundColor(
+                  bsgItems[itemInSlot.tpl].backgroundColor,
+                )}`}
+              >
+                <div class="slots-grid-item-name">{bsgItems[itemInSlot.tpl].shortName}</div>
+                <img
+                  alt="item"
+                  src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`}
+                />
+              </div>
+            {:else}
+              <div class="slots-grid-item">
+                <div class="slots-grid-item-name">{slot.name}</div>
+              </div>
+            {/if}
+          {/each}
+        {/if}
       </div>
     </div>
   </div>
