@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -45,8 +45,6 @@ pub struct Item {
     pub resource: Option<u16>,
     #[serde(rename = "maxResource")]
     pub max_resource: Option<u16>,
-    // #[serde(rename = "originalMaxResource")]
-    // pub original_max_resource: Option<u16>,
     #[serde(rename = "backgroundColor")]
     pub background_color: String,
     #[serde(rename = "isContainer")]
@@ -54,10 +52,10 @@ pub struct Item {
     #[serde(rename = "gridItems")]
     pub grid_items: Option<Vec<GridItem>>,
     #[serde(rename = "slotItems")]
-    pub slot_items: Option<Vec<SlotItem>>,
+    pub slot_items: Option<HashSet<SlotItem>>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
 pub struct SlotItem {
     pub id: String,
     pub tpl: String,
@@ -96,29 +94,22 @@ pub struct BsgItem {
     #[serde(rename = "backgroundColor")]
     pub background_color: Option<Value>,
     #[serde(rename = "Slots")]
-    pub slots: Option<Vec<BsgItemSlot>>,
-    pub ergonomics: Option<Value>,
-    pub accuracy: Option<Value>,
+    pub slots: Option<Value>,
+    pub ergonomics: Value,
     #[serde(rename = "deviationMax")]
-    pub deviation_max: Option<Value>,
+    pub deviation_max: Value,
     #[serde(rename = "sightingRange")]
-    pub sighting_range: Option<Value>,
-    pub recoil: Option<Value>,
+    pub sighting_range: Value,
+    pub recoil: Value,
     #[serde(rename = "recoilForceBack")]
-    pub recoil_force_back: Option<Value>,
+    pub recoil_force_back: Value,
     #[serde(rename = "recoilForceUp")]
-    pub recoil_force_up: Option<Value>,
-    #[serde(rename = "muzzleVelocity")]
-    pub muzzle_velocity: Option<Value>,
-    pub velocity: Option<Value>,
-}
-#[derive(Deserialize, Serialize, Debug)]
-pub struct BsgItemSlot {
-    pub _id: Option<Value>,
-    pub _name: Option<Value>,
-    pub name: Option<Value>,
-    pub _parent: Option<Value>,
-    pub _props: Option<Value>,
+    pub recoil_force_up: Value,
+    #[serde(rename = "singleFireRate")]
+    pub single_fire_rate: Value,
+    #[serde(rename = "centerOfImpact")]
+    pub center_of_impact: Value,
+    pub velocity: Value,
 }
 
 pub fn convert_profile_to_ui(
@@ -149,6 +140,7 @@ pub fn convert_profile_to_ui(
         bsg_items_root,
         stash.as_str(),
         "hideout",
+        locale_root,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -165,31 +157,6 @@ pub fn convert_profile_to_ui(
             .and_then(|v| v.as_str())
             .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
         let props = item.get("_props");
-        let slots: Option<Vec<BsgItemSlot>> = props
-            .and_then(|p| p.get("Slots"))
-            .and_then(|s| s.as_array())
-            .map(|array| {
-                array
-                    .iter()
-                    .map(|s| BsgItemSlot {
-                        _id: s.get("_id").cloned(),
-                        _name: s.get("_name").cloned(),
-                        _parent: s.get("_parent").cloned(),
-                        _props: s.get("_props").cloned(),
-                        name: locale_root
-                            .get(
-                                s.get("_name")
-                                    .unwrap()
-                                    .as_str()
-                                    .unwrap()
-                                    .to_uppercase()
-                                    .as_str(),
-                            )
-                            .or(s.get("_name"))
-                            .cloned(),
-                    })
-                    .collect::<Vec<_>>() // Collect the results into a new Vec
-            });
         bsg_items.insert(
             id.to_string(),
             BsgItem {
@@ -205,16 +172,43 @@ pub fn convert_profile_to_ui(
                 hide_entrails: props.and_then(|p| p.get("HideEntrails")).cloned(),
                 r#type: item.get("_type").cloned(),
                 background_color: props.and_then(|p| p.get("BackgroundColor")).cloned(),
-                slots,
-                ergonomics: props.and_then(|p| p.get("Ergonomics")).cloned(),
-                accuracy: props.and_then(|p| p.get("Accuracy")).cloned(),
-                deviation_max: props.and_then(|p| p.get("DeviationMax")).cloned(),
-                sighting_range: props.and_then(|p| p.get("SightingRange")).cloned(),
-                recoil: props.and_then(|p| p.get("Recoil")).cloned(),
-                recoil_force_back: props.and_then(|p| p.get("RecoilForceBack")).cloned(),
-                recoil_force_up: props.and_then(|p| p.get("RecoilForceUp")).cloned(),
-                muzzle_velocity: props.and_then(|p| p.get("SingleFireRate")).cloned(),
-                velocity: props.and_then(|p| p.get("Velocity")).cloned(),
+                slots: props.and_then(|p| p.get("Slots")).cloned(),
+                ergonomics: props
+                    .and_then(|p| p.get("Ergonomics"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                deviation_max: props
+                    .and_then(|p| p.get("DeviationMax"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                sighting_range: props
+                    .and_then(|p| p.get("SightingRange"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil: props
+                    .and_then(|p| p.get("Recoil"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil_force_back: props
+                    .and_then(|p| p.get("RecoilForceBack"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil_force_up: props
+                    .and_then(|p| p.get("RecoilForceUp"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                single_fire_rate: props
+                    .and_then(|p| p.get("SingleFireRate"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                velocity: props
+                    .and_then(|p| p.get("Velocity"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                center_of_impact: props
+                    .and_then(|p| p.get("CenterOfImpact"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
             },
         );
     });
@@ -234,6 +228,7 @@ fn parse_items(
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
+    locale_root: &HashMap<String, Value>,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -284,6 +279,7 @@ fn parse_items(
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
+                    locale_root,
                 )?;
 
                 let grid_item = GridItem {
@@ -300,23 +296,17 @@ fn parse_items(
         let has_slots =
             bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
 
-        let mut slot_items: Option<Vec<SlotItem>> = None;
+        let mut slot_items: Option<HashSet<SlotItem>> = None;
         if has_slots {
-            slot_items = Some(Vec::new());
+            slot_items = Some(HashSet::new());
             bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
-                let id_and_tpl_vec = find_all_ids_and_tpl_from_parent(
+                let all_slots_from_item = find_all_slots_from_parent(
                     item._id.as_str(),
                     &profile_items,
                     bsg_t._name.as_str(),
                 );
 
-                id_and_tpl_vec.iter().for_each(|(id, tpl)| {
-                    slot_items.as_mut().unwrap().push(SlotItem {
-                        id: id.to_string(),
-                        tpl: tpl.to_string(),
-                        slot_id: bsg_t._name.to_string(),
-                    })
-                })
+                slot_items.as_mut().unwrap().extend(all_slots_from_item);
             })
         }
 
@@ -482,6 +472,30 @@ fn find_all_ids_and_tpl_from_parent(
             }
 
             let sub_items = find_all_ids_and_tpl_from_parent(&i._id, items, slot_id);
+            result.extend(sub_items);
+        }
+    }
+
+    result
+}
+
+fn find_all_slots_from_parent(
+    parent_id: &str,
+    items: &[spt::spt_profile_serializer::Item],
+    slot_id: &str,
+) -> HashSet<SlotItem> {
+    let mut result: HashSet<SlotItem> = HashSet::new();
+
+    for i in items {
+        if i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == parent_id {
+            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with(slot_id) {
+                let id = i._id.to_string();
+                let tpl = i._tpl.to_string();
+                let slot_id = i.slot_id.as_ref().unwrap().to_string();
+                result.insert(SlotItem { id, tpl, slot_id });
+            }
+
+            let sub_items = find_all_slots_from_parent(&i._id, items, "");
             result.extend(sub_items);
         }
     }
@@ -677,6 +691,7 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
+            &HashMap::new(),
         )
         .ok()
         .unwrap();
@@ -692,5 +707,41 @@ mod tests {
 
         let nested_backpack = backpack_content.items.get(0).unwrap();
         assert!(nested_backpack.is_container);
+    }
+
+    #[test]
+    fn should_calculate_all_attachments() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/angel-git.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let stash = &tarkov_profile.characters.pmc.inventory.stash;
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            stash.as_str(),
+            "hideout",
+            &HashMap::new(),
+        )
+        .ok()
+        .unwrap();
+
+        let vpo = items
+            .iter()
+            .find(|i| i.id == "1d0832b091d9e1e36e17666b")
+            .unwrap();
+        let slot_items = vpo.slot_items.as_ref().unwrap().len();
+        assert_eq!(slot_items, 14);
     }
 }

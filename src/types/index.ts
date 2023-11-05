@@ -32,6 +32,7 @@ export interface SlotItem {
   id: string;
   tpl: string;
   slotId: string;
+  parentId: string;
 }
 
 export interface GridItem {
@@ -58,20 +59,19 @@ export interface BsgItem {
   backgroundColor: string;
   Slots: Array<Slot>;
   ergonomics: number;
-  accuracy: number;
   deviationMax: number;
   sightingRange: number;
   recoil: number;
   recoilForceBack: number;
   recoilForceUp: number;
-  muzzleVelocity: number;
   velocity: number;
+  singleFireRate: number;
+  centerOfImpact: number;
 }
 
 export interface Slot {
   _id: string;
   _name: SlotKind;
-  name: string;
   _parent: string;
   _props: SlotProps;
 }
@@ -154,6 +154,10 @@ export interface Stats {
   accuracy: number;
   sightingRange: number;
   verticalRecoil: number;
+  verticalRecoilPercentage: number;
   horizontalRecoil: number;
-  muzzleVelocity: number;
+  horizontalRecoilPercentage: number;
+  singleFireRate: number;
+  velocityPercentage: number;
+  centerOfImpactPercentage: number;
 }

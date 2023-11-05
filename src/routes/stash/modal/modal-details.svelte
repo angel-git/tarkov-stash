@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { BsgItem, Item, SlotKind, Stats } from '../../../types';
+  import type { BsgItem, Item, Stats } from '../../../types';
   import Modal from './modal.svelte';
   import { calculateBackgroundColor } from '../../../helper';
 
@@ -18,38 +18,60 @@
 
   $: if (!showModal) onClose();
 
-  function findItemInSlot(slotName: SlotKind) {
-    return item.slotItems?.find((slotItem) => slotItem.slotId === slotName);
+  function findItemsInSlot(slotId: string) {
+    return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId);
   }
 
   function calculateStats(): Stats | undefined {
     const bsgItem = bsgItems[item.tpl];
-    if (!bsgItem) return;
     const initialStats: Stats = {
-      ergonomics: bsgItem.ergonomics || 0,
-      accuracy: bsgItem.deviationMax || 0,
-      sightingRange: bsgItem.sightingRange || 0,
-      verticalRecoil: bsgItem.recoilForceUp || 0,
-      horizontalRecoil: bsgItem.recoilForceBack || 0,
-      muzzleVelocity: bsgItem.muzzleVelocity || 0,
+      ergonomics: bsgItem.ergonomics,
+      accuracy: bsgItem.deviationMax,
+      sightingRange: bsgItem.sightingRange,
+      verticalRecoil: bsgItem.recoilForceUp,
+      horizontalRecoil: bsgItem.recoilForceBack,
+      singleFireRate: bsgItem.singleFireRate,
+      verticalRecoilPercentage: 0,
+      horizontalRecoilPercentage: 0,
+      velocityPercentage: 0,
+      centerOfImpactPercentage: 0,
     };
-    return item.slotItems?.reduce((acc, value) => {
+    const stats = item.slotItems?.reduce((acc, value) => {
       const slotItem = bsgItems[value.tpl];
-      if (!slotItem) return acc;
       acc.ergonomics += slotItem.ergonomics;
-      acc.accuracy += slotItem.accuracy;
+      acc.centerOfImpactPercentage += slotItem.centerOfImpact;
       acc.sightingRange =
         acc.sightingRange > slotItem.sightingRange ? acc.sightingRange : slotItem.sightingRange;
-      acc.verticalRecoil += slotItem.recoil; // TODO test with real profile
-      acc.horizontalRecoil += slotItem.recoil; // TODO test with real profile
-      acc.muzzleVelocity += slotItem.velocity;
+      acc.verticalRecoilPercentage += slotItem.recoil;
+      acc.horizontalRecoilPercentage += slotItem.recoil;
+      acc.velocityPercentage += slotItem.velocity;
       return acc;
     }, initialStats) as Stats;
+
+    stats.verticalRecoil =
+      bsgItem.recoilForceUp + (bsgItem.recoilForceUp * stats.verticalRecoilPercentage) / 100;
+    stats.horizontalRecoil =
+      bsgItem.recoilForceBack + (bsgItem.recoilForceBack * stats.horizontalRecoilPercentage) / 100;
+    stats.singleFireRate =
+      bsgItem.singleFireRate + (bsgItem.singleFireRate * stats.velocityPercentage) / 100;
+    stats.accuracy =
+      bsgItem.deviationMax + (bsgItem.deviationMax * -stats.centerOfImpactPercentage) / 100;
+
+    return stats;
+  }
+
+  function mergeSlots() {
+    const bsgItemSlots = bsgItems[item.tpl].Slots || [];
+    const itemSlots = item.slotItems || [];
+    const bsgNames = bsgItemSlots.map((s) => s._name);
+    const itemNames = itemSlots.map((s) => s.slotId);
+    return new Set([...bsgNames, ...itemNames]);
   }
 
   const stats = calculateStats();
+  const slots = mergeSlots();
 
-  console.log('item', item);
+  console.log('item', item); // TODO delete me
 
   function handleConfirm() {
     showModal = false;
@@ -78,7 +100,7 @@
               <img alt="ergonomics logo" src={ergonomicsLogo} />
               <div>ERGONOMICS</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.ergonomics / 1.5}%`} />
+            <div class="graph-line" style={`width: ${stats.ergonomics}%`} />
             <div class="stat-value">{stats.ergonomics}</div>
           </div>
         {/if}
@@ -109,7 +131,7 @@
               <div>VERTICAL RECOIL</div>
             </div>
             <div class="graph-line" style={`width: ${stats.verticalRecoil / 7}%`} />
-            <div class="stat-value">{stats.verticalRecoil}</div>
+            <div class="stat-value">{Math.ceil(stats.verticalRecoil)}</div>
           </div>
         {/if}
         {#if stats.horizontalRecoil}
@@ -119,42 +141,45 @@
               <div>HORIZONTAL RECOIL</div>
             </div>
             <div class="graph-line" style={`width: ${stats.horizontalRecoil / 12}%`} />
-            <div class="stat-value">{stats.horizontalRecoil}</div>
+            <div class="stat-value">{Math.ceil(stats.horizontalRecoil)}</div>
           </div>
         {/if}
-        {#if stats.muzzleVelocity}
+        {#if stats.singleFireRate}
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={muzzleVelocityLogo} />
               <div>MUZZLE VELOCITY</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.muzzleVelocity / 13}%`} />
-            <div class="stat-value">{Math.floor(stats.muzzleVelocity)} m/s</div>
+            <div class="graph-line" style={`width: ${stats.singleFireRate / 13}%`} />
+            <div class="stat-value">{Math.floor(stats.singleFireRate)} m/s</div>
           </div>
         {/if}
       </div>
     {/if}
     <div class="slots">
       <div class="slots-grid">
-        {#if bsgItems[item.tpl].Slots}
-          {#each bsgItems[item.tpl].Slots as slot}
-            {@const itemInSlot = findItemInSlot(slot._name)}
-            {#if itemInSlot}
-              <div
-                class="slots-grid-item with-item"
-                style={`background-color: ${calculateBackgroundColor(
-                  bsgItems[itemInSlot.tpl].backgroundColor,
-                )}`}
-              >
-                <div class="slots-grid-item-name">{bsgItems[itemInSlot.tpl].shortName}</div>
-                <img
-                  alt="item"
-                  src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`}
-                />
-              </div>
+        {#if slots}
+          {#each slots as slotId}
+            {@const itemsInSlot = findItemsInSlot(slotId)}
+            {#if itemsInSlot && itemsInSlot.length}
+              {#each itemsInSlot as itemInSlot}
+                <div
+                  id={itemInSlot.tpl}
+                  class="slots-grid-item with-item"
+                  style={`background-color: ${calculateBackgroundColor(
+                    bsgItems[itemInSlot.tpl].backgroundColor,
+                  )}`}
+                >
+                  <div class="slots-grid-item-name">{bsgItems[itemInSlot.tpl].shortName}</div>
+                  <img
+                    alt="item"
+                    src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`}
+                  />
+                </div>
+              {/each}
             {:else}
               <div class="slots-grid-item">
-                <div class="slots-grid-item-name">{slot.name}</div>
+                <div class="slots-grid-item-name">{slotId}</div>
               </div>
             {/if}
           {/each}
@@ -207,6 +232,7 @@
   }
 
   .slots-grid {
+    padding: 16px;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -220,6 +246,7 @@
     display: flex;
     justify-content: center;
     position: relative;
+    border: 1px solid #575b5e;
   }
 
   .slots-grid-item.with-item {

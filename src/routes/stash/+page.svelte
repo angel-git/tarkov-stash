@@ -68,12 +68,7 @@
       <img class="loading" src={Loading} alt="loading gif" width="40" height="40" />
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'details'}
-      <DetailsModal
-        allItems={$profile.items}
-        item={selectedItem}
-        bsgItems={$profile.bsgItems}
-        onClose={handleCloseModal}
-      />
+      <DetailsModal item={selectedItem} bsgItems={$profile.bsgItems} onClose={handleCloseModal} />
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'amount'}
       <AmountModal item={selectedItem} onClose={handleCloseModal} />
