@@ -140,7 +140,6 @@ pub fn convert_profile_to_ui(
         bsg_items_root,
         stash.as_str(),
         "hideout",
-        locale_root,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -228,7 +227,6 @@ fn parse_items(
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
-    locale_root: &HashMap<String, Value>,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -279,7 +277,6 @@ fn parse_items(
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
-                    locale_root,
                 )?;
 
                 let grid_item = GridItem {
@@ -691,7 +688,6 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
-            &HashMap::new(),
         )
         .ok()
         .unwrap();
@@ -732,7 +728,6 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
-            &HashMap::new(),
         )
         .ok()
         .unwrap();
