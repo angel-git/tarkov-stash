@@ -56,8 +56,7 @@
       bsgItem.recoilForceBack + (bsgItem.recoilForceBack * stats.horizontalRecoilPercentage) / 100;
     stats.singleFireRate =
       bsgItem.singleFireRate + (bsgItem.singleFireRate * stats.velocityPercentage) / 100;
-    stats.accuracy =
-      bsgItem.deviationMax + (bsgItem.deviationMax * -stats.centerOfImpactPercentage) / 100;
+    stats.accuracy = 34.38 * stats.centerOfImpactPercentage;
 
     return stats;
   }
@@ -110,10 +109,10 @@
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={accuracyLogo} />
-              <div>ACCURACY</div>
+              <div>ACCURACY (aprox)</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.accuracy / 0.35}%`} />
-            <div class="stat-value">{stats.accuracy} MOA</div>
+            <div class="graph-line" style={`width: ${100 - stats.accuracy / 0.35}%`} />
+            <div class="stat-value">{Math.round(stats.accuracy)} MOA</div>
           </div>
         {/if}
         {#if stats.sightingRange}
@@ -150,7 +149,7 @@
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={muzzleVelocityLogo} />
-              <div>MUZZLE VELOCITY</div>
+              <div>MUZZLE VELOCITY (aprox)</div>
             </div>
             <div class="graph-line" style={`width: ${stats.singleFireRate / 13}%`} />
             <div class="stat-value">{Math.floor(stats.singleFireRate)} m/s</div>
