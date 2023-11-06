@@ -1,20 +1,35 @@
 <script lang="ts">
   import type { Item, BsgItem } from '../../../types';
   import { calculateBackgroundColor } from '../../../helper';
+
   export let item: Item;
   export let bsgItems: Record<string, BsgItem>;
   export let handleOpenClick: (item: Item | undefined) => void;
-
-  function calculateBackgroundStyle(item: Item) {
-    return `position: absolute; background-image: url(https://assets.tarkov.dev/${
-      item.tpl
-    }-base-image.png); background-size: ${item.sizeX * 64}px ${item.sizeY * 64}px;`;
-  }
 
   function calculateSizeStyle(item: Item) {
     return `z-index: 2; position: relative; height: ${item.sizeY * 64}px; width: ${
       item.sizeX * 64
     }px; background-color: ${calculateBackgroundColor(item.backgroundColor)}`;
+  }
+
+  function calculateBackgroundStyle(item: Item) {
+    const rotation = item.rotation === 'Vertical' ? '90deg' : '0deg';
+    const width = item.rotation === 'Vertical' ? item.sizeY * 64 : item.sizeX * 64;
+    const height = item.rotation === 'Vertical' ? item.sizeX * 64 : item.sizeY * 64;
+    const translateX = (64 - width) / 2;
+    const translateY = (64 - height) / 2;
+
+    const translateYAdjustment = (rotation === '90deg' ? width - 64 : height - 64) / 2;
+    const translateXAdjustment = (rotation === '90deg' ? height - 64 : width - 64) / 2;
+
+    // Update the translateY value.
+    const translateYFinal = translateY + translateYAdjustment;
+    const translateXFinal = translateX + translateXAdjustment;
+    const transform = {
+      rotate: `transform: rotate(${rotation})`,
+      translate: rotation === '90deg' ? `translate: ${translateXFinal}px ${translateYFinal}px` : '',
+    };
+    return `${transform.rotate}; ${transform.translate} ; background-image: url(https://assets.tarkov.dev/${item.tpl}-base-image.png); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
   }
 </script>
 
@@ -26,7 +41,9 @@
   style={calculateSizeStyle(item)}
   on:click={() => handleOpenClick(item)}
 >
-  <div class="item-image" style={calculateBackgroundStyle(item)} />
+  <div class="item-image">
+    <div style={calculateBackgroundStyle(item)} />
+  </div>
   <div class="short-name">{bsgItems[item.tpl].shortName}</div>
   <div class="item-data">
     {#if item.isFir}
@@ -76,6 +93,8 @@
   }
 
   .item-data {
+    position: absolute;
+    top: 0;
     height: 100%;
     width: 100%;
     display: flex;
