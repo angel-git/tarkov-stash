@@ -17,20 +17,20 @@ export const calculateBackgroundColor = (backgroundColor: string) => {
     case 'black':
       return `rgba(0, 0, 0, 0.3)`;
     case 'blue':
-      return `rgba(63, 63, 147, 0.1)`;
+      return `rgba(28, 65, 86, 0.3)`;
     case 'green':
-      return `rgba(55, 119, 55, 0.1)`;
+      return `rgba(21, 45, 0, 0.3)`;
     case 'grey':
-      return `rgba(50, 50, 50, 0.1)`;
+      return `rgba(29, 29, 29, 0.3)`;
     case 'orange':
-      return `rgba(255, 182, 115, 0.1)`;
+      return `rgba(60, 25, 0, 0.3)`;
     case 'red':
-      return `rgba(255, 0, 0, 0.1)`;
+      return `rgba(109, 36, 24, 0.3)`;
     case 'violet':
-      return `rgba(155, 38, 182, 0.1)`;
+      return `rgba(76, 42, 85, 0.3)`;
     case 'yellow':
-      return `rgba(246, 235, 97, 0.1)`;
+      return `rgba(104, 102, 40, 0.3)`;
     default:
-      return `rgba(0, 0, 0, 0.0)`;
+      return `rgba(127, 127, 127, 0.0)`;
   }
 };
