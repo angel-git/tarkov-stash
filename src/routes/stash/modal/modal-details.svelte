@@ -23,6 +23,8 @@
   }
 
   function calculateStats(): Stats | undefined {
+    if (!item.slotItems) return undefined;
+
     const bsgItem = bsgItems[item.tpl];
     const initialStats: Stats = {
       ergonomics: bsgItem.ergonomics,
