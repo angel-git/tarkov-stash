@@ -60,6 +60,7 @@ export interface BsgItem {
   Slots: Array<Slot>;
   ergonomics: number;
   deviationMax: number;
+  deviationCurve: number;
   sightingRange: number;
   recoil: number;
   recoilForceBack: number;
@@ -67,6 +68,8 @@ export interface BsgItem {
   velocity: number;
   singleFireRate: number;
   centerOfImpact: number;
+  ammoAccr: number;
+  accuracy: number;
 }
 
 export interface Slot {
@@ -159,5 +162,4 @@ export interface Stats {
   horizontalRecoilPercentage: number;
   singleFireRate: number;
   velocityPercentage: number;
-  centerOfImpactPercentage: number;
 }

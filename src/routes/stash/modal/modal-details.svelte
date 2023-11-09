@@ -18,6 +18,72 @@
 
   $: if (!showModal) onClose();
 
+  function getCenterOfImpactDelta() {
+    const acc =
+      item.slotItems?.reduce((acc, value) => {
+        const slotItem = bsgItems[value.tpl];
+        acc += slotItem.accuracy;
+        return acc;
+      }, 0) || 0;
+    return -(acc / 100);
+  }
+
+  function getWeaponBarrel(): BsgItem | undefined {
+    const mod_barrel = item.slotItems?.find((item) => item.slotId === 'mod_barrel');
+    if (mod_barrel) {
+      return bsgItems[mod_barrel.tpl];
+    }
+  }
+
+  function getBarrelDeviation(): number {
+    // TODO item.durability * WeaponSpread
+    return calculateDeviation(item.resource || 0) * 1;
+  }
+
+  function getCenterOfImpactBase() {
+    return getWeaponBarrel()?.centerOfImpact || bsgItems[item.tpl].centerOfImpact;
+  }
+
+  function calculateDeviation(durability: number): number {
+    const template = bsgItems[item.tpl];
+    const deviationCurve = template.deviationCurve;
+    const num = 2 * deviationCurve;
+    const num2 =
+      100 - num == 0
+        ? durability / num
+        : (0 -
+            deviationCurve +
+            Math.sqrt((0 - num + 100) * durability + deviationCurve * deviationCurve)) /
+          (0 - num + 100);
+    const num3 = 1 - num2;
+    const num4 = getWeaponBarrel()?.deviationMax || template.deviationMax;
+    return num3 * num3 * num4 + 2 * num2 * num3 * deviationCurve + num2 * num2;
+  }
+
+  function getAmmoFactor(): number | undefined {
+    const cartridges = item.slotItems?.find((item) => item.slotId === 'cartridges');
+    if (cartridges) {
+      const ammo = bsgItems[cartridges.tpl];
+      const ammoAccr = ammo.ammoAccr || 0;
+      if (ammoAccr <= 0) {
+        return (100 + Math.abs(ammoAccr)) / 100;
+      }
+      return 100 / (100 + ammoAccr);
+    }
+  }
+
+  function getTotalCenterOfImpact(includeAmmo = true): number {
+    const num = getCenterOfImpactBase() * (1 + getCenterOfImpactDelta());
+    if (!includeAmmo) {
+      return num;
+    }
+    return num * (getAmmoFactor() ?? 1);
+  }
+
+  function getAccuracy() {
+    return (getTotalCenterOfImpact(true) * getBarrelDeviation() * 100) / 2.9089;
+  }
+
   function findItemsInSlot(slotId: string) {
     return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId);
   }
@@ -28,7 +94,7 @@
     const bsgItem = bsgItems[item.tpl];
     const initialStats: Stats = {
       ergonomics: bsgItem.ergonomics,
-      accuracy: bsgItem.deviationMax,
+      accuracy: getAccuracy(),
       sightingRange: bsgItem.sightingRange,
       verticalRecoil: bsgItem.recoilForceUp,
       horizontalRecoil: bsgItem.recoilForceBack,
@@ -36,12 +102,10 @@
       verticalRecoilPercentage: 0,
       horizontalRecoilPercentage: 0,
       velocityPercentage: 0,
-      centerOfImpactPercentage: 0,
     };
     const stats = item.slotItems?.reduce((acc, value) => {
       const slotItem = bsgItems[value.tpl];
       acc.ergonomics += slotItem.ergonomics;
-      acc.centerOfImpactPercentage += slotItem.centerOfImpact;
       acc.sightingRange =
         acc.sightingRange > slotItem.sightingRange ? acc.sightingRange : slotItem.sightingRange;
       acc.verticalRecoilPercentage += slotItem.recoil;
@@ -56,7 +120,6 @@
       bsgItem.recoilForceBack + (bsgItem.recoilForceBack * stats.horizontalRecoilPercentage) / 100;
     stats.singleFireRate =
       bsgItem.singleFireRate + (bsgItem.singleFireRate * stats.velocityPercentage) / 100;
-    stats.accuracy = 34.38 * stats.centerOfImpactPercentage;
 
     return stats;
   }
@@ -109,10 +172,10 @@
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={accuracyLogo} />
-              <div>ACCURACY (aprox)</div>
+              <div>ACCURACY</div>
             </div>
             <div class="graph-line" style={`width: ${100 - stats.accuracy / 0.35}%`} />
-            <div class="stat-value">{Math.round(stats.accuracy)} MOA</div>
+            <div class="stat-value">{Math.round(stats.accuracy * 100) / 100} MOA</div>
           </div>
         {/if}
         {#if stats.sightingRange}
@@ -149,7 +212,7 @@
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={muzzleVelocityLogo} />
-              <div>MUZZLE VELOCITY (aprox)</div>
+              <div>MUZZLE VELOCITY (WIP)</div>
             </div>
             <div class="graph-line" style={`width: ${stats.singleFireRate / 13}%`} />
             <div class="stat-value">{Math.floor(stats.singleFireRate)} m/s</div>

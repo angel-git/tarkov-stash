@@ -98,6 +98,8 @@ pub struct BsgItem {
     pub ergonomics: Value,
     #[serde(rename = "deviationMax")]
     pub deviation_max: Value,
+    #[serde(rename = "deviationCurve")]
+    pub deviation_curve: Value,
     #[serde(rename = "sightingRange")]
     pub sighting_range: Value,
     pub recoil: Value,
@@ -110,6 +112,10 @@ pub struct BsgItem {
     #[serde(rename = "centerOfImpact")]
     pub center_of_impact: Value,
     pub velocity: Value,
+    #[serde(rename = "ammoAccr")]
+    pub ammo_accr: Value,
+    #[serde(rename = "accuracy")]
+    pub accuracy: Value,
 }
 
 pub fn convert_profile_to_ui(
@@ -180,6 +186,10 @@ pub fn convert_profile_to_ui(
                     .and_then(|p| p.get("DeviationMax"))
                     .cloned()
                     .unwrap_or(Value::from(0)),
+                deviation_curve: props
+                    .and_then(|p| p.get("DeviationCurve"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
                 sighting_range: props
                     .and_then(|p| p.get("SightingRange"))
                     .cloned()
@@ -206,6 +216,14 @@ pub fn convert_profile_to_ui(
                     .unwrap_or(Value::from(0)),
                 center_of_impact: props
                     .and_then(|p| p.get("CenterOfImpact"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                ammo_accr: props
+                    .and_then(|p| p.get("ammoAccr"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                accuracy: props
+                    .and_then(|p| p.get("Accuracy"))
                     .cloned()
                     .unwrap_or(Value::from(0)),
             },
