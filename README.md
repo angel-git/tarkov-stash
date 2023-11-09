@@ -12,6 +12,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
 - Add items into your stash (beta)
+- See weapons attachments
 - Delete items
 
 ### Limitations
@@ -21,6 +22,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
 - Some items show wrong duration (like USEC baseball cap)
+- MOA and velocity stats might be wrong depending on your chamber bullets.
 - Check the https://github.com/angel-git/tarkov-stash/issues for more
 
 ### Future features
