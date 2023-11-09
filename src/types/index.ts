@@ -5,6 +5,7 @@ export interface Profile {
   items: Array<Item>;
   bsgItems: Record<string, BsgItem>;
   sptVersion: string;
+  locale: Record<string, string>;
 }
 
 export interface Item {

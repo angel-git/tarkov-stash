@@ -13,6 +13,7 @@
   export let onClose: () => void;
   export let item: Item;
   export let bsgItems: Record<string, BsgItem>;
+  export let locale: Record<string, string>;
 
   let showModal = true;
 
@@ -272,7 +273,7 @@
               {/each}
             {:else}
               <div class="slots-grid-item">
-                <div class="slots-grid-item-name">{slotId}</div>
+                <div class="slots-grid-item-name">{locale[slotId.toUpperCase()]}</div>
               </div>
             {/if}
           {/each}

@@ -19,6 +19,8 @@ pub struct UIProfile {
     pub bsg_items: HashMap<String, BsgItem>,
     #[serde(rename = "sptVersion")]
     pub spt_version: Option<String>,
+    #[serde(rename = "locale")]
+    locale: HashMap<String, Value>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -237,6 +239,7 @@ pub fn convert_profile_to_ui(
         items,
         bsg_items,
         spt_version: None,
+        locale: locale_root.clone(),
     })
 }
 

@@ -31,6 +31,10 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Screenshots
 
+#### 0.5.x
+
+![0.5.0-attachments.png](0.5.0-attachments.png)
+
 #### 0.3.x
 
 Keyboard navigation:
