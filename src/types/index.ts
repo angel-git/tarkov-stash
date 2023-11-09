@@ -66,7 +66,7 @@ export interface BsgItem {
   recoilForceBack: number;
   recoilForceUp: number;
   velocity: number;
-  singleFireRate: number;
+  initialSpeed: number;
   centerOfImpact: number;
   ammoAccr: number;
   accuracy: number;
@@ -160,6 +160,5 @@ export interface Stats {
   verticalRecoilPercentage: number;
   horizontalRecoil: number;
   horizontalRecoilPercentage: number;
-  singleFireRate: number;
-  velocityPercentage: number;
+  velocity: number;
 }

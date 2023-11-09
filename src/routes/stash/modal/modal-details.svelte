@@ -18,12 +18,12 @@
 
   $: if (!showModal) onClose();
 
+  ///// accuracy
   function getCenterOfImpactDelta() {
     const acc =
       item.slotItems?.reduce((acc, value) => {
         const slotItem = bsgItems[value.tpl];
-        acc += slotItem.accuracy;
-        return acc;
+        return acc + slotItem.accuracy;
       }, 0) || 0;
     return -(acc / 100);
   }
@@ -61,6 +61,7 @@
   }
 
   function getAmmoFactor(): number | undefined {
+    // TODO ideally we should look for other places with bullets like chamber first
     const cartridges = item.slotItems?.find((item) => item.slotId === 'cartridges');
     if (cartridges) {
       const ammo = bsgItems[cartridges.tpl];
@@ -83,6 +84,38 @@
   function getAccuracy() {
     return (getTotalCenterOfImpact(true) * getBarrelDeviation() * 100) / 2.9089;
   }
+  /////
+
+  ///// velocity
+  function getVelocityBase(): number {
+    // TODO ideally we should look for other places with bullets like chamber first
+    const cartridges = item.slotItems?.find((item) => item.slotId === 'cartridges');
+    if (cartridges) {
+      return bsgItems[cartridges.tpl].initialSpeed || 0;
+    }
+    return 0;
+  }
+
+  function getVelocityDelta() {
+    const bsgItem = bsgItems[item.tpl];
+    const acc =
+      item.slotItems?.reduce((acc, value) => {
+        const slotItem = bsgItems[value.tpl];
+        return acc + slotItem.velocity;
+      }, 0) || 0;
+    return (acc + bsgItem.velocity) / 100;
+  }
+
+  function getSpeedFactor() {
+    return 1 + getVelocityDelta();
+  }
+
+  function getVelocity() {
+    return getVelocityBase() * getSpeedFactor();
+  }
+
+  console.log('velocity', getVelocity());
+  /////
 
   function findItemsInSlot(slotId: string) {
     return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId);
@@ -98,10 +131,9 @@
       sightingRange: bsgItem.sightingRange,
       verticalRecoil: bsgItem.recoilForceUp,
       horizontalRecoil: bsgItem.recoilForceBack,
-      singleFireRate: bsgItem.singleFireRate,
+      velocity: getVelocity(),
       verticalRecoilPercentage: 0,
       horizontalRecoilPercentage: 0,
-      velocityPercentage: 0,
     };
     const stats = item.slotItems?.reduce((acc, value) => {
       const slotItem = bsgItems[value.tpl];
@@ -110,7 +142,6 @@
         acc.sightingRange > slotItem.sightingRange ? acc.sightingRange : slotItem.sightingRange;
       acc.verticalRecoilPercentage += slotItem.recoil;
       acc.horizontalRecoilPercentage += slotItem.recoil;
-      acc.velocityPercentage += slotItem.velocity;
       return acc;
     }, initialStats) as Stats;
 
@@ -118,8 +149,6 @@
       bsgItem.recoilForceUp + (bsgItem.recoilForceUp * stats.verticalRecoilPercentage) / 100;
     stats.horizontalRecoil =
       bsgItem.recoilForceBack + (bsgItem.recoilForceBack * stats.horizontalRecoilPercentage) / 100;
-    stats.singleFireRate =
-      bsgItem.singleFireRate + (bsgItem.singleFireRate * stats.velocityPercentage) / 100;
 
     return stats;
   }
@@ -164,7 +193,7 @@
               <img alt="ergonomics logo" src={ergonomicsLogo} />
               <div>ERGONOMICS</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.ergonomics}%`} />
+            <div class="graph-line" style={`width: ${stats.ergonomics / 1}%`} />
             <div class="stat-value">{stats.ergonomics}</div>
           </div>
         {/if}
@@ -184,7 +213,7 @@
               <img alt="ergonomics logo" src={sightingRangeLogo} />
               <div>SIGHTING RANGE</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.sightingRange / 20}%`} />
+            <div class="graph-line" style={`width: ${stats.sightingRange / 50}%`} />
             <div class="stat-value">{stats.sightingRange}</div>
           </div>
         {/if}
@@ -194,7 +223,7 @@
               <img alt="ergonomics logo" src={recoilLogo} />
               <div>VERTICAL RECOIL</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.verticalRecoil / 7}%`} />
+            <div class="graph-line" style={`width: ${stats.verticalRecoil / 10}%`} />
             <div class="stat-value">{Math.ceil(stats.verticalRecoil)}</div>
           </div>
         {/if}
@@ -204,18 +233,18 @@
               <img alt="ergonomics logo" src={recoilLogo} />
               <div>HORIZONTAL RECOIL</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.horizontalRecoil / 12}%`} />
+            <div class="graph-line" style={`width: ${stats.horizontalRecoil / 10}%`} />
             <div class="stat-value">{Math.ceil(stats.horizontalRecoil)}</div>
           </div>
         {/if}
-        {#if stats.singleFireRate}
+        {#if stats.velocity}
           <div class="stat-wrapper">
             <div class="stat-name">
               <img alt="ergonomics logo" src={muzzleVelocityLogo} />
-              <div>MUZZLE VELOCITY (WIP)</div>
+              <div>MUZZLE VELOCITY</div>
             </div>
-            <div class="graph-line" style={`width: ${stats.singleFireRate / 13}%`} />
-            <div class="stat-value">{Math.floor(stats.singleFireRate)} m/s</div>
+            <div class="graph-line" style={`width: ${stats.velocity / 15}%`} />
+            <div class="stat-value">{Math.floor(stats.velocity)} m/s</div>
           </div>
         {/if}
       </div>

@@ -107,11 +107,11 @@ pub struct BsgItem {
     pub recoil_force_back: Value,
     #[serde(rename = "recoilForceUp")]
     pub recoil_force_up: Value,
-    #[serde(rename = "singleFireRate")]
-    pub single_fire_rate: Value,
     #[serde(rename = "centerOfImpact")]
     pub center_of_impact: Value,
     pub velocity: Value,
+    #[serde(rename = "initialSpeed")]
+    pub initial_speed: Value,
     #[serde(rename = "ammoAccr")]
     pub ammo_accr: Value,
     #[serde(rename = "accuracy")]
@@ -206,8 +206,8 @@ pub fn convert_profile_to_ui(
                     .and_then(|p| p.get("RecoilForceUp"))
                     .cloned()
                     .unwrap_or(Value::from(0)),
-                single_fire_rate: props
-                    .and_then(|p| p.get("SingleFireRate"))
+                initial_speed: props
+                    .and_then(|p| p.get("InitialSpeed"))
                     .cloned()
                     .unwrap_or(Value::from(0)),
                 velocity: props
