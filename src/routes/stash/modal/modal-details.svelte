@@ -169,13 +169,9 @@
   function getEmptyAttachmentBackgroundUrl(slotId: string) {
     return getAttachmentBackground(slotId as SlotKind);
   }
-
-  function handleConfirm() {
-    showModal = false;
-  }
 </script>
 
-<Modal bind:showModal onConfirm={handleConfirm}>
+<Modal bind:showModal withSubmit={false}>
   <h2 slot="header">
     {getName(item.tpl, locale)}
   </h2>

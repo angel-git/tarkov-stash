@@ -1,6 +1,7 @@
 <script lang="ts">
   export let showModal: boolean;
   export let onConfirm: () => void;
+  export let withSubmit = true;
 
   let dialog: HTMLDialogElement;
 
@@ -19,8 +20,10 @@
     <slot name="header" />
     <slot />
     <div class="controls">
-      <button class="secondary" on:click={() => (showModal = false)}>Cancel</button>
-      <button class="primary" on:click={onConfirm}>Confirm</button>
+      <button class="secondary" on:click={() => (showModal = false)}>Close</button>
+      {#if withSubmit}
+        <button class="primary" on:click={onConfirm}>Confirm</button>
+      {/if}
     </div>
   </div>
 </dialog>
