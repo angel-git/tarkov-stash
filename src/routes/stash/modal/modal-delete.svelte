@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { BsgItem, Item } from '../../../types';
+  import type { Item } from '../../../types';
   import { goto } from '$app/navigation';
 
   import Modal from './modal.svelte';
-  import { invokeWithLoader } from '../../../helper';
+  import { getName, invokeWithLoader } from '../../../helper';
 
   export let onClose: () => void;
   export let item: Item;
-  export let bsgItems: Record<string, BsgItem>;
+  export let locale: Record<string, string>;
 
   let showModal = true;
 
@@ -31,7 +31,7 @@
       {#each item.gridItems as gridItem}
         <ul>
           {#each gridItem.items as innerItem}
-            <li>{bsgItems[innerItem.tpl].name}</li>
+            <li>{getName(innerItem.tpl, locale)}</li>
           {/each}
         </ul>
       {/each}

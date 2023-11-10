@@ -1,28 +1,34 @@
 <script lang="ts">
+  interface BsgItemWithParent extends BsgItem {
+    parent: string;
+  }
+
   import { goto } from '$app/navigation';
   import Modal from './modal.svelte';
   import type { BsgItem, Item, NewItem } from '../../../types';
-  import { calculateBackgroundColor } from '../../../helper';
+  import { calculateBackgroundColor, getName } from '../../../helper';
   import { invokeWithLoader } from '../../../helper';
   import { addNewItem } from '../../../store';
+  import { getShortName } from '../../../helper';
 
   export let onClose: () => void;
   export let allItems: Record<string, BsgItem>;
+  export let locale: Record<string, string>;
   export let grid: Array<Array<Item | undefined>>;
 
   type OrderType = 'alpha' | 'parent';
 
   let showModal = true;
-  let parsedItems: Array<BsgItem>;
+  let parsedItems: Array<BsgItemWithParent>;
   let parsedNodes: Record<string, BsgItem>;
   let notEnoughSpaceError = false;
   let order: OrderType = 'alpha';
 
-  const sortByName = (a: BsgItem, b: BsgItem) => {
-    if (a.name < b.name) {
+  const sortByName = (a: BsgItemWithParent, b: BsgItemWithParent) => {
+    if (a.parent < b.parent) {
       return -1;
     }
-    if (a.name > b.name) {
+    if (a.parent > b.parent) {
       return 1;
     }
     return 0;
@@ -44,19 +50,19 @@
         .map((i) => allItems[i])
         .filter((i) => i.type === 'Item')
         .filter((i) => !i.unbuyable)
-        .filter((i) => i.name)
-        .filter((i) => !i.name.includes('!!!DO_NOT_USE!!'))
+        .filter((i) => getName(i.id, locale))
+        .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
         .map((i) => {
           if (order === 'alpha') {
-            return { ...i, name: `${i.name} - [${getParentNode(i)}]` };
+            return { ...i, parent: `${getName(i.id, locale)} - [${getParentNode(i)}]` };
           } else {
-            return { ...i, name: `[${getParentNode(i)}] - ${i.name}` };
+            return { ...i, parent: `[${getParentNode(i)}] - ${getName(i.id, locale)}` };
           }
         })
         .filter(
           (i) =>
-            i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
-            i.shortName.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
+            i.parent.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
+            getShortName(i.id, locale).toLowerCase().includes($addNewItem.input.toLowerCase()) ||
             $addNewItem.item?.id === i.id,
         )
         .sort(sortByName);
@@ -119,7 +125,7 @@
   }
 
   function getParentNode(item: BsgItem) {
-    return parsedNodes[item.parentId]?.name || '??';
+    return getName(parsedNodes[item.parentId]?.id, locale) || '??';
   }
 
   function onOrderChange(event: { currentTarget: HTMLInputElement }) {
@@ -161,7 +167,7 @@
         <ul>
           {#each parsedItems as item}
             <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
-              <button on:click={() => selectItem(item)}>{item.name}</button>
+              <button on:click={() => selectItem(item)}>{item.parent}</button>
             </li>
           {/each}
         </ul>
@@ -172,7 +178,7 @@
         class="selected-item"
         style={`background-color: ${calculateBackgroundColor($addNewItem.item.backgroundColor)}`}
       >
-        <div>{$addNewItem.item.shortName}</div>
+        <div>{getShortName($addNewItem.item.id, locale)}</div>
         <div>{$addNewItem.item.width}X{$addNewItem.item.height}</div>
         <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
       </div>

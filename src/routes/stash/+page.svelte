@@ -79,7 +79,7 @@
       <AmountModal item={selectedItem} onClose={handleCloseModal} />
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'delete'}
-      <DeleteModal item={selectedItem} bsgItems={$profile.bsgItems} onClose={handleCloseModal} />
+      <DeleteModal item={selectedItem} locale={$profile.locale} onClose={handleCloseModal} />
     {/if}
     <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />
   {:else}

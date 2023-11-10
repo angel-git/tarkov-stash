@@ -1,9 +1,10 @@
 <script lang="ts">
-  import type { Item, BsgItem } from '../../../types';
+  import type { Item } from '../../../types';
   import { calculateBackgroundColor } from '../../../helper';
+  import { getShortName } from '../../../helper';
 
   export let item: Item;
-  export let bsgItems: Record<string, BsgItem>;
+  export let locale: Record<string, string>;
   export let handleOpenClick: (item: Item | undefined) => void;
 
   function calculateSizeStyle(item: Item) {
@@ -44,7 +45,7 @@
   <div class="item-image">
     <div style={calculateBackgroundStyle(item)} />
   </div>
-  <div class="short-name">{bsgItems[item.tpl].shortName}</div>
+  <div class="short-name">{getShortName(item.tpl, locale)}</div>
   <div class="item-data">
     {#if item.isFir}
       <div class="fir" />

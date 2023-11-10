@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BsgItem, Item, Stats } from '../../../types';
   import Modal from './modal.svelte';
-  import { calculateBackgroundColor } from '../../../helper';
+  import { calculateBackgroundColor, getName } from '../../../helper';
 
   // images
   import ergonomicsLogo from '$lib/images/ergonomics.png';
@@ -9,6 +9,7 @@
   import sightingRangeLogo from '$lib/images/sighting-range.png';
   import recoilLogo from '$lib/images/recoil.png';
   import muzzleVelocityLogo from '$lib/images/muzzle-velocity.png';
+  import { getDescription, getShortName } from '../../../helper';
 
   export let onClose: () => void;
   export let item: Item;
@@ -174,7 +175,7 @@
 
 <Modal bind:showModal onConfirm={handleConfirm}>
   <h2 slot="header">
-    {bsgItems[item.tpl].name}
+    {getName(item.tpl, locale)}
   </h2>
 
   <div>
@@ -183,7 +184,7 @@
         <img alt="item" src={`https://assets.tarkov.dev/${item.tpl}-base-image.png`} />
       </div>
       <div class="details">
-        {bsgItems[item.tpl].description}
+        {getDescription(item.tpl, locale)}
       </div>
     </div>
     {#if stats}
@@ -264,7 +265,7 @@
                     bsgItems[itemInSlot.tpl].backgroundColor,
                   )}`}
                 >
-                  <div class="slots-grid-item-name">{bsgItems[itemInSlot.tpl].shortName}</div>
+                  <div class="slots-grid-item-name">{getShortName(itemInSlot.tpl, locale)}</div>
                   <img
                     alt="item"
                     src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`}

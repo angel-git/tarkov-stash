@@ -34,3 +34,15 @@ export const calculateBackgroundColor = (backgroundColor: string) => {
       return `rgba(127, 127, 127, 0.0)`;
   }
 };
+
+export const getShortName = (id: string, locale: Record<string, string>): string => {
+  return locale[`${id} ShortName`];
+};
+
+export const getName = (id: string, locale: Record<string, string>): string => {
+  return locale[`${id} Name`];
+};
+
+export const getDescription = (id: string, locale: Record<string, string>): string => {
+  return locale[`${id} Description`];
+};
