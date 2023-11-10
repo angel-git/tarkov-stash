@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { BsgItem, Item, Stats } from '../../../types';
+  import type { BsgItem, Item, SlotKind, Stats } from '../../../types';
   import Modal from './modal.svelte';
-  import { calculateBackgroundColor, getName } from '../../../helper';
+  import { calculateBackgroundColor, getAttachmentBackground, getName } from '../../../helper';
 
   // images
   import ergonomicsLogo from '$lib/images/ergonomics.png';
@@ -166,7 +166,9 @@
   const stats = calculateStats();
   const slots = mergeSlots();
 
-  console.log('item', item); // TODO delete me
+  function getEmptyAttachmentBackgroundUrl(slotId: string) {
+    return getAttachmentBackground(slotId as SlotKind);
+  }
 
   function handleConfirm() {
     showModal = false;
@@ -274,6 +276,10 @@
               {/each}
             {:else}
               <div class="slots-grid-item">
+                <div
+                  class="slots-grid-item-empty"
+                  style={`background-image: url(${getEmptyAttachmentBackgroundUrl(slotId)}`}
+                />
                 <div class="slots-grid-item-name">{locale[slotId.toUpperCase()]}</div>
               </div>
             {/if}
@@ -342,6 +348,13 @@
     justify-content: center;
     position: relative;
     border: 1px solid #575b5e;
+  }
+
+  .slots-grid-item .slots-grid-item-empty {
+    height: 64px;
+    width: 64px;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   .slots-grid-item.with-item {

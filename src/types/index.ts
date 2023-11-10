@@ -140,7 +140,8 @@ export type SlotKind =
   | 'mod_tactical_003'
   | 'mod_tactical_004'
   | 'mod_tactical_2'
-  | 'mod_trigger';
+  | 'mod_trigger'
+  | 'patron_in_weapon';
 
 export type Option = 'amount' | 'fir' | 'resource' | 'open' | 'delete' | 'details';
 
