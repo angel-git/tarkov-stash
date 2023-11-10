@@ -16,7 +16,7 @@ import pistol_grip from '$lib/images/attachments/pistol-grip.png';
 import receiver from '$lib/images/attachments/receiver.png';
 import muzzle from '$lib/images/attachments/muzzle.png';
 import foregrip from '$lib/images/attachments/foregrip.png';
-import gas_block from '$lib/images/attachments/gas_block.png';
+import gas_block from '$lib/images/attachments/gas-block.png';
 import launcher from '$lib/images/attachments/launcher.png';
 
 type InvokeArgs = Record<string, unknown>;
