@@ -14,9 +14,11 @@
   $: if (!showModal) onClose();
 
   function handleConfirm() {
-    showModal = false;
-
-    invokeWithLoader('remove_item', { item }).catch((e) => goto(`/error?message=${e}`));
+    invokeWithLoader('remove_item', { item })
+      .then(() => {
+        showModal = false;
+      })
+      .catch((e) => goto(`/error?message=${e}`));
   }
 </script>
 

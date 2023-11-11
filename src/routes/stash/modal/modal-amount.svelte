@@ -15,11 +15,11 @@
   $: if (!showModal) onClose();
 
   function handleConfirm() {
-    showModal = false;
-
-    invokeWithLoader('change_amount', { item: { ...item, amount } }).catch((e) =>
-      goto(`/error?message=${e}`),
-    );
+    invokeWithLoader('change_amount', { item: { ...item, amount } })
+      .then(() => {
+        showModal = false;
+      })
+      .catch((e) => goto(`/error?message=${e}`));
   }
 
   function handleKeyUp() {
@@ -51,6 +51,7 @@
     background-color: var(--color-background);
     color: var(--color-text);
   }
+
   button {
     background-color: var(--color-background);
     color: var(--color-secondary);
