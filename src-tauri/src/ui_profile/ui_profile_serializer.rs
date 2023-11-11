@@ -1,10 +1,10 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
-use crate::spt;
-use crate::spt::spt_bsg_items_serializer::load_item;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use crate::spt;
+use crate::spt::spt_bsg_items_serializer::load_item;
 use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -19,12 +19,16 @@ pub struct UIProfile {
     pub bsg_items: HashMap<String, BsgItem>,
     #[serde(rename = "sptVersion")]
     pub spt_version: Option<String>,
+    #[serde(rename = "locale")]
+    locale: HashMap<String, Value>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Item {
     pub id: String,
     pub tpl: String,
+    #[serde(rename = "parentId")]
+    pub parent_id: Option<String>,
     pub x: u16,
     pub y: u16,
     #[serde(rename = "sizeX")]
@@ -43,14 +47,22 @@ pub struct Item {
     pub resource: Option<u16>,
     #[serde(rename = "maxResource")]
     pub max_resource: Option<u16>,
-    // #[serde(rename = "originalMaxResource")]
-    // pub original_max_resource: Option<u16>,
     #[serde(rename = "backgroundColor")]
     pub background_color: String,
     #[serde(rename = "isContainer")]
     pub is_container: bool,
     #[serde(rename = "gridItems")]
     pub grid_items: Option<Vec<GridItem>>,
+    #[serde(rename = "slotItems")]
+    pub slot_items: Option<HashSet<SlotItem>>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
+pub struct SlotItem {
+    pub id: String,
+    pub tpl: String,
+    #[serde(rename = "slotId")]
+    pub slot_id: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -67,11 +79,8 @@ pub struct GridItem {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct BsgItem {
     pub id: String,
-    pub name: String,
     #[serde(rename = "parentId")]
     pub parent_id: Option<Value>,
-    #[serde(rename = "shortName")]
-    pub short_name: String,
     pub width: Option<Value>,
     pub height: Option<Value>,
     #[serde(rename = "hideEntrails")]
@@ -82,6 +91,29 @@ pub struct BsgItem {
     pub r#type: Option<Value>,
     #[serde(rename = "backgroundColor")]
     pub background_color: Option<Value>,
+    #[serde(rename = "Slots")]
+    pub slots: Option<Value>,
+    pub ergonomics: Value,
+    #[serde(rename = "deviationMax")]
+    pub deviation_max: Value,
+    #[serde(rename = "deviationCurve")]
+    pub deviation_curve: Value,
+    #[serde(rename = "sightingRange")]
+    pub sighting_range: Value,
+    pub recoil: Value,
+    #[serde(rename = "recoilForceBack")]
+    pub recoil_force_back: Value,
+    #[serde(rename = "recoilForceUp")]
+    pub recoil_force_up: Value,
+    #[serde(rename = "centerOfImpact")]
+    pub center_of_impact: Value,
+    pub velocity: Value,
+    #[serde(rename = "initialSpeed")]
+    pub initial_speed: Value,
+    #[serde(rename = "ammoAccr")]
+    pub ammo_accr: Value,
+    #[serde(rename = "accuracy")]
+    pub accuracy: Value,
 }
 
 pub fn convert_profile_to_ui(
@@ -118,22 +150,12 @@ pub fn convert_profile_to_ui(
     bsg_items_root.keys().for_each(|k| {
         let item = bsg_items_root.get(k).unwrap();
         let id = item.get("_id").unwrap().as_str().unwrap();
-        let maybe_name = locale_root.get(format!("{} Name", id).as_str());
-        let maybe_short_name = locale_root.get(format!("{} ShortName", id).as_str());
-        let name = maybe_name
-            .and_then(|v| v.as_str())
-            .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
-        let short_name = maybe_short_name
-            .and_then(|v| v.as_str())
-            .unwrap_or_else(|| item.get("_name").unwrap().as_str().unwrap());
         let props = item.get("_props");
         bsg_items.insert(
             id.to_string(),
             BsgItem {
                 id: id.to_string(),
-                name: name.to_string(),
                 parent_id: item.get("_parent").cloned(),
-                short_name: short_name.to_string(),
                 width: props.and_then(|p| p.get("Width")).cloned(),
                 height: props.and_then(|p| p.get("Height")).cloned(),
                 unlootable: props.and_then(|p| p.get("Unlootable")).cloned(),
@@ -141,6 +163,55 @@ pub fn convert_profile_to_ui(
                 hide_entrails: props.and_then(|p| p.get("HideEntrails")).cloned(),
                 r#type: item.get("_type").cloned(),
                 background_color: props.and_then(|p| p.get("BackgroundColor")).cloned(),
+                slots: props.and_then(|p| p.get("Slots")).cloned(),
+                ergonomics: props
+                    .and_then(|p| p.get("Ergonomics"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                deviation_max: props
+                    .and_then(|p| p.get("DeviationMax"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                deviation_curve: props
+                    .and_then(|p| p.get("DeviationCurve"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                sighting_range: props
+                    .and_then(|p| p.get("SightingRange"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil: props
+                    .and_then(|p| p.get("Recoil"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil_force_back: props
+                    .and_then(|p| p.get("RecoilForceBack"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                recoil_force_up: props
+                    .and_then(|p| p.get("RecoilForceUp"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                initial_speed: props
+                    .and_then(|p| p.get("InitialSpeed"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                velocity: props
+                    .and_then(|p| p.get("Velocity"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                center_of_impact: props
+                    .and_then(|p| p.get("CenterOfImpact"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                ammo_accr: props
+                    .and_then(|p| p.get("ammoAccr"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                accuracy: props
+                    .and_then(|p| p.get("Accuracy"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
             },
         );
     });
@@ -152,6 +223,7 @@ pub fn convert_profile_to_ui(
         items,
         bsg_items,
         spt_version: None,
+        locale: locale_root.clone(),
     })
 }
 
@@ -223,6 +295,23 @@ fn parse_items(
             }
         }
 
+        let has_slots =
+            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
+
+        let mut slot_items: Option<HashSet<SlotItem>> = None;
+        if has_slots {
+            slot_items = Some(HashSet::new());
+            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
+                let all_slots_from_item = find_all_slots_from_parent(
+                    item._id.as_str(),
+                    &profile_items,
+                    bsg_t._name.as_str(),
+                );
+
+                slot_items.as_mut().unwrap().extend(all_slots_from_item);
+            })
+        }
+
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
@@ -273,6 +362,7 @@ fn parse_items(
         let i = Item {
             id: item._id.to_string(),
             tpl: item._tpl.to_string(),
+            parent_id: item.parent_id.clone(),
             x: location_in_stash.x,
             y: location_in_stash.y,
             size_x,
@@ -287,6 +377,7 @@ fn parse_items(
             background_color,
             is_container,
             grid_items,
+            slot_items,
         };
         items.push(i)
     }
@@ -390,22 +481,48 @@ fn find_all_ids_and_tpl_from_parent(
     result
 }
 
+fn find_all_slots_from_parent(
+    parent_id: &str,
+    items: &[spt::spt_profile_serializer::Item],
+    slot_id: &str,
+) -> HashSet<SlotItem> {
+    let mut result: HashSet<SlotItem> = HashSet::new();
+
+    for i in items {
+        if i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == parent_id {
+            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with(slot_id) {
+                let id = i._id.to_string();
+                let tpl = i._tpl.to_string();
+                let slot_id = i.slot_id.as_ref().unwrap().to_string();
+                result.insert(SlotItem { id, tpl, slot_id });
+            }
+
+            let sub_items = find_all_slots_from_parent(&i._id, items, "");
+            result.extend(sub_items);
+        }
+    }
+
+    result
+}
+
 fn get_bsg_item(
     item: &spt::spt_profile_serializer::Item,
     bsg_items_root: &HashMap<String, Value>,
-) -> Option<spt::spt_bsg_items_serializer::Item> {
+) -> Option<spt::spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
     load_item(parent_item.to_string().as_str()).ok()
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
+    use serde_json::Value;
+
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
     use crate::ui_profile::ui_profile_serializer::{
         calculate_item_size, get_bsg_item, parse_items,
     };
-    use serde_json::Value;
-    use std::collections::HashMap;
 
     #[test]
     fn should_not_crash_if_template_is_not_found() {
@@ -591,5 +708,40 @@ mod tests {
 
         let nested_backpack = backpack_content.items.get(0).unwrap();
         assert!(nested_backpack.is_container);
+    }
+
+    #[test]
+    fn should_calculate_all_attachments() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/angel-git.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let stash = &tarkov_profile.characters.pmc.inventory.stash;
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            stash.as_str(),
+            "hideout",
+        )
+        .ok()
+        .unwrap();
+
+        let vpo = items
+            .iter()
+            .find(|i| i.id == "1d0832b091d9e1e36e17666b")
+            .unwrap();
+        let slot_items = vpo.slot_items.as_ref().unwrap().len();
+        assert_eq!(slot_items, 14);
     }
 }

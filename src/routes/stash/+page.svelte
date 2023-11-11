@@ -4,6 +4,7 @@
   import StashGrid from './stash-grid.svelte';
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
+  import DetailsModal from './modal/modal-details.svelte';
   import { afterNavigate, goto } from '$app/navigation';
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
@@ -66,11 +67,19 @@
     {#if isLoading}
       <img class="loading" src={Loading} alt="loading gif" width="40" height="40" />
     {/if}
+    {#if selectedItem && selectedOption && selectedOption === 'details'}
+      <DetailsModal
+        item={selectedItem}
+        bsgItems={$profile.bsgItems}
+        locale={$profile.locale}
+        onClose={handleCloseModal}
+      />
+    {/if}
     {#if selectedItem && selectedOption && selectedOption === 'amount'}
       <AmountModal item={selectedItem} onClose={handleCloseModal} />
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'delete'}
-      <DeleteModal item={selectedItem} bsgItems={$profile.bsgItems} onClose={handleCloseModal} />
+      <DeleteModal item={selectedItem} locale={$profile.locale} onClose={handleCloseModal} />
     {/if}
     <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />
   {:else}

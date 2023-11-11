@@ -4,8 +4,10 @@
   import StashItem from '../item/stash-item.svelte';
   import Grid from './grid.svelte';
   import NewItemModal from '../modal/modal-item.svelte';
+  import { getName } from '../../../helper';
 
   export let items: Array<Item>;
+  export let locale: Record<string, string>;
   export let sizeY: number;
   export let sizeX: number;
   export let nestedLevel: number;
@@ -107,7 +109,7 @@
   <button class="primary" on:click={openNewItemModal}>Add item</button>
 {/if}
 {#if isNewItemModalOpen}
-  <NewItemModal {grid} allItems={bsgItems} onClose={() => (isNewItemModalOpen = false)} />
+  <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
 {/if}
 <div
   class="grid"
@@ -116,13 +118,22 @@
   {#each orderedItems as item}
     <div class="grid-item">
       {#if item}
-        <StashItem {bsgItems} {handleOpenClick} {item} />
+        <StashItem {locale} {handleOpenClick} {item} />
       {:else}
         <div class="empty" />
       {/if}
       {#if item?.id === secondaryItemMenuId}
         <div class="options">
-          <div class="title">{bsgItems[item.tpl].name}</div>
+          <div class="title">{getName(item.tpl, locale)}</div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            class="option"
+            tabindex="-1"
+            role="button"
+            on:click={() => handleOptionClicked('details', item)}
+          >
+            See details
+          </div>
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
@@ -183,11 +194,12 @@
       {#if item?.id === containerOpenId}
         <div class="nested-grid" style={`z-index: ${nestedLevel + 10}`}>
           <div class="nested-grid-header">
-            <div>{bsgItems[item.tpl].name}</div>
+            <div>{getName(item.tpl, locale)}</div>
             <button on:click={() => (containerOpenId = '-1')}>close</button>
           </div>
           {#each item.gridItems as gridItem}
             <Grid
+              {locale}
               nestedLevel={nestedLevel + 1}
               {bsgItems}
               items={gridItem.items}

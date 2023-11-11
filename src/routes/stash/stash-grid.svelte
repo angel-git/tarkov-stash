@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Item, Profile, Option } from '../../types';
   import Grid from './grid/grid.svelte';
+  import { getName, getShortName } from '../../helper';
 
   export let profile: Profile;
   export let onOptionClicked: (option: Option, item: Item) => void;
@@ -12,8 +13,8 @@
     if (profile) {
       filteredItems = profile.items.filter((item) => {
         return (
-          profile.bsgItems[item.tpl].name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          profile.bsgItems[item.tpl].shortName.toLowerCase().includes(searchTerm.toLowerCase())
+          getName(item.tpl, profile.locale).toLowerCase().includes(searchTerm.toLowerCase()) ||
+          getShortName(item.tpl, profile.locale).toLowerCase().includes(searchTerm.toLowerCase())
         );
       });
     }
@@ -25,6 +26,7 @@
 </div>
 
 <Grid
+  locale={profile.locale}
   nestedLevel={1}
   bsgItems={profile.bsgItems}
   items={filteredItems}
