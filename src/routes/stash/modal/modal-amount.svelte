@@ -16,10 +16,10 @@
 
   function handleConfirm() {
     invokeWithLoader('change_amount', { item: { ...item, amount } })
-      .then(() => {
+      .catch((e) => goto(`/error?message=${e}`))
+      .finally(() => {
         showModal = false;
-      })
-      .catch((e) => goto(`/error?message=${e}`));
+      });
   }
 
   function handleKeyUp() {

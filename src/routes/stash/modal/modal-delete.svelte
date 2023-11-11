@@ -15,10 +15,10 @@
 
   function handleConfirm() {
     invokeWithLoader('remove_item', { item })
-      .then(() => {
+      .catch((e) => goto(`/error?message=${e}`))
+      .finally(() => {
         showModal = false;
-      })
-      .catch((e) => goto(`/error?message=${e}`));
+      });
   }
 </script>
 

@@ -29,18 +29,18 @@
     switch (option) {
       case 'fir': {
         invokeWithLoader('change_fir', { item })
-          .then(() => {
+          .catch((e) => goto(`/error?message=${e}`))
+          .finally(() => {
             handleCloseModal();
-          })
-          .catch((e) => goto(`/error?message=${e}`));
+          });
         break;
       }
       case 'resource': {
         invokeWithLoader('restore_durability', { item })
-          .then(() => {
+          .catch((e) => goto(`/error?message=${e}`))
+          .finally(() => {
             handleCloseModal();
-          })
-          .catch((e) => goto(`/error?message=${e}`));
+          });
         break;
       }
       default: {

@@ -87,10 +87,10 @@
         locationY: location?.y,
       },
     })
-      .then(() => {
+      .catch((e) => goto(`/error?message=${e}`))
+      .finally(() => {
         showModal = false;
-      })
-      .catch((e) => goto(`/error?message=${e}`));
+      });
   }
 
   function selectItem(item: BsgItem) {
