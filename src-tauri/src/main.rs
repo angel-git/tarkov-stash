@@ -160,7 +160,7 @@ fn main() {
 }
 
 #[tauri::command]
-fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String> {
+async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfile, String> {
     let mut internal_state = state.state.lock().unwrap();
     let b = &internal_state.profile_file_path;
     let b_clone = b.clone();
@@ -216,31 +216,31 @@ fn load_profile_file(state: State<TarkovStashState>) -> Result<UIProfile, String
 }
 
 #[tauri::command]
-fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Changing amount to item {}", item.id.as_str());
     with_state_do(item, app, update_item_amount)
 }
 
 #[tauri::command]
-fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Setting fir to item {}", item.id.as_str());
     with_state_do(item, app, update_spawned_in_session)
 }
 
 #[tauri::command]
-fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Restoring durability to item {}", item.id.as_str());
     with_state_do(item, app, update_durability)
 }
 
 #[tauri::command]
-fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Deleting item {}", item.id.as_str());
     with_state_do(item, app, delete_item)
 }
 
 #[tauri::command]
-fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
     info!(
         "Adding item {} on [{},{}]",
         item.id.as_str(),

@@ -80,14 +80,17 @@
       return;
     }
 
-    showModal = false;
     invokeWithLoader<NewItem>('add_item', {
       item: {
         id: $addNewItem.item.id,
         locationX: location?.x,
         locationY: location?.y,
       },
-    }).catch((e) => goto(`/error?message=${e}`));
+    })
+      .catch((e) => goto(`/error?message=${e}`))
+      .finally(() => {
+        showModal = false;
+      });
   }
 
   function selectItem(item: BsgItem) {

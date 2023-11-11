@@ -28,13 +28,19 @@
   function handleOptionClicked(option: Option, item: Item) {
     switch (option) {
       case 'fir': {
-        invokeWithLoader('change_fir', { item }).catch((e) => goto(`/error?message=${e}`));
-        handleCloseModal();
+        invokeWithLoader('change_fir', { item })
+          .catch((e) => goto(`/error?message=${e}`))
+          .finally(() => {
+            handleCloseModal();
+          });
         break;
       }
       case 'resource': {
-        invokeWithLoader('restore_durability', { item }).catch((e) => goto(`/error?message=${e}`));
-        handleCloseModal();
+        invokeWithLoader('restore_durability', { item })
+          .catch((e) => goto(`/error?message=${e}`))
+          .finally(() => {
+            handleCloseModal();
+          });
         break;
       }
       default: {
