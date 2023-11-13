@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
+use serde_json::Value;
+
 use crate::spt::spt_profile_serializer::{
     FireMode, Foldable, FoodDrink, MedKit, Repairable, Togglable, UPD,
 };
-use serde_json::Value;
 
 pub fn get_upd_props_from_item(item: &Value) -> UPD {
     let props = item.get("_props").expect("no _props for item");
@@ -68,9 +71,72 @@ pub fn get_upd_props_from_item(item: &Value) -> UPD {
     }
 }
 
+pub fn is_ammo_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Ammo").is_some()
+}
+
+pub fn is_weapon_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Weapon").is_some()
+}
+
+pub fn is_magazine_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Magazine").is_some()
+}
+
+pub fn is_compound_without_hide_entrails(
+    tpl: &str,
+    bsg_items_root: &HashMap<String, Value>,
+) -> bool {
+    if let Some(node) = bsg_items_root.get(tpl) {
+        if let Some(hide) = node
+            .get("_props")
+            .and_then(|p| p.get("HideEntrails").and_then(|hide| hide.as_bool()))
+        {
+            if !hide {
+                if let Some(slots) = node.get("_props").and_then(|p| p.get("Slots")) {
+                    slots.as_array().is_some_and(|slot| !slot.is_empty())
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    } else {
+        false
+    }
+}
+
+fn find_parent_by_name(
+    bsg_items_root: &HashMap<String, Value>,
+    current_id: &str,
+    target_name: &str,
+) -> Option<Value> {
+    if let Some(node) = bsg_items_root.get(current_id) {
+        let name = node.get("_name").unwrap().as_str().unwrap();
+        if name == target_name {
+            Some(node.clone())
+        } else if let Some(parent_id) = node.get("_parent") {
+            find_parent_by_name(bsg_items_root, &parent_id.as_str().unwrap(), target_name)
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::utils::item_utils::get_upd_props_from_item;
+    use std::collections::HashMap;
+
+    use serde_json::Value;
+
+    use crate::utils::item_utils::{
+        get_upd_props_from_item, is_ammo_item, is_compound_without_hide_entrails,
+    };
 
     #[test]
     fn should_not_be_toggable() {
@@ -165,5 +231,45 @@ mod tests {
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
         assert_eq!(upd.med_kit.unwrap().hp_resource, 50);
         assert_eq!(upd.food_drink.unwrap().hp_percent, 100);
+    }
+
+    #[test]
+    fn should_item_be_ammo() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let is_ammo = is_ammo_item("5ea2a8e200685063ec28c05a", &bsg_items_root);
+        assert!(is_ammo);
+    }
+
+    #[test]
+    fn should_container_not_be_compound_without_hide_entrails() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let backpack =
+            is_compound_without_hide_entrails("5e9dcf5986f7746c417435b3", &bsg_items_root);
+        assert!(!backpack);
+    }
+
+    #[test]
+    fn should_weapon_be_compound_without_hide_entrails() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let weapon = is_compound_without_hide_entrails("59e6152586f77473dc057aa1", &bsg_items_root);
+        assert!(weapon);
     }
 }

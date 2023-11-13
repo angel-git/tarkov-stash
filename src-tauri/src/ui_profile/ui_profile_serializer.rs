@@ -6,6 +6,9 @@ use serde_json::Value;
 use crate::spt;
 use crate::spt::spt_bsg_items_serializer::load_item;
 use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
+use crate::utils::item_utils::{
+    is_compound_without_hide_entrails, is_magazine_item, is_weapon_item,
+};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -59,8 +62,8 @@ pub struct Item {
 
 #[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
 pub struct SlotItem {
-    pub id: String,
-    pub tpl: String,
+    pub id: Option<String>,
+    pub tpl: Option<String>,
     #[serde(rename = "slotId")]
     pub slot_id: String,
 }
@@ -302,11 +305,21 @@ fn parse_items(
         if has_slots {
             slot_items = Some(HashSet::new());
             bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
-                let all_slots_from_item = find_all_slots_from_parent(
+                if item._id == "82ca53c4603ff9748f265d85" {
+                    println!("gonna find all slots {}", bsg_t._name.as_str());
+                }
+                let mut all_slots_from_item = find_all_slots_from_parent(
                     item._id.as_str(),
                     &profile_items,
                     bsg_t._name.as_str(),
                 );
+                if all_slots_from_item.is_empty() {
+                    all_slots_from_item.insert(SlotItem {
+                        slot_id: bsg_t._name.to_string(),
+                        id: None,
+                        tpl: None,
+                    });
+                }
 
                 slot_items.as_mut().unwrap().extend(all_slots_from_item);
             })
@@ -489,14 +502,19 @@ fn find_all_slots_from_parent(
     let mut result: HashSet<SlotItem> = HashSet::new();
 
     for i in items {
-        if i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == parent_id {
-            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with(slot_id) {
-                let id = i._id.to_string();
-                let tpl = i._tpl.to_string();
-                let slot_id = i.slot_id.as_ref().unwrap().to_string();
-                result.insert(SlotItem { id, tpl, slot_id });
-            }
-
+        if i.parent_id.is_some()
+            && i.parent_id.as_ref().unwrap() == parent_id
+            && i.slot_id.is_some()
+            && i.slot_id.as_ref().unwrap().starts_with(slot_id)
+        {
+            let id = i._id.to_string();
+            let tpl = i._tpl.to_string();
+            let slot_id = i.slot_id.as_ref().unwrap().to_string();
+            result.insert(SlotItem {
+                id: Some(id),
+                tpl: Some(tpl),
+                slot_id,
+            });
             let sub_items = find_all_slots_from_parent(&i._id, items, "");
             result.extend(sub_items);
         }
@@ -513,6 +531,119 @@ fn get_bsg_item(
     load_item(parent_item.to_string().as_str()).ok()
 }
 
+// https://github.com/RatScanner/RatStash/blob/master/RatStash/CacheHashIndexParser.cs
+fn calculate_item_cache_hash(item: &Item, bsg_items_root: &HashMap<String, Value>) -> Option<i32> {
+    let mut hash = 17;
+    hash ^= get_single_item_hash(&item.tpl, bsg_items_root);
+    println!("hash 1 {}", hash);
+    if is_compound_without_hide_entrails(&item.tpl, bsg_items_root) {
+        hash = get_container_hash(&hash, &item.slot_items, bsg_items_root);
+        println!("hash 2 {}", hash);
+        Some(hash)
+    } else {
+        // TODO
+        // if (item is CompoundItem { HideEntrails: false } compoundItem)
+        // {
+        //     hash = GetContainerHash(hash, compoundItem.Slots);
+        // }
+        //
+        // if (item is Magazine magazine)
+        // {
+        //     hash = GetContainerHash(hash, magazine.Cartridges);
+        // }
+        //
+        // if (item is AmmoContainer ammoContainer)
+        // {
+        //     hash = GetContainerHash(hash, ammoContainer.StackSlots);
+        // }
+        //
+        // if (item is Ammo)
+        // {
+        //     // Ammo is never used when rendered in the inventory
+        //     // hash ^= 27 * (ammo.IsUsed ? 42 : 56);
+        hash ^= 27 * 56;
+        // }
+        println!("returning none for hash: {}", hash);
+        None
+    }
+}
+
+fn get_single_item_hash(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> i32 {
+    let mut hash = 0;
+    // if (item == null) return hash;
+    hash ^= get_deterministic_hash_code(tpl);
+
+    if is_weapon_item(tpl, bsg_items_root) {
+        // TODO folded
+        hash ^= (23 + 0) << 1;
+    }
+    if is_magazine_item(tpl, bsg_items_root) {
+        // TODO max visible ammo
+        hash ^= (23 + 2) << 2;
+    }
+
+    // TODO
+    // switch (item)
+    // {
+    //     case NightVision:
+    //     case ThermalVision:
+    //     case ArmoredEquipment:
+    //     if (item is ArmoredEquipment { HasHinge: false }) break;
+    //     hash ^= 23 + (itemExtraInfo.ItemIsToggled ? 1 : 0);
+    //     break;
+    //     case Weapon:
+    //     hash ^= 23 + (itemExtraInfo.WeaponIsFolded ? 1 : 0) << 1;
+    //     break;
+    //     case Magazine magazine:
+    //     hash ^= 23 + magazine.GetMaxVisibleAmmo() << 2;
+    //     break;
+    // }
+
+    hash
+}
+
+fn get_container_hash(
+    hash: &i32,
+    slot_items_option: &Option<HashSet<SlotItem>>,
+    bsg_items_root: &HashMap<String, Value>,
+) -> i32 {
+    let mut hash_clone = *hash;
+    if let Some(slot_items) = slot_items_option {
+        slot_items.iter().for_each(|slot| {
+            hash_clone ^= get_deterministic_hash_code(slot.slot_id.as_str());
+            println!("hash_clone for slot {}: {}", slot.slot_id, hash_clone);
+            if slot.id.is_some() && slot.tpl.is_some() {
+                hash_clone ^=
+                    get_single_item_hash(slot.tpl.as_ref().unwrap().as_str(), bsg_items_root);
+                println!(
+                    "hash_clone for item inside slot {}: {}",
+                    slot.slot_id, hash_clone
+                );
+            }
+        });
+        hash_clone
+    } else {
+        0
+    }
+}
+
+fn get_deterministic_hash_code(s: &str) -> i32 {
+    let mut hash1: i32 = 5381;
+    let mut hash2: i32 = hash1;
+
+    for (i, c) in s.chars().enumerate().step_by(2) {
+        hash1 = hash1.wrapping_shl(5).wrapping_add(hash1) ^ c as i32;
+
+        if i == s.len() - 1 {
+            break;
+        }
+        let next_char = s.chars().nth(i + 1).unwrap();
+        hash2 = hash2.wrapping_shl(5).wrapping_add(hash2) ^ next_char as i32
+    }
+
+    hash1.wrapping_add(hash2.wrapping_mul(1566083941))
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -521,7 +652,7 @@ mod tests {
 
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
     use crate::ui_profile::ui_profile_serializer::{
-        calculate_item_size, get_bsg_item, parse_items,
+        calculate_item_cache_hash, calculate_item_size, get_bsg_item, parse_items,
     };
 
     #[test]
@@ -742,6 +873,105 @@ mod tests {
             .find(|i| i.id == "1d0832b091d9e1e36e17666b")
             .unwrap();
         let slot_items = vpo.slot_items.as_ref().unwrap().len();
-        assert_eq!(slot_items, 14);
+        assert_eq!(slot_items, 17);
+    }
+
+    #[test]
+    fn should_calculate_cache_hash_for_ammo() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/angel-git.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            &tarkov_profile.characters.pmc.inventory.stash,
+            "hideout",
+        )
+        .unwrap();
+
+        let ammo = items
+            .iter()
+            .find(|item| item.id == "f5b4f4741134ec027112e83b");
+
+        let hash = calculate_item_cache_hash(ammo.unwrap(), &bsg_items_root);
+        assert_eq!(hash, None)
+    }
+
+    #[test]
+    fn should_calculate_cache_hash_for_pistol_without_attachments() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/angel-git.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            &tarkov_profile.characters.pmc.inventory.stash,
+            "hideout",
+        )
+        .unwrap();
+
+        let pistol = items
+            .iter()
+            .find(|item| item.id == "6484870279ae0f13f00d7e7d");
+
+        let hash = calculate_item_cache_hash(pistol.unwrap(), &bsg_items_root);
+        assert_eq!(hash, Some(-157439809))
+    }
+
+    #[test]
+    fn should_calculate_cache_hash_for_weapon() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/angel-git.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let items = parse_items(
+            tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+            &tarkov_profile.characters.pmc.inventory.stash,
+            "hideout",
+        )
+        .unwrap();
+
+        let weapon = items
+            .iter()
+            .find(|item| item.id == "1d0832b091d9e1e36e17666b");
+
+        let hash = calculate_item_cache_hash(weapon.unwrap(), &bsg_items_root);
+        assert_eq!(hash, Some(1190782383))
     }
 }

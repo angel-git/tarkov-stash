@@ -25,7 +25,7 @@
     const acc =
       item.slotItems?.reduce((acc, value) => {
         const slotItem = bsgItems[value.tpl];
-        return acc + slotItem.accuracy;
+        return slotItem ? acc + slotItem.accuracy : 0;
       }, 0) || 0;
     return -(acc / 100);
   }
@@ -103,7 +103,8 @@
     const acc =
       item.slotItems?.reduce((acc, value) => {
         const slotItem = bsgItems[value.tpl];
-        return acc + slotItem.velocity;
+
+        return slotItem ? acc + slotItem.velocity : 0;
       }, 0) || 0;
     return (acc + bsgItem.velocity) / 100;
   }
@@ -120,7 +121,7 @@
   /////
 
   function findItemsInSlot(slotId: string) {
-    return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId);
+    return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId && slotItem.id);
   }
 
   function calculateStats(): Stats | undefined {
@@ -139,6 +140,7 @@
     };
     const stats = item.slotItems?.reduce((acc, value) => {
       const slotItem = bsgItems[value.tpl];
+      if (!slotItem) return acc;
       acc.ergonomics += slotItem.ergonomics;
       acc.sightingRange =
         acc.sightingRange > slotItem.sightingRange ? acc.sightingRange : slotItem.sightingRange;
