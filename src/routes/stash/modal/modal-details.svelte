@@ -116,7 +116,6 @@
     return getVelocityBase() * getSpeedFactor();
   }
 
-  console.log('velocity', getVelocity());
   /////
 
   function findItemsInSlot(slotId: string) {
@@ -169,6 +168,12 @@
   function getEmptyAttachmentBackgroundUrl(slotId: string) {
     return getAttachmentBackground(slotId as SlotKind);
   }
+
+  function getImageUrl() {
+    return item.presetImageId
+      ? `https://assets.tarkov.dev/${item.presetImageId}-base-image.png`
+      : `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
+  }
 </script>
 
 <Modal bind:showModal withSubmit={false}>
@@ -179,7 +184,7 @@
   <div>
     <div class="img-details">
       <div class="img">
-        <img alt="item" src={`https://assets.tarkov.dev/${item.tpl}-base-image.png`} />
+        <img alt="item" src={getImageUrl()} />
       </div>
       <div class="details">
         {getDescription(item.tpl, locale)}

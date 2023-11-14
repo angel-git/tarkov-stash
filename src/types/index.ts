@@ -27,6 +27,7 @@ export interface Item {
   isContainer: boolean;
   gridItems: Array<GridItem> | null;
   slotItems?: Array<SlotItem>;
+  presetImageId?: string;
 }
 
 export interface SlotItem {
