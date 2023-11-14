@@ -30,7 +30,10 @@
       rotate: `transform: rotate(${rotation})`,
       translate: rotation === '90deg' ? `translate: ${translateXFinal}px ${translateYFinal}px` : '',
     };
-    return `${transform.rotate}; ${transform.translate} ; background-image: url(https://assets.tarkov.dev/${item.tpl}-base-image.png); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
+    const backgroundImageUrl = item.presetImageId
+      ? `https://assets.tarkov.dev/${item.presetImageId}-base-image.png`
+      : `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
+    return `${transform.rotate}; ${transform.translate} ; background-image: url(${backgroundImageUrl}); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
   }
 </script>
 

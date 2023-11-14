@@ -31,7 +31,13 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Screenshots
 
-#### 0.5.x
+#### 0.5.1
+
+|    Stash on 0.5.0    |    Stash on 0.5.1    |
+| :------------------: | :------------------: |
+| ![](0.5.0-stash.png) | ![](0.5.1-stash.png) |
+
+#### 0.5.x0
 
 ![0.5.0-attachments.png](0.5.0-attachments.png)
 

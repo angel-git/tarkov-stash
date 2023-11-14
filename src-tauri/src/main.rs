@@ -195,6 +195,7 @@ async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfi
                             p,
                             internal_state.bsg_items.as_ref().unwrap(),
                             internal_state.locale.as_ref().unwrap(),
+                            internal_state.globals.as_ref().unwrap(),
                         );
                         match ui_profile_result {
                             Ok(mut ui_profile) => {
