@@ -6,6 +6,7 @@ use serde_json::Value;
 use crate::spt;
 use crate::spt::spt_bsg_items_serializer::load_item;
 use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
+use crate::utils::global_utils::find_id_from_encyclopedia;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -55,6 +56,8 @@ pub struct Item {
     pub grid_items: Option<Vec<GridItem>>,
     #[serde(rename = "slotItems")]
     pub slot_items: Option<HashSet<SlotItem>>,
+    #[serde(rename = "presetImageId")]
+    pub preset_image_id: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
@@ -120,6 +123,7 @@ pub fn convert_profile_to_ui(
     tarkov_profile: TarkovProfile,
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
+    globals: &HashMap<String, Value>,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_bonuses = &tarkov_profile
@@ -144,6 +148,7 @@ pub fn convert_profile_to_ui(
         bsg_items_root,
         stash.as_str(),
         "hideout",
+        globals,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -232,6 +237,7 @@ fn parse_items(
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
+    globals: &HashMap<String, Value>,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -282,6 +288,7 @@ fn parse_items(
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
+                    globals,
                 )?;
 
                 let grid_item = GridItem {
@@ -358,6 +365,7 @@ fn parse_items(
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
+        let preset_image_id = find_id_from_encyclopedia(item._tpl.as_str(), globals);
 
         let i = Item {
             id: item._id.to_string(),
@@ -378,6 +386,7 @@ fn parse_items(
             is_container,
             grid_items,
             slot_items,
+            preset_image_id,
         };
         items.push(i)
     }
@@ -693,6 +702,7 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
+            &HashMap::new(),
         )
         .ok()
         .unwrap();
@@ -733,6 +743,7 @@ mod tests {
             &bsg_items_root,
             stash.as_str(),
             "hideout",
+            &HashMap::new(),
         )
         .ok()
         .unwrap();
