@@ -234,11 +234,11 @@
 
   .main .left {
     overflow-y: auto;
-    flex: 1 0 50vh;
+    flex: 1 0 50vw;
   }
 
   .main .right {
-    flex: 1 1 50vh;
+    flex: 1 1 50vw;
     padding: 8px;
   }
 
