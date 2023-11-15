@@ -6,7 +6,7 @@
   import { goto } from '$app/navigation';
   import Modal from './modal.svelte';
   import type { BsgItem, Item, NewItem } from '../../../types';
-  import { calculateBackgroundColor, getName } from '../../../helper';
+  import { calculateBackgroundColor, getDescription, getName } from '../../../helper';
   import { invokeWithLoader } from '../../../helper';
   import { addNewItem } from '../../../store';
   import { getShortName } from '../../../helper';
@@ -21,6 +21,7 @@
   let showModal = true;
   let parsedItems: Array<BsgItemWithParent>;
   let parsedNodes: Record<string, BsgItem>;
+  const categories: Set<string> = new Set<string>();
   let notEnoughSpaceError = false;
   let order: OrderType = 'alpha';
 
@@ -46,6 +47,18 @@
       }, {} as Record<string, BsgItem>);
 
     if (allItems) {
+      Object.keys(allItems)
+        .map((i) => allItems[i])
+        .filter((i) => i.type === 'Item')
+        .filter((i) => !i.unbuyable)
+        .filter((i) => getName(i.id, locale))
+        .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
+        .forEach((i) => {
+          categories.add(getParentNode(i));
+        });
+
+      console.log('categories', categories);
+
       parsedItems = Object.keys(allItems)
         .map((i) => allItems[i])
         .filter((i) => i.type === 'Item')
@@ -66,6 +79,11 @@
             $addNewItem.item?.id === i.id,
         )
         .sort(sortByName);
+
+      // preselet first item
+      if (!$addNewItem.item) {
+        selectItem(parsedItems[0]);
+      }
     }
   }
 
@@ -136,62 +154,70 @@
   }
 </script>
 
-<Modal bind:showModal onConfirm={handleConfirm}>
+<Modal bind:showModal onConfirm={handleConfirm} fullHeight={true}>
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
   <h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
 
-  <div>
-    <div>
-      <fieldset>
-        <input
-          type="radio"
-          id="alpha"
-          name="alpha"
-          value="alpha"
-          checked={order === 'alpha'}
-          on:change={onOrderChange}
-        />
-        <label for="alpha">Alpha ordering</label>
-        <input
-          type="radio"
-          id="parent"
-          name="parent"
-          value="parent"
-          checked={order === 'parent'}
-          on:change={onOrderChange}
-        />
-        <label for="parent">Parent ordering</label>
-      </fieldset>
-      <!-- svelte-ignore a11y-autofocus -->
-      <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
-      <div>
-        <ul>
-          {#each parsedItems as item}
-            <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
-              <button on:click={() => selectItem(item)}>{item.parent}</button>
-            </li>
-          {/each}
-        </ul>
-      </div>
+  <div class="modal-content">
+    <fieldset>
+      <input
+        type="radio"
+        id="alpha"
+        name="alpha"
+        value="alpha"
+        checked={order === 'alpha'}
+        on:change={onOrderChange}
+      />
+      <label for="alpha">Alpha ordering</label>
+      <input
+        type="radio"
+        id="parent"
+        name="parent"
+        value="parent"
+        checked={order === 'parent'}
+        on:change={onOrderChange}
+      />
+      <label for="parent">Parent ordering</label>
+    </fieldset>
+    <!-- svelte-ignore a11y-autofocus -->
+    <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
+    <div class="main">
+      <ul>
+        {#each parsedItems as item}
+          <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
+            <button on:click={() => selectItem(item)}>{item.parent}</button>
+          </li>
+        {/each}
+      </ul>
+      {#if $addNewItem.item}
+        <div
+          class="selected-item"
+          style={`background-color: ${calculateBackgroundColor($addNewItem.item.backgroundColor)}`}
+        >
+          <div>{getShortName($addNewItem.item.id, locale)}</div>
+          <div>{$addNewItem.item.width}X{$addNewItem.item.height}</div>
+          <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
+          <div class="details">
+            {getDescription($addNewItem.item.id, locale)}
+          </div>
+        </div>
+      {/if}
     </div>
-    {#if $addNewItem.item}
-      <div
-        class="selected-item"
-        style={`background-color: ${calculateBackgroundColor($addNewItem.item.backgroundColor)}`}
-      >
-        <div>{getShortName($addNewItem.item.id, locale)}</div>
-        <div>{$addNewItem.item.width}X{$addNewItem.item.height}</div>
-        <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
-      </div>
-    {/if}
   </div>
 </Modal>
 
 <style>
   h3 {
     color: orangered;
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 90%;
   }
 
   input {
@@ -205,10 +231,28 @@
     border: 2px solid var(--color-highlight);
   }
 
-  ul {
-    max-height: 300px;
+  .main {
+    display: flex;
     overflow-y: auto;
+  }
+
+  .main ul {
+    overflow-y: auto;
+    flex: 1 0 50vh;
+  }
+
+  .main .selected-item {
+    flex: 1 1 50vh;
+    padding: 8px;
+  }
+
+  .main .selected-item .details {
+    text-align: justify;
+  }
+
+  ul {
     padding: 0;
+    margin: 0;
   }
 
   li {
@@ -232,10 +276,5 @@
 
   fieldset {
     border: none;
-  }
-
-  .selected-item {
-    margin: 16px;
-    padding: 8px;
   }
 </style>
