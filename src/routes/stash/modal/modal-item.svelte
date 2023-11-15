@@ -164,7 +164,9 @@
       <div class="left">
         {#each categories as cat}
           <section>
-            <h2>{cat}</h2>
+            <div class="section-heading">
+              <h2>{cat}</h2>
+            </div>
             <ul>
               {#each parsedItems as item}
                 {#if item.category === cat}
@@ -226,6 +228,14 @@
     display: flex;
     flex-direction: column;
   }
+  .main .section-heading {
+    flex: 0 0 33%;
+    position: sticky;
+    text-align: right;
+    top: 0;
+    background-color: var(--color-background);
+  }
+
   .main section h2 {
     border-bottom: 1px solid var(--color-text);
     font-size: 1.2em;
