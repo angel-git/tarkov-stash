@@ -2,6 +2,7 @@
   export let showModal: boolean;
   export let onConfirm: () => void;
   export let withSubmit = true;
+  export let fullHeight = false;
 
   let dialog: HTMLDialogElement;
 
@@ -14,6 +15,7 @@
   bind:this={dialog}
   on:close={() => (showModal = false)}
   on:click|self={() => (showModal = false)}
+  class={fullHeight ? 'full' : ''}
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation>
@@ -35,7 +37,11 @@
     width: 90%;
     border-radius: 0.2em;
     border: none;
-    padding: 0;
+    padding: 1em;
+  }
+
+  dialog.full {
+    height: 90%;
   }
 
   dialog::backdrop {
@@ -43,7 +49,12 @@
   }
 
   dialog > div {
-    padding: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  dialog.full > div {
+    height: 100%;
   }
 
   dialog[open] {
@@ -75,6 +86,6 @@
   .controls {
     display: flex;
     justify-content: space-between;
-    margin-top: 2em;
+    margin-top: auto;
   }
 </style>
