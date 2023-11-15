@@ -31,6 +31,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Screenshots
 
+#### 0.5.2
+
+New add item modal window:
+
+![0.5.0-attachments.png](0.5.2.png)
+
 #### 0.5.1
 
 |    Stash on 0.5.0    |    Stash on 0.5.1    |
