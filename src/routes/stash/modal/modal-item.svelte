@@ -149,6 +149,10 @@
       '??'
     );
   }
+
+  function isAnyItemInCategory(cat: string) {
+    return parsedItems.some((item) => item.category === cat);
+  }
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm} fullHeight={true}>
@@ -163,20 +167,22 @@
     <div class="main">
       <div class="left">
         {#each categories as cat}
-          <section>
-            <div class="section-heading">
-              <h2>{cat}</h2>
-            </div>
-            <ul>
-              {#each parsedItems as item}
-                {#if item.category === cat}
-                  <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
-                    <button on:click={() => selectItem(item)}>{item.name}</button>
-                  </li>
-                {/if}
-              {/each}
-            </ul>
-          </section>
+          {#if isAnyItemInCategory(cat)}
+            <section>
+              <div class="section-heading">
+                <h2>{cat}</h2>
+              </div>
+              <ul>
+                {#each parsedItems as item}
+                  {#if item.category === cat}
+                    <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
+                      <button on:click={() => selectItem(item)}>{item.name}</button>
+                    </li>
+                  {/if}
+                {/each}
+              </ul>
+            </section>
+          {/if}
         {/each}
       </div>
       {#if $addNewItem.item}
@@ -228,6 +234,7 @@
     display: flex;
     flex-direction: column;
   }
+
   .main .section-heading {
     flex: 0 0 33%;
     position: sticky;
