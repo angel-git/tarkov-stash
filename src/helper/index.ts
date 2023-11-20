@@ -234,7 +234,6 @@ export const getAttachmentBackground = (slotId: SlotKind) => {
   return image;
 };
 
-// TODO extract this to helper
 export const findNewItemLocation = (
   width: number,
   height: number,
