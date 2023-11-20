@@ -12,6 +12,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
 - Add items into your stash (beta)
+- Add weapons presets into your stash (beta)
 - See weapons attachments
 - Delete items
 
@@ -30,6 +31,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Nothing is planned for now, submit an issue with your ideas!
 
 ### Screenshots
+
+#### 0.6.0
+
+New weapon presets:
+
+![0.6.0.png](0.6.0.png)
 
 #### 0.5.2
 
