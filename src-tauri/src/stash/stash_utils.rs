@@ -205,6 +205,93 @@ pub fn add_new_item(
     serde_json::to_string(&root)
 }
 
+pub fn add_new_preset(
+    profile_content: &str,
+    preset_id: &str,
+    location_x: u16,
+    location_y: u16,
+    globals: &HashMap<String, Value>,
+) -> Result<String, Error> {
+    let mut root: Value = serde_json::from_str(profile_content).unwrap();
+
+    let stash = root
+        .pointer("/characters/pmc/Inventory/stash")
+        .expect("Stash missing");
+    let items_option = root
+        .pointer("/characters/pmc/Inventory/items")
+        .expect("Items missing");
+
+    if let Some(items) = items_option.as_array() {
+        // Clone the items array to make it mutable
+        let mut cloned_items = items.clone();
+
+        let global_preset = globals
+            .get("ItemPresets")
+            .unwrap()
+            .get(preset_id)
+            .expect("No preset found for id");
+
+        let mut old_id_map: HashMap<String, String> = HashMap::new();
+
+        global_preset
+            .get("_items")
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .clone()
+            .iter_mut()
+            .for_each(|item| {
+                if let Value::Object(item_obj) = item {
+                    {
+                        let old_id = item_obj.get("_id").unwrap().as_str().unwrap().to_string();
+                        let new_id = old_id_map.entry(old_id).or_insert(generate());
+                        item_obj.insert(
+                            "_id".to_string(),
+                            Value::String((*new_id.clone()).parse().unwrap()),
+                        );
+                    }
+
+                    // if there is no parentId is the base item, let's add location and stuff
+                    if item_obj.get("parentId").is_none() {
+                        item_obj.insert("parentId".to_string(), stash.clone());
+                        item_obj.insert("slotId".to_string(), Value::String("hideout".to_string()));
+                        let location = json!(
+                            {
+                                    "isSearched": true,
+                                    "r": "Horizontal",
+                                    "x": location_x,
+                                    "y": location_y,
+                            }
+                        );
+                        item_obj.insert("location".to_string(), location);
+                    } else {
+                        let old_parent = item_obj
+                            .get("parentId")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        {
+                            let new_parent = old_id_map.entry(old_parent).or_insert(generate());
+                            item_obj.insert(
+                                "parentId".to_string(),
+                                Value::String((*new_parent.clone()).parse().unwrap()),
+                            );
+                        }
+                    }
+                }
+                cloned_items.push(item.clone());
+            });
+
+        if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
+            *root_items = Value::Array(cloned_items);
+        }
+    }
+
+    serde_json::to_string(&root)
+}
+
 pub fn delete_item(
     file_content: &str,
     item: &Item,

@@ -36,12 +36,12 @@ pub struct PMCInfo {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Inventory {
-    pub items: Vec<Item>,
+    pub items: Vec<InventoryItem>,
     pub stash: String,
 }
 
 #[derive(Serialize, Debug, Clone)]
-pub struct Item {
+pub struct InventoryItem {
     pub _id: String,
     pub _tpl: String,
     #[serde(rename = "parentId")]
@@ -180,7 +180,7 @@ where
     Ok(value as u16)
 }
 
-impl<'de> Deserialize<'de> for Item {
+impl<'de> Deserialize<'de> for InventoryItem {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -209,7 +209,7 @@ impl<'de> Deserialize<'de> for Item {
             _ => None, // If location is not provided or there is no valid combination, set it to None
         };
 
-        Ok(Item {
+        Ok(InventoryItem {
             _id: helper._id,
             _tpl: helper._tpl,
             parent_id: helper.parent_id,
