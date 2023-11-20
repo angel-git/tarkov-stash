@@ -78,7 +78,13 @@
 
       // preselect first item
       if (!$addNewPreset.item) {
-        selectItem(parsedItems[0]);
+        for (const cat of categories) {
+          if (isAnyItemInCategory(cat)) {
+            const firstItemOnList = parsedItems.find((i) => i.category === cat);
+            selectItem(firstItemOnList);
+            break;
+          }
+        }
       }
     }
   }
@@ -111,8 +117,8 @@
       });
   }
 
-  function selectItem(item: PresetItem) {
-    if (item.id === $addNewPreset.item?.id) {
+  function selectItem(item: PresetItem | undefined) {
+    if (item?.id === $addNewPreset.item?.id) {
       addNewPreset.set({ item: undefined, input: $addNewPreset.input });
     } else {
       addNewPreset.set({ item, input: $addNewPreset.input });

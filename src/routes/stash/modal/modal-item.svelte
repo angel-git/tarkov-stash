@@ -81,7 +81,8 @@
 
       // preselect first item
       if (!$addNewItem.item) {
-        selectItem(parsedItems[0]);
+        const firstItemOnList = parsedItems.find((i) => i.category === categories[0]);
+        selectItem(firstItemOnList);
       }
     }
   }
@@ -110,8 +111,8 @@
       });
   }
 
-  function selectItem(item: BsgItem) {
-    if (item.id === $addNewItem.item?.id) {
+  function selectItem(item: BsgItem | undefined) {
+    if (item?.id === $addNewItem.item?.id) {
       addNewItem.set({ item: undefined, input: $addNewItem.input });
     } else {
       addNewItem.set({ item, input: $addNewItem.input });
