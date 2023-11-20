@@ -5,8 +5,9 @@ use serde_json::Value;
 
 use crate::spt;
 use crate::spt::spt_bsg_items_serializer::load_item;
-use crate::spt::spt_profile_serializer::{Location, TarkovProfile};
-use crate::utils::global_utils::find_id_from_encyclopedia;
+use crate::spt::spt_profile_serializer::{InventoryItem, Location, TarkovProfile};
+use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
+use crate::utils::item_utils::calculate_item_size;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -21,7 +22,9 @@ pub struct UIProfile {
     #[serde(rename = "sptVersion")]
     pub spt_version: Option<String>,
     #[serde(rename = "locale")]
-    locale: HashMap<String, Value>,
+    pub locale: HashMap<String, Value>,
+    #[serde(rename = "presetItems")]
+    pub preset_items: Vec<PresetItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -58,6 +61,15 @@ pub struct Item {
     pub slot_items: Option<HashSet<SlotItem>>,
     #[serde(rename = "presetImageId")]
     pub preset_image_id: Option<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct PresetItem {
+    pub id: String,
+    pub encyclopedia: Option<String>,
+    pub items: Vec<InventoryItem>,
+    pub width: u16,
+    pub height: u16,
 }
 
 #[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
@@ -229,11 +241,12 @@ pub fn convert_profile_to_ui(
         bsg_items,
         spt_version: None,
         locale: locale_root.clone(),
+        preset_items: find_all_item_presets(globals, bsg_items_root),
     })
 }
 
 fn parse_items(
-    profile_items: Vec<spt::spt_profile_serializer::Item>,
+    profile_items: Vec<InventoryItem>,
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
@@ -393,106 +406,9 @@ fn parse_items(
     Ok(items)
 }
 
-fn calculate_item_size(
-    item: &spt::spt_profile_serializer::Item,
-    items: &[spt::spt_profile_serializer::Item],
-    bsg_items_root: &HashMap<String, Value>,
-    is_container: bool,
-) -> (u16, u16) {
-    let all_children: Vec<(String, String)> = if !is_container {
-        find_all_ids_and_tpl_from_parent(item._id.as_str(), items, "mod_")
-    } else {
-        Vec::new()
-    };
-    // copied from InventoryHelper.getSizeByInventoryItemHash
-    let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
-    let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
-
-    let mut out_x = parsed_parent_item._props.width;
-    let out_y = parsed_parent_item._props.height;
-    let mut size_up = 0;
-    let mut size_down = 0;
-    let mut size_left = 0;
-    let mut size_right = 0;
-    let mut forced_up = 0;
-    let mut forced_down = 0;
-    let mut forced_left = 0;
-    let mut forced_right = 0;
-
-    let foldable = parsed_parent_item._props.foldable;
-    let folded_slot = parsed_parent_item._props.folded_slot;
-    if foldable.is_some()
-        && foldable.unwrap()
-        && folded_slot.is_some()
-        && folded_slot.unwrap() == ""
-        && item.upd.as_ref().unwrap().foldable.is_some()
-        && item.upd.as_ref().unwrap().foldable.as_ref().unwrap().folded
-    {
-        out_x -= parsed_parent_item._props.size_reduced_right.unwrap();
-    }
-
-    all_children.iter().for_each(|(_id, tpl)| {
-        let bsg_item = bsg_items_root.get(tpl).unwrap();
-        let parsed_bsg_item = load_item(bsg_item.to_string().as_str()).unwrap();
-
-        if parsed_bsg_item._props.extra_size_force_add {
-            forced_up += parsed_bsg_item._props.extra_size_up;
-            forced_down += parsed_bsg_item._props.extra_size_down;
-            forced_left += parsed_bsg_item._props.extra_size_left;
-            forced_right += parsed_bsg_item._props.extra_size_right;
-        } else {
-            size_up = if size_up < parsed_bsg_item._props.extra_size_up {
-                parsed_bsg_item._props.extra_size_up
-            } else {
-                size_up
-            };
-            size_down = if size_down < parsed_bsg_item._props.extra_size_down {
-                parsed_bsg_item._props.extra_size_down
-            } else {
-                size_down
-            };
-            size_left = if size_left < parsed_bsg_item._props.extra_size_left {
-                parsed_bsg_item._props.extra_size_left
-            } else {
-                size_left
-            };
-            size_right = if size_right < parsed_bsg_item._props.extra_size_right {
-                parsed_bsg_item._props.extra_size_right
-            } else {
-                size_right
-            };
-        }
-    });
-
-    let size_x = out_x + size_left + size_right + forced_left + forced_right;
-    let size_y = out_y + size_up + size_down + forced_up + forced_down;
-    (size_x, size_y)
-}
-
-fn find_all_ids_and_tpl_from_parent(
-    parent_id: &str,
-    items: &[spt::spt_profile_serializer::Item],
-    slot_id: &str,
-) -> Vec<(String, String)> {
-    let mut result: Vec<(String, String)> = Vec::new();
-
-    for i in items {
-        if i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == parent_id {
-            if i.slot_id.is_some() && i.slot_id.as_ref().unwrap().starts_with(slot_id) {
-                result.push((i._id.to_string(), i._tpl.to_string()));
-            }
-
-            let sub_items = find_all_ids_and_tpl_from_parent(&i._id, items, slot_id);
-            result.extend(sub_items);
-        }
-    }
-
-    result
-}
-
 fn find_all_slots_from_parent(
     parent_id: &str,
-    items: &[spt::spt_profile_serializer::Item],
+    items: &[InventoryItem],
     slot_id: &str,
 ) -> HashSet<SlotItem> {
     let mut result: HashSet<SlotItem> = HashSet::new();
@@ -515,7 +431,7 @@ fn find_all_slots_from_parent(
 }
 
 fn get_bsg_item(
-    item: &spt::spt_profile_serializer::Item,
+    item: &InventoryItem,
     bsg_items_root: &HashMap<String, Value>,
 ) -> Option<spt::spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
@@ -528,14 +444,12 @@ mod tests {
 
     use serde_json::Value;
 
-    use crate::spt::spt_profile_serializer::{load_profile, Foldable, Item, UPD};
-    use crate::ui_profile::ui_profile_serializer::{
-        calculate_item_size, get_bsg_item, parse_items,
-    };
+    use crate::spt::spt_profile_serializer::{load_profile, InventoryItem};
+    use crate::ui_profile::ui_profile_serializer::{get_bsg_item, parse_items};
 
     #[test]
     fn should_not_crash_if_template_is_not_found() {
-        let item = Item {
+        let item = InventoryItem {
             _id: "6c116ae6e3e795d2e508a5f0".to_string(),
             _tpl: "FAKE".to_string(),
             parent_id: None,
@@ -554,129 +468,6 @@ mod tests {
 
         let bsg_item = get_bsg_item(&item, &bsg_items_root);
         assert!(bsg_item.is_none())
-    }
-
-    #[test]
-    fn should_calculate_size_with_attachments() {
-        let item = Item {
-            _id: "6c116ae6e3e795d2e508a5f0".to_string(),
-            _tpl: "5926bb2186f7744b1c6c6e60".to_string(),
-            parent_id: None,
-            location: None,
-            slot_id: None,
-            upd: None,
-        };
-
-        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/Aki_Data/Server/database/templates/items.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        let tarkov_profile = load_profile(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        // mp5 with large magazine and silencer
-        let (size_x, size_y) = calculate_item_size(
-            &item,
-            &tarkov_profile.characters.pmc.inventory.items,
-            &bsg_items_root,
-            false,
-        );
-        assert_eq!(size_x, 3);
-        assert_eq!(size_y, 2);
-    }
-
-    #[test]
-    fn should_calculate_size_folded() {
-        let item = Item {
-            _id: "be82550094e077141e097192".to_string(),
-            _tpl: "57d14d2524597714373db789".to_string(),
-            parent_id: None,
-            location: None,
-            slot_id: None,
-            upd: Some(UPD {
-                stack_objects_count: None,
-                spawned_in_session: None,
-                food_drink: None,
-                med_kit: None,
-                resource: None,
-                repairable: None,
-                key: None,
-                foldable: Some(Foldable { folded: true }),
-                togglable: None,
-                fire_mode: None,
-            }),
-        };
-
-        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/Aki_Data/Server/database/templates/items.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        let tarkov_profile = load_profile(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        // folded weapon
-        let (size_x, size_y) = calculate_item_size(
-            &item,
-            &tarkov_profile.characters.pmc.inventory.items,
-            &bsg_items_root,
-            false,
-        );
-        assert_eq!(size_x, 2);
-        assert_eq!(size_y, 2);
-    }
-
-    #[test]
-    fn should_calculate_size_for_containers_with_attachments_inside() {
-        let item = Item {
-            _id: "fa17c8765e58fb25a97d7bba".to_string(),
-            _tpl: "5b6d9ce188a4501afc1b2b25".to_string(),
-            parent_id: None,
-            location: None,
-            slot_id: None,
-            upd: None,
-        };
-
-        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/Aki_Data/Server/database/templates/items.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        let tarkov_profile = load_profile(
-            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/thicc.json"))
-                .as_ref(),
-        )
-        .unwrap();
-
-        // thicc weapon case with weapons inside
-        let (size_x, size_y) = calculate_item_size(
-            &item,
-            &tarkov_profile.characters.pmc.inventory.items,
-            &bsg_items_root,
-            true,
-        );
-        assert_eq!(size_x, 5);
-        assert_eq!(size_y, 2);
     }
 
     #[test]

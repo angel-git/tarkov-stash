@@ -12,6 +12,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
 - Add items into your stash (beta)
+- Add weapons presets into your stash (beta)
 - See weapons attachments
 - Delete items
 
@@ -21,6 +22,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - The profile you want to edit must be a valid one, ie: you have started the game with that profile and configure your character
 - Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
+- Some images are not found, since I rely on `https://assets.tarkov.dev` and some IDs don't match for some reason 🤷‍
 - Some items show wrong duration (like USEC baseball cap)
 - MOA and velocity stats might be wrong depending on your chamber bullets.
 - Check the https://github.com/angel-git/tarkov-stash/issues for more
@@ -30,6 +32,12 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Nothing is planned for now, submit an issue with your ideas!
 
 ### Screenshots
+
+#### 0.6.0
+
+New weapon presets:
+
+![0.6.0.png](0.6.0.png)
 
 #### 0.5.2
 

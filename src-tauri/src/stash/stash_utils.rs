@@ -205,6 +205,93 @@ pub fn add_new_item(
     serde_json::to_string(&root)
 }
 
+pub fn add_new_preset(
+    profile_content: &str,
+    preset_id: &str,
+    location_x: u16,
+    location_y: u16,
+    globals: &HashMap<String, Value>,
+) -> Result<String, Error> {
+    let mut root: Value = serde_json::from_str(profile_content).unwrap();
+
+    let stash = root
+        .pointer("/characters/pmc/Inventory/stash")
+        .expect("Stash missing");
+    let items_option = root
+        .pointer("/characters/pmc/Inventory/items")
+        .expect("Items missing");
+
+    if let Some(items) = items_option.as_array() {
+        // Clone the items array to make it mutable
+        let mut cloned_items = items.clone();
+
+        let global_preset = globals
+            .get("ItemPresets")
+            .unwrap()
+            .get(preset_id)
+            .expect("No preset found for id");
+
+        let mut old_id_map: HashMap<String, String> = HashMap::new();
+
+        global_preset
+            .get("_items")
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .clone()
+            .iter_mut()
+            .for_each(|item| {
+                if let Value::Object(item_obj) = item {
+                    {
+                        let old_id = item_obj.get("_id").unwrap().as_str().unwrap().to_string();
+                        let new_id = old_id_map.entry(old_id).or_insert(generate());
+                        item_obj.insert(
+                            "_id".to_string(),
+                            Value::String((*new_id.clone()).parse().unwrap()),
+                        );
+                    }
+
+                    // if there is no parentId is the base item, let's add location and stuff
+                    if item_obj.get("parentId").is_none() {
+                        item_obj.insert("parentId".to_string(), stash.clone());
+                        item_obj.insert("slotId".to_string(), Value::String("hideout".to_string()));
+                        let location = json!(
+                            {
+                                    "isSearched": true,
+                                    "r": "Horizontal",
+                                    "x": location_x,
+                                    "y": location_y,
+                            }
+                        );
+                        item_obj.insert("location".to_string(), location);
+                    } else {
+                        let old_parent = item_obj
+                            .get("parentId")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        {
+                            let new_parent = old_id_map.entry(old_parent).or_insert(generate());
+                            item_obj.insert(
+                                "parentId".to_string(),
+                                Value::String((*new_parent.clone()).parse().unwrap()),
+                            );
+                        }
+                    }
+                }
+                cloned_items.push(item.clone());
+            });
+
+        if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
+            *root_items = Value::Array(cloned_items);
+        }
+    }
+
+    serde_json::to_string(&root)
+}
+
 pub fn delete_item(
     file_content: &str,
     item: &Item,
@@ -251,8 +338,10 @@ fn get_insured_items(root: &mut Value) -> Option<&mut Vec<Value>> {
 
 #[cfg(test)]
 mod tests {
+    use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
-        delete_item, update_durability, update_item_amount, update_spawned_in_session,
+        add_new_preset, delete_item, update_durability, update_item_amount,
+        update_spawned_in_session,
     };
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
@@ -961,6 +1050,60 @@ mod tests {
         assert_eq!(
             updated,
             r#"{"characters":{"pmc":{"Inventory":{"InsuredItems":[],"items":[{"_id":"random item","_tpl":"","parentId":"","slotId":""}]}}}}"#
+        );
+    }
+
+    #[test]
+    fn should_add_a_preset() {
+        let binding =
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/empty.json"));
+        let profile = binding.as_ref();
+
+        let globals: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/globals.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let new_profile =
+            add_new_preset(profile, "584147ed2459775a77263501", 0, 0, &globals).unwrap();
+
+        let root: Value = serde_json::from_str(new_profile.as_str()).unwrap();
+
+        let items_option = root
+            .pointer("/characters/pmc/Inventory/items")
+            .expect("Items missing");
+
+        let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
+        println!("items {:?}", items);
+        // main item tpl: 583990e32459771419544dd2, it should have location, upd, parentId and slot
+        let main = items
+            .iter()
+            .find(|i| i._tpl == "583990e32459771419544dd2")
+            .unwrap();
+
+        assert!(main.upd.is_some());
+        assert_eq!(
+            main.parent_id.as_ref().unwrap().as_str(),
+            "5fe49a0e2694b0755a504876"
+        );
+        assert_eq!(main.slot_id.as_ref().unwrap().as_str(), "hideout");
+
+        let mod_gas_block = items
+            .iter()
+            .find(|i| i.slot_id.is_some() && i.slot_id.as_ref().unwrap() == "mod_gas_block")
+            .unwrap();
+
+        // attachment with rewritten parentId: "slotId": "mod_handguard"
+        let mod_handguard = items
+            .iter()
+            .find(|i| i.slot_id.is_some() && i.slot_id.as_ref().unwrap() == "mod_handguard")
+            .unwrap();
+        assert_eq!(
+            mod_handguard.parent_id.as_ref().unwrap(),
+            mod_gas_block._id.as_str()
         );
     }
 }

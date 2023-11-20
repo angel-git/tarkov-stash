@@ -15,8 +15,8 @@ use tauri_plugin_log::LogTarget;
 
 use crate::spt::spt_profile_serializer::load_profile;
 use crate::stash::stash_utils::{
-    add_new_item, delete_item, update_durability, update_item_amount, update_spawned_in_session,
-    NewItem,
+    add_new_item, add_new_preset, delete_item, update_durability, update_item_amount,
+    update_spawned_in_session, NewItem,
 };
 use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
 
@@ -154,7 +154,7 @@ fn main() {
             }
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item, remove_item])
+        .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item, remove_item, add_preset])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -261,6 +261,39 @@ async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String
         item.location_x,
         item.location_y,
         bsg_items,
+    );
+    match response {
+        Ok(new_content) => {
+            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            app.emit_all("profile_loaded", "")
+                .expect("Can't emit event to window!");
+            Ok("done".to_string())
+        }
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+    info!(
+        "Adding preset id {} on [{},{}]",
+        item.id.as_str(),
+        item.location_x,
+        item.location_y
+    );
+    let state: State<TarkovStashState> = app.state();
+    let internal_state = state.state.lock().unwrap();
+    let profile_file_path_option = &internal_state.profile_file_path;
+    let profile_file_path = profile_file_path_option.as_ref().unwrap();
+    let profile_content = fs::read_to_string(profile_file_path).unwrap();
+    let globals_option = &internal_state.globals;
+    let globals = globals_option.as_ref().unwrap();
+    let response = add_new_preset(
+        profile_content.as_str(),
+        item.id.as_str(),
+        item.location_x,
+        item.location_y,
+        globals,
     );
     match response {
         Ok(new_content) => {

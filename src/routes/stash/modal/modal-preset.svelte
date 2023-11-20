@@ -1,31 +1,35 @@
 <script lang="ts">
-  import { findNewItemLocation } from '../../../helper';
+  import type { PresetItem } from '../../../types';
 
-  interface BsgItemWithParent extends BsgItem {
+  interface PresetItemWithParent extends PresetItem {
     category: string;
     name: string;
   }
 
   import { goto } from '$app/navigation';
   import Modal from './modal.svelte';
+  import Slots from '../slots/slots.svelte';
   import type { BsgItem, Item, NewItem } from '../../../types';
   import { calculateBackgroundColor, getDescription, getName } from '../../../helper';
   import { invokeWithLoader } from '../../../helper';
-  import { addNewItem } from '../../../store';
+  import { addNewPreset } from '../../../store';
   import { getShortName } from '../../../helper';
+  import { findNewItemLocation } from '../../../helper';
 
   export let onClose: () => void;
   export let allItems: Record<string, BsgItem>;
   export let locale: Record<string, string>;
   export let grid: Array<Array<Item | undefined>>;
+  export let presetItems: Array<PresetItem>;
 
   let showModal = true;
-  let parsedItems: Array<BsgItemWithParent>;
+  let parsedItems: Array<PresetItemWithParent>;
   let parsedNodes: Record<string, BsgItem>;
   let categories: Array<string>;
   let notEnoughSpaceError = false;
+  let slots: Array<string> = [];
 
-  const sortByName = (a: BsgItemWithParent, b: BsgItemWithParent) => {
+  const sortByName = (a: PresetItemWithParent, b: PresetItemWithParent) => {
     if (a.name < b.name) {
       return -1;
     }
@@ -51,56 +55,58 @@
     if (allItems) {
       Object.keys(allItems)
         .map((i) => allItems[i])
-        .filter((i) => i.type === 'Item')
-        .filter((i) => !i.unbuyable)
-        .filter((i) => getName(i.id, locale))
-        .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
         .forEach((i) => {
-          categoriesSet.add(getParentNode(i));
+          categoriesSet.add(getParentNode(i.parentId));
         });
 
-      // remove wrong categories
-      categories = Array.from(categoriesSet)
-        .filter((c) => c !== 'inventory')
-        .sort();
+      categories = Array.from(categoriesSet).sort();
 
-      parsedItems = Object.keys(allItems)
-        .map((i) => allItems[i])
-        .filter((i) => i.type === 'Item')
-        .filter((i) => !i.unbuyable)
-        .filter((i) => getName(i.id, locale))
-        .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
-        .map((i) => ({ ...i, category: getParentNode(i), name: getName(i.id, locale) }))
+      parsedItems = presetItems
+        .filter((i) => getName(i.encyclopedia, locale))
+        .map((i) => ({
+          ...i,
+          category: getPresetFromBsgItems(i.encyclopedia),
+          name: getName(i.encyclopedia, locale),
+        }))
         .filter(
           (i) =>
-            i.category.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
-            i.name.toLowerCase().includes($addNewItem.input.toLowerCase()) ||
-            $addNewItem.item?.id === i.id,
+            i.category.toLowerCase().includes($addNewPreset.input.toLowerCase()) ||
+            i.name.toLowerCase().includes($addNewPreset.input.toLowerCase()) ||
+            $addNewPreset.item?.id === i.id,
         )
         .sort(sortByName);
 
       // preselect first item
-      if (!$addNewItem.item) {
-        const firstItemOnList = parsedItems.find((i) => i.category === categories[0]);
-        selectItem(firstItemOnList);
+      if (!$addNewPreset.item) {
+        for (const cat of categories) {
+          if (isAnyItemInCategory(cat)) {
+            const firstItemOnList = parsedItems.find((i) => i.category === cat);
+            selectItem(firstItemOnList);
+            break;
+          }
+        }
       }
     }
   }
 
+  $: {
+    slots = ($addNewPreset.item?.items.map((i) => i.slotId) || []).filter((s) => s);
+  }
+
   function handleConfirm() {
-    if (!$addNewItem.item) {
+    if (!$addNewPreset.item) {
       return;
     }
 
-    const location = findNewItemLocation($addNewItem.item.width, $addNewItem.item.height, grid);
+    const location = findNewItemLocation($addNewPreset.item.width, $addNewPreset.item.height, grid);
     if (!location) {
       notEnoughSpaceError = true;
       return;
     }
 
-    invokeWithLoader<NewItem>('add_item', {
+    invokeWithLoader<NewItem>('add_preset', {
       item: {
-        id: $addNewItem.item.id,
+        id: $addNewPreset.item.id,
         locationX: location?.x,
         locationY: location?.y,
       },
@@ -111,20 +117,22 @@
       });
   }
 
-  function selectItem(item: BsgItem | undefined) {
-    if (item?.id === $addNewItem.item?.id) {
-      addNewItem.set({ item: undefined, input: $addNewItem.input });
+  function selectItem(item: PresetItem | undefined) {
+    if (item?.id === $addNewPreset.item?.id) {
+      addNewPreset.set({ item: undefined, input: $addNewPreset.input });
     } else {
-      addNewItem.set({ item, input: $addNewItem.input });
+      addNewPreset.set({ item, input: $addNewPreset.input });
     }
   }
 
-  function getParentNode(item: BsgItem) {
+  function getParentNode(id: string) {
     return (
-      getName(parsedNodes[item.parentId]?.id, locale) ||
-      getName(parsedNodes[item.parentId]?.parentId, locale) ||
-      '??'
+      getName(parsedNodes[id]?.id, locale) || getName(parsedNodes[id]?.parentId, locale) || '??'
     );
+  }
+
+  function getPresetFromBsgItems(encyclopedia: string) {
+    return getParentNode(allItems[encyclopedia].parentId);
   }
 
   function isAnyItemInCategory(cat: string) {
@@ -136,11 +144,11 @@
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add preset weapon into stash <strong>(BETA!)</strong></h2>
 
   <div class="modal-content">
     <!-- svelte-ignore a11y-autofocus -->
-    <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
+    <input autofocus placeholder="Filter..." bind:value={$addNewPreset.input} />
     <div class="main">
       <div class="left">
         {#each categories as cat}
@@ -152,7 +160,7 @@
               <ul>
                 {#each parsedItems as item}
                   {#if item.category === cat}
-                    <li class={item.id === $addNewItem.item?.id ? 'selected' : ''}>
+                    <li class={item.id === $addNewPreset.item?.id ? 'selected' : ''}>
                       <button on:click={() => selectItem(item)}>{item.name}</button>
                     </li>
                   {/if}
@@ -162,17 +170,18 @@
           {/if}
         {/each}
       </div>
-      {#if $addNewItem.item}
-        <div
-          class="right"
-          style={`background-color: ${calculateBackgroundColor($addNewItem.item.backgroundColor)}`}
-        >
-          <div>{getShortName($addNewItem.item.id, locale)}</div>
-          <div>{$addNewItem.item.width}x{$addNewItem.item.height}</div>
-          <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
+      {#if $addNewPreset.item}
+        <div class="right" style={`background-color: ${calculateBackgroundColor('black')}`}>
+          <div>{getShortName($addNewPreset.item.encyclopedia, locale)}</div>
+          <div>{$addNewPreset.item.width}x{$addNewPreset.item.height}</div>
+          <img
+            alt="item"
+            src={`https://assets.tarkov.dev/${$addNewPreset.item.id}-base-image.png`}
+          />
           <div class="details">
-            {getDescription($addNewItem.item.id, locale)}
+            {getDescription($addNewPreset.item.encyclopedia, locale)}
           </div>
+          <Slots itemsInSlots={$addNewPreset.item?.items} bsgItems={allItems} {locale} {slots} />
         </div>
       {/if}
     </div>
@@ -232,12 +241,17 @@
   }
 
   .main .right {
+    overflow-y: auto;
     flex: 1 1 50vw;
     padding: 8px;
   }
 
   .main .right .details {
     text-align: justify;
+  }
+
+  .main .right img {
+    max-width: 100%;
   }
 
   ul {
