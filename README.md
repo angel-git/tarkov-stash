@@ -22,6 +22,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - The profile you want to edit must be a valid one, ie: you have started the game with that profile and configure your character
 - Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
+- Some images are not found, since I rely on `https://assets.tarkov.dev` and some IDs don't match for some reason 🤷‍
 - Some items show wrong duration (like USEC baseball cap)
 - MOA and velocity stats might be wrong depending on your chamber bullets.
 - Check the https://github.com/angel-git/tarkov-stash/issues for more
