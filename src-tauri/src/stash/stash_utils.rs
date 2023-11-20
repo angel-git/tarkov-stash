@@ -1077,7 +1077,7 @@ mod tests {
             .expect("Items missing");
 
         let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
-
+        println!("items {:?}", items);
         // main item tpl: 583990e32459771419544dd2, it should have location, upd, parentId and slot
         let main = items
             .iter()
@@ -1093,13 +1093,13 @@ mod tests {
 
         let mod_gas_block = items
             .iter()
-            .find(|i| i.slot_id.as_ref().unwrap() == "mod_gas_block")
+            .find(|i| i.slot_id.is_some() && i.slot_id.as_ref().unwrap() == "mod_gas_block")
             .unwrap();
 
         // attachment with rewritten parentId: "slotId": "mod_handguard"
         let mod_handguard = items
             .iter()
-            .find(|i| i.slot_id.as_ref().unwrap() == "mod_handguard")
+            .find(|i| i.slot_id.is_some() && i.slot_id.as_ref().unwrap() == "mod_handguard")
             .unwrap();
         assert_eq!(
             mod_handguard.parent_id.as_ref().unwrap(),
