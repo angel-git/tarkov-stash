@@ -1064,7 +1064,28 @@
         "equipment": "5fe49a0e2694b0755a50476c",
         "fastPanel": {},
         "hideoutAreaStashes": {},
-        "items": [],
+        "items": [
+          {
+            "_id": "5fe49a0e2694b0755a504876",
+            "_tpl": "5811ce772459770e9e5f9532"
+          },
+          {
+            "_id": "5fe49a0e2694b0755a50476c",
+            "_tpl": "55d7217a4bdc2d86028b456d"
+          },
+          {
+            "_id": "5fe49a0e2694b0755a504877",
+            "_tpl": "5963866286f7747bf429b572"
+          },
+          {
+            "_id": "60dca3da42ad9b706b369aca",
+            "_tpl": "602543c13fee350cd564d032"
+          },
+          {
+            "_id": "5fe49a0e2694b0755a504878",
+            "_tpl": "5963866b86f7747bfa1c4462"
+          }
+        ],
         "questRaidItems": "5fe49a0e2694b0755a504877",
         "questStashItems": "5fe49a0e2694b0755a504878",
         "sortingTable": "60dca3da42ad9b706b369aca",
