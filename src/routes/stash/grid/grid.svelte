@@ -6,6 +6,7 @@
   import NewItemModal from '../modal/modal-item.svelte';
   import NewPresetModal from '../modal/modal-preset.svelte';
   import { getName } from '../../../helper';
+  import WeaponIcon from '$lib/images/icon_weapons.png';
 
   export let items: Array<Item>;
   export let locale: Record<string, string>;
@@ -115,7 +116,9 @@
 
 {#if nestedLevel === 1}
   <button class="primary" on:click={openNewItemModal}>Add item</button>
-  <button class="primary" on:click={openPresetItemModal}>Add weapon preset</button>
+  <button class="primary" on:click={openPresetItemModal}
+    ><img alt="weapon logo" src={WeaponIcon} />Add weapon preset</button
+  >
 {/if}
 {#if isNewItemModalOpen}
   <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
@@ -299,5 +302,9 @@
     cursor: pointer;
     background-color: rgba(44, 42, 42, 0.7);
     color: var(--color-highlight);
+  }
+
+  button img {
+    max-height: 15px;
   }
 </style>
