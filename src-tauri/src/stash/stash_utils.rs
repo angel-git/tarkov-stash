@@ -338,8 +338,10 @@ fn get_insured_items(root: &mut Value) -> Option<&mut Vec<Value>> {
 
 #[cfg(test)]
 mod tests {
+    use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
-        delete_item, update_durability, update_item_amount, update_spawned_in_session,
+        add_new_preset, delete_item, update_durability, update_item_amount,
+        update_spawned_in_session,
     };
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
@@ -1048,6 +1050,60 @@ mod tests {
         assert_eq!(
             updated,
             r#"{"characters":{"pmc":{"Inventory":{"InsuredItems":[],"items":[{"_id":"random item","_tpl":"","parentId":"","slotId":""}]}}}}"#
+        );
+    }
+
+    #[test]
+    fn should_add_a_preset() {
+        let binding =
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/empty.json"));
+        let profile = binding.as_ref();
+
+        let globals: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/globals.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let new_profile =
+            add_new_preset(profile, "584147ed2459775a77263501", 0, 0, &globals).unwrap();
+
+        let root: Value = serde_json::from_str(new_profile.as_str()).unwrap();
+
+        let items_option = root
+            .pointer("/characters/pmc/Inventory/items")
+            .expect("Items missing");
+
+        let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
+
+        // main item tpl: 583990e32459771419544dd2, it should have location, upd, parentId and slot
+        let main = items
+            .iter()
+            .find(|i| i._tpl == "583990e32459771419544dd2")
+            .unwrap();
+
+        assert!(main.upd.is_some());
+        assert_eq!(
+            main.parent_id.as_ref().unwrap().as_str(),
+            "5fe49a0e2694b0755a504876"
+        );
+        assert_eq!(main.slot_id.as_ref().unwrap().as_str(), "hideout");
+
+        let mod_gas_block = items
+            .iter()
+            .find(|i| i.slot_id.as_ref().unwrap() == "mod_gas_block")
+            .unwrap();
+
+        // attachment with rewritten parentId: "slotId": "mod_handguard"
+        let mod_handguard = items
+            .iter()
+            .find(|i| i.slot_id.as_ref().unwrap() == "mod_handguard")
+            .unwrap();
+        assert_eq!(
+            mod_handguard.parent_id.as_ref().unwrap(),
+            mod_gas_block._id.as_str()
         );
     }
 }
