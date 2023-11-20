@@ -6,6 +6,7 @@ export interface Profile {
   bsgItems: Record<string, BsgItem>;
   sptVersion: string;
   locale: Record<string, string>;
+  presetItems: Array<PresetItem>;
 }
 
 export interface Item {
@@ -161,4 +162,20 @@ export interface Stats {
   horizontalRecoil: number;
   horizontalRecoilPercentage: number;
   velocity: number;
+}
+
+export interface PresetItem {
+  id: string;
+  encyclopedia: string;
+  items: Array<PresetItemItem>;
+  width: number;
+  height: number;
+}
+
+interface PresetItemItem {
+  _id: string;
+  _tpl: string;
+  parentId: string;
+  slotId: SlotKind;
+  upd: unknown;
 }

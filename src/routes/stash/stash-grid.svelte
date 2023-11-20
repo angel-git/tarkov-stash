@@ -29,6 +29,7 @@
   locale={profile.locale}
   nestedLevel={1}
   bsgItems={profile.bsgItems}
+  presetItems={profile.presetItems}
   items={filteredItems}
   sizeX={profile.sizeX}
   sizeY={profile.sizeY}

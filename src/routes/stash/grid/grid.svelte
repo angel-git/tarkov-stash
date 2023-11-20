@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import type { BsgItem, Item, Option } from '../../../types';
+  import type { BsgItem, Item, Option, PresetItem } from '../../../types';
   import StashItem from '../item/stash-item.svelte';
   import Grid from './grid.svelte';
   import NewItemModal from '../modal/modal-item.svelte';
+  import NewPresetModal from '../modal/modal-preset.svelte';
   import { getName } from '../../../helper';
 
   export let items: Array<Item>;
@@ -12,6 +13,7 @@
   export let sizeX: number;
   export let nestedLevel: number;
   export let bsgItems: Record<string, BsgItem>;
+  export let presetItems: Array<PresetItem>;
   export let onOptionClicked: (option: Option, item: Item) => void;
 
   onMount(() => {
@@ -27,6 +29,7 @@
   };
 
   let isNewItemModalOpen = false;
+  let isPresetItemModalOpen = false;
   let secondaryItemMenuId = '-1';
   let containerOpenId = '-1';
   let orderedItems: Array<Item | undefined>;
@@ -103,13 +106,28 @@
     secondaryItemMenuId = '-1';
     isNewItemModalOpen = true;
   }
+
+  function openPresetItemModal() {
+    secondaryItemMenuId = '-1';
+    isPresetItemModalOpen = true;
+  }
 </script>
 
 {#if nestedLevel === 1}
   <button class="primary" on:click={openNewItemModal}>Add item</button>
+  <button class="primary" on:click={openPresetItemModal}>Add weapon preset</button>
 {/if}
 {#if isNewItemModalOpen}
   <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
+{/if}
+{#if isPresetItemModalOpen}
+  <NewPresetModal
+    {presetItems}
+    {grid}
+    allItems={bsgItems}
+    {locale}
+    onClose={() => (isPresetItemModalOpen = false)}
+  />
 {/if}
 <div
   class="grid"
