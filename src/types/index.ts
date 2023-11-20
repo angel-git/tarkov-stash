@@ -172,9 +172,9 @@ export interface PresetItem {
   height: number;
 }
 
-interface PresetItemItem {
-  _id: string;
-  _tpl: string;
+export interface PresetItemItem {
+  id: string;
+  tpl: string;
   parentId: string;
   slotId: SlotKind;
   upd: unknown;

@@ -8,6 +8,7 @@
 
   import { goto } from '$app/navigation';
   import Modal from './modal.svelte';
+  import Slots from '../slots/slots.svelte';
   import type { BsgItem, Item, NewItem } from '../../../types';
   import { calculateBackgroundColor, getDescription, getName } from '../../../helper';
   import { invokeWithLoader } from '../../../helper';
@@ -83,7 +84,7 @@
   }
 
   $: {
-    slots = $addNewPreset.item?.items.map((i) => i.slotId) || [];
+    slots = ($addNewPreset.item?.items.map((i) => i.slotId) || []).filter((s) => s);
   }
 
   function handleConfirm() {
@@ -131,10 +132,6 @@
   function isAnyItemInCategory(cat: string) {
     return parsedItems.some((item) => item.category === cat);
   }
-
-  function findItemsInSlot(slotId: string) {
-    return $addNewPreset.item?.items.filter((slotItem) => slotItem.slotId === slotId);
-  }
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm} fullHeight={true}>
@@ -178,36 +175,7 @@
           <div class="details">
             {getDescription($addNewPreset.item.encyclopedia, locale)}
           </div>
-          <div class="slots">
-            <div class="slots-grid">
-              {#if slots}
-                {#each slots as slotId}
-                  {@const itemsInSlot = findItemsInSlot(slotId)}
-                  {#if itemsInSlot}
-                    {#each itemsInSlot as itemInSlot}
-                      {#if itemInSlot._tpl !== $addNewPreset.item.encyclopedia}
-                        <div
-                          id={itemInSlot._tpl}
-                          class="slots-grid-item with-item"
-                          style={`background-color: ${calculateBackgroundColor(
-                            allItems[itemInSlot._tpl].backgroundColor,
-                          )}`}
-                        >
-                          <div class="slots-grid-item-name">
-                            {getShortName(itemInSlot._tpl, locale)}
-                          </div>
-                          <img
-                            alt="item"
-                            src={`https://assets.tarkov.dev/${itemInSlot._tpl}-base-image.png`}
-                          />
-                        </div>
-                      {/if}
-                    {/each}
-                  {/if}
-                {/each}
-              {/if}
-            </div>
-          </div>
+          <Slots itemsInSlots={$addNewPreset.item?.items} bsgItems={allItems} {locale} {slots} />
         </div>
       {/if}
     </div>
@@ -303,39 +271,5 @@
 
   li button:hover {
     color: var(--color-highlight);
-  }
-
-  .slots-grid {
-    padding: 16px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .slots-grid-item {
-    background-image: url($lib/images/empty-slot.png);
-    height: 64px;
-    width: 64px;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    border: 1px solid #575b5e;
-  }
-
-  .slots-grid-item.with-item {
-    background-image: none;
-  }
-
-  .slots-grid-item-name {
-    position: absolute;
-    font-size: 10px;
-    right: 0;
-  }
-
-  .slots-grid-item img {
-    max-height: 100%;
-    max-width: 100%;
-    margin: 8px;
   }
 </style>

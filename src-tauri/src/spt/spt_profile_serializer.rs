@@ -42,7 +42,9 @@ pub struct Inventory {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct InventoryItem {
+    #[serde(rename = "id")]
     pub _id: String,
+    #[serde(rename = "tpl")]
     pub _tpl: String,
     #[serde(rename = "parentId")]
     pub parent_id: Option<String>,

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { BsgItem, Item, SlotKind, Stats } from '../../../types';
+  import type { BsgItem, Item, Stats } from '../../../types';
   import Modal from './modal.svelte';
-  import { calculateBackgroundColor, getAttachmentBackground, getName } from '../../../helper';
+  import { getName } from '../../../helper';
 
   // images
   import ergonomicsLogo from '$lib/images/ergonomics.png';
@@ -9,7 +9,8 @@
   import sightingRangeLogo from '$lib/images/sighting-range.png';
   import recoilLogo from '$lib/images/recoil.png';
   import muzzleVelocityLogo from '$lib/images/muzzle-velocity.png';
-  import { getDescription, getShortName } from '../../../helper';
+  import { getDescription } from '../../../helper';
+  import Slots from '../slots/slots.svelte';
 
   export let onClose: () => void;
   export let item: Item;
@@ -86,6 +87,7 @@
   function getAccuracy() {
     return (getTotalCenterOfImpact(true) * getBarrelDeviation() * 100) / 2.9089;
   }
+
   /////
 
   ///// velocity
@@ -117,11 +119,6 @@
   }
 
   /////
-
-  function findItemsInSlot(slotId: string) {
-    return item.slotItems?.filter((slotItem) => slotItem.slotId === slotId);
-  }
-
   function calculateStats(): Stats | undefined {
     if (!item.slotItems) return undefined;
 
@@ -164,10 +161,6 @@
 
   const stats = calculateStats();
   const slots = mergeSlots();
-
-  function getEmptyAttachmentBackgroundUrl(slotId: string) {
-    return getAttachmentBackground(slotId as SlotKind);
-  }
 
   function getImageUrl() {
     return item.presetImageId
@@ -254,40 +247,7 @@
         {/if}
       </div>
     {/if}
-    <div class="slots">
-      <div class="slots-grid">
-        {#if slots}
-          {#each slots as slotId}
-            {@const itemsInSlot = findItemsInSlot(slotId)}
-            {#if itemsInSlot && itemsInSlot.length}
-              {#each itemsInSlot as itemInSlot}
-                <div
-                  id={itemInSlot.tpl}
-                  class="slots-grid-item with-item"
-                  style={`background-color: ${calculateBackgroundColor(
-                    bsgItems[itemInSlot.tpl].backgroundColor,
-                  )}`}
-                >
-                  <div class="slots-grid-item-name">{getShortName(itemInSlot.tpl, locale)}</div>
-                  <img
-                    alt="item"
-                    src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`}
-                  />
-                </div>
-              {/each}
-            {:else}
-              <div class="slots-grid-item">
-                <div
-                  class="slots-grid-item-empty"
-                  style={`background-image: url(${getEmptyAttachmentBackgroundUrl(slotId)}`}
-                />
-                <div class="slots-grid-item-name">{locale[slotId.toUpperCase()]}</div>
-              </div>
-            {/if}
-          {/each}
-        {/if}
-      </div>
-    </div>
+    <Slots itemsInSlots={item.slotItems} {bsgItems} {locale} slots={Array.from(slots)} />
   </div>
 </Modal>
 
@@ -331,46 +291,5 @@
     top: 0;
     height: 100%;
     z-index: -1;
-  }
-
-  .slots-grid {
-    padding: 16px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .slots-grid-item {
-    background-image: url($lib/images/empty-slot.png);
-    height: 64px;
-    width: 64px;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    border: 1px solid #575b5e;
-  }
-
-  .slots-grid-item .slots-grid-item-empty {
-    height: 64px;
-    width: 64px;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  .slots-grid-item.with-item {
-    background-image: none;
-  }
-
-  .slots-grid-item-name {
-    position: absolute;
-    font-size: 10px;
-    right: 0;
-  }
-
-  .slots-grid-item img {
-    max-height: 100%;
-    max-width: 100%;
-    margin: 8px;
   }
 </style>
