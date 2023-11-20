@@ -13,6 +13,7 @@
   import { invokeWithLoader } from '../../../helper';
   import { addNewPreset } from '../../../store';
   import { getShortName } from '../../../helper';
+  import { findNewItemLocation } from '../../../helper';
 
   export let onClose: () => void;
   export let allItems: Record<string, BsgItem>;
@@ -90,13 +91,11 @@
       return;
     }
 
-    const location = findNewItemLocation($addNewPreset.item.width, $addNewPreset.item.height);
+    const location = findNewItemLocation($addNewPreset.item.width, $addNewPreset.item.height, grid);
     if (!location) {
       notEnoughSpaceError = true;
       return;
     }
-
-    console.log('gonna create preset for ', $addNewPreset.item);
 
     invokeWithLoader<NewItem>('add_preset', {
       item: {
@@ -117,31 +116,6 @@
     } else {
       addNewPreset.set({ item, input: $addNewPreset.input });
     }
-  }
-
-  // TODO extract this to helper
-  function findNewItemLocation(width: number, height: number) {
-    const sizeY = grid.length;
-    const sizeX = grid[0].length;
-
-    for (let row = 0; row <= sizeY - height; row++) {
-      for (let col = 0; col <= sizeX - width; col++) {
-        let hasSpace = true;
-        for (let i = 0; i < height && hasSpace; i++) {
-          for (let j = 0; j < width; j++) {
-            if (grid[row + i][col + j]) {
-              hasSpace = false;
-              break;
-            }
-          }
-        }
-
-        if (hasSpace) {
-          return { x: col, y: row };
-        }
-      }
-    }
-    return null;
   }
 
   function getParentNode(id: string) {

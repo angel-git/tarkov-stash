@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { findNewItemLocation } from '../../../helper';
+
   interface BsgItemWithParent extends BsgItem {
     category: string;
     name: string;
@@ -89,7 +91,7 @@
       return;
     }
 
-    const location = findNewItemLocation($addNewItem.item);
+    const location = findNewItemLocation($addNewItem.item.width, $addNewItem.item.height, grid);
     if (!location) {
       notEnoughSpaceError = true;
       return;
@@ -114,32 +116,6 @@
     } else {
       addNewItem.set({ item, input: $addNewItem.input });
     }
-  }
-
-  function findNewItemLocation(item: BsgItem) {
-    const { width, height } = item;
-
-    const sizeY = grid.length;
-    const sizeX = grid[0].length;
-
-    for (let row = 0; row <= sizeY - height; row++) {
-      for (let col = 0; col <= sizeX - width; col++) {
-        let hasSpace = true;
-        for (let i = 0; i < height && hasSpace; i++) {
-          for (let j = 0; j < width; j++) {
-            if (grid[row + i][col + j]) {
-              hasSpace = false;
-              break;
-            }
-          }
-        }
-
-        if (hasSpace) {
-          return { x: col, y: row };
-        }
-      }
-    }
-    return null;
   }
 
   function getParentNode(item: BsgItem) {

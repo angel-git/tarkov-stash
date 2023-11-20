@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api';
 import { loading } from '../store';
-import type { SlotKind } from '../types';
+import type { Item, SlotKind } from '../types';
 
 import empty from '$lib/images/empty-slot.png';
 import patron_in_weapon from '$lib/images/attachments/patron_in_weapon.png';
@@ -232,4 +232,33 @@ export const getAttachmentBackground = (slotId: SlotKind) => {
   }
 
   return image;
+};
+
+// TODO extract this to helper
+export const findNewItemLocation = (
+  width: number,
+  height: number,
+  grid: Array<Array<Item | undefined>>,
+) => {
+  const sizeY = grid.length;
+  const sizeX = grid[0].length;
+
+  for (let row = 0; row <= sizeY - height; row++) {
+    for (let col = 0; col <= sizeX - width; col++) {
+      let hasSpace = true;
+      for (let i = 0; i < height && hasSpace; i++) {
+        for (let j = 0; j < width; j++) {
+          if (grid[row + i][col + j]) {
+            hasSpace = false;
+            break;
+          }
+        }
+      }
+
+      if (hasSpace) {
+        return { x: col, y: row };
+      }
+    }
+  }
+  return null;
 };
