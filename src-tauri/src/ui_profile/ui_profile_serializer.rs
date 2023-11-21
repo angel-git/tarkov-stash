@@ -280,7 +280,7 @@ fn parse_items(
         let bsg_item_option = get_bsg_item(item, bsg_items_root);
         if bsg_item_option.is_none() {
             return Err(format!(
-                "Item with id [{}] and template [{}] can't be read",
+                "Item with id [{}] and template [{}] can't be read, if you have custom items (from a mod), please move them to your character equipment and try again",
                 item._id, item._tpl
             ));
         }
