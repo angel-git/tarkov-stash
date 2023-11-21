@@ -18,7 +18,7 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Limitations
 
-- Right now custom items like https://hub.sp-tarkov.com/files/file/488-holtzman-shield/ won't work
+- Right now custom items like https://hub.sp-tarkov.com/files/file/488-holtzman-shield/ won't work, **if you have them, you can move the items inside your equipped items, like your backpack** and try again.
 - The profile you want to edit must be a valid one, ie: you have started the game with that profile and configure your character
 - Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
