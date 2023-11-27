@@ -55,6 +55,10 @@
     selectedOption = undefined;
     selectedItem = undefined;
   }
+
+  function areItemsAreOutsideBounds(p: Profile) {
+    return p.items.some((i) => i.y >= p.sizeY);
+  }
 </script>
 
 <div class="container container-center">
@@ -67,9 +71,13 @@
     <h3>
       Editing <span class="highlight">{$profile.name}</span>'s stash
     </h3>
-    <h4>
-      Your current stash size is {$profile.sizeX}x{$profile.sizeY}
-    </h4>
+    {#if areItemsAreOutsideBounds($profile)}
+      <h4 class="error">Stash size UNKNOWN some items might be missing</h4>
+    {:else}
+      <h4>
+        Your current stash size is {$profile.sizeX}x{$profile.sizeY}
+      </h4>
+    {/if}
     {#if isLoading}
       <img class="loading" src={Loading} alt="loading gif" width="40" height="40" />
     {/if}
@@ -99,5 +107,9 @@
     top: 12px;
     right: 12px;
     z-index: 10;
+  }
+
+  h4.error {
+    color: var(--color-destructive);
   }
 </style>
