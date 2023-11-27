@@ -55,7 +55,7 @@
             : item;
         for (let col = rotatedItem.y; col < rotatedItem.y + rotatedItem.sizeY; col++) {
           for (let row = rotatedItem.x; row < rotatedItem.x + rotatedItem.sizeX; row++) {
-            if (rotatedItem.y < sizeY && rotatedItem.x < sizeX) {
+            if (col < sizeY && row < sizeX) {
               grid[col][row] = rotatedItem;
             }
           }
