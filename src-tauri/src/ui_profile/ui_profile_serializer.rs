@@ -448,6 +448,17 @@ mod tests {
     use crate::ui_profile::ui_profile_serializer::{get_bsg_item, parse_items};
 
     #[test]
+    fn should_not_crash_if_hp_resource_is_float() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"
+            ))
+            .as_ref(),
+        );
+        assert!(tarkov_profile.is_ok())
+    }
+
+    #[test]
     fn should_not_crash_if_template_is_not_found() {
         let item = InventoryItem {
             _id: "6c116ae6e3e795d2e508a5f0".to_string(),
