@@ -145,7 +145,7 @@ pub fn get_upd_props_from_item(item: &Value) -> UPD {
         let max_hp_64 = max_hp.as_u64().unwrap();
         if max_hp_64 > 0 {
             med_kit = Some(MedKit {
-                hp_resource: max_hp_64 as u16,
+                hp_resource: max_hp_64 as f32,
             });
 
             if let Some(_food_use_time) = props.get("foodUseTime") {
@@ -388,7 +388,7 @@ mod tests {
         assert!(!upd.foldable.as_ref().unwrap().folded);
         assert!(upd.togglable.as_ref().unwrap().on);
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
-        assert_eq!(upd.med_kit.unwrap().hp_resource, 50);
+        assert_eq!(upd.med_kit.unwrap().hp_resource, 50.0);
         assert_eq!(upd.food_drink.unwrap().hp_percent, 100);
     }
 }
