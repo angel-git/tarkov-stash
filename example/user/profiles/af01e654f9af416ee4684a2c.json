@@ -1118,7 +1118,7 @@
             "slotId": "main",
             "upd": {
               "Resource": {
-                "Value": 0
+                "Value": 20.2345
               },
               "SpawnedInSession": true
             }
