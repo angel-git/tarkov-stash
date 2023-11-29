@@ -354,7 +354,7 @@ fn parse_items(
                     resource = Some(udp.food_drink.as_ref().unwrap().hp_percent);
                 }
                 if udp.med_kit.is_some() {
-                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource as u16);
+                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource);
                 }
                 if udp.resource.is_some() {
                     resource = Some(udp.resource.as_ref().unwrap().value);
@@ -448,7 +448,7 @@ mod tests {
     use crate::ui_profile::ui_profile_serializer::{get_bsg_item, parse_items};
 
     #[test]
-    fn should_not_crash_if_hp_resource_is_float() {
+    fn should_not_crash_if_values_are_float() {
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/user/profiles/af01e654f9af416ee4684a2c.json"

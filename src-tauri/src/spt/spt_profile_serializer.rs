@@ -118,12 +118,14 @@ pub struct FoodDrink {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MedKit {
     #[serde(rename = "HpResource")]
-    pub hp_resource: f32,
+    #[serde(deserialize_with = "deserialize_to_integer")]
+    pub hp_resource: u16,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Resource {
     #[serde(rename = "Value")]
+    #[serde(deserialize_with = "deserialize_to_integer")]
     pub value: u16,
 }
 
