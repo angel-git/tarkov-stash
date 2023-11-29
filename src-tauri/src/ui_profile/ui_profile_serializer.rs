@@ -354,7 +354,7 @@ fn parse_items(
                     resource = Some(udp.food_drink.as_ref().unwrap().hp_percent);
                 }
                 if udp.med_kit.is_some() {
-                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource as u16);
+                    resource = Some(udp.med_kit.as_ref().unwrap().hp_resource);
                 }
                 if udp.resource.is_some() {
                     resource = Some(udp.resource.as_ref().unwrap().value);
