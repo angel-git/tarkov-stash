@@ -38,9 +38,28 @@ fn get_max_visible_ammo_ranges(visible_ammo_ranges_string: &str) -> Vec<(u16, u1
     ranges
 }
 
+fn get_deterministic_hash_code(s: &str) -> i32 {
+    let mut hash1: i32 = 5381;
+    let mut hash2: i32 = hash1;
+
+    for (i, c) in s.chars().enumerate().step_by(2) {
+        hash1 = hash1.wrapping_shl(5).wrapping_add(hash1) ^ c as i32;
+
+        if i == s.len() - 1 {
+            break;
+        }
+        let next_char = s.chars().nth(i + 1).unwrap();
+        hash2 = hash2.wrapping_shl(5).wrapping_add(hash2) ^ next_char as i32
+    }
+
+    hash1.wrapping_add(hash2.wrapping_mul(1566083941))
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::utils::cache_utils::{get_max_visible_ammo, get_max_visible_ammo_ranges};
+    use crate::utils::cache_utils::{
+        get_deterministic_hash_code, get_max_visible_ammo, get_max_visible_ammo_ranges,
+    };
     use serde_json::Value;
     use std::collections::HashMap;
 
@@ -86,6 +105,8 @@ mod tests {
 
     #[test]
     fn should_get_max_visible_ammo_for_5a17fb03fcdbcbcae668728f() {
+        // https://assets.tarkov.dev/5a17fb03fcdbcbcae668728f-base-image.png
+
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/Aki_Data/Server/database/templates/items.json"
@@ -130,7 +151,13 @@ mod tests {
             get_max_visible_ammo(20, visible_ammo_ranges_string_5a17fb03fcdbcbcae668728f),
             20
         );
+    }
 
-        // https://assets.tarkov.dev/5a17fb03fcdbcbcae668728f-base-image.png
+    #[test]
+    fn should_get_deterministic_hash_code() {
+        assert_eq!(
+            get_deterministic_hash_code("f5b4f4741134ec027112e83b"),
+            1795904484
+        );
     }
 }
