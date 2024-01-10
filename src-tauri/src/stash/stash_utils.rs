@@ -1,9 +1,6 @@
-use crate::ui_profile::ui_profile_serializer::Item;
-use crate::utils::hash_utils::generate;
-use crate::utils::item_utils::get_upd_props_from_item;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Error, Value};
 use std::collections::HashMap;
+
+pub use crate::prelude::*;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewItem {
@@ -176,11 +173,11 @@ pub fn add_new_item(
         // Clone the items array to make it mutable
         let mut cloned_items = items.clone();
 
-        let item_id = generate();
+        let item_id = hash_utils::generate();
         // TODO check if id already exists
 
         let bsg_item = bsg_items.get(template_id).expect("No item!");
-        let upd = get_upd_props_from_item(bsg_item);
+        let upd = item_utils::get_upd_props_from_item(bsg_item);
         let new_item_json = json!(
             {
                 "_id": item_id,
@@ -244,7 +241,7 @@ pub fn add_new_preset(
                 if let Value::Object(item_obj) = item {
                     {
                         let old_id = item_obj.get("_id").unwrap().as_str().unwrap().to_string();
-                        let new_id = old_id_map.entry(old_id).or_insert(generate());
+                        let new_id = old_id_map.entry(old_id).or_insert(hash_utils::generate());
                         item_obj.insert(
                             "_id".to_string(),
                             Value::String((*new_id.clone()).parse().unwrap()),
@@ -273,7 +270,9 @@ pub fn add_new_preset(
                             .to_string();
 
                         {
-                            let new_parent = old_id_map.entry(old_parent).or_insert(generate());
+                            let new_parent = old_id_map
+                                .entry(old_parent)
+                                .or_insert(hash_utils::generate());
                             item_obj.insert(
                                 "parentId".to_string(),
                                 Value::String((*new_parent.clone()).parse().unwrap()),
