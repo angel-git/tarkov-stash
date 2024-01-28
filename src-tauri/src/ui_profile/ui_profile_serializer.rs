@@ -1,13 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-
-use crate::spt;
-use crate::spt::spt_bsg_items_serializer::load_item;
-use crate::spt::spt_profile_serializer::{InventoryItem, Location, TarkovProfile};
-use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
-use crate::utils::item_utils::calculate_item_size;
+pub use crate::prelude::*;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -67,7 +60,7 @@ pub struct Item {
 pub struct PresetItem {
     pub id: String,
     pub encyclopedia: Option<String>,
-    pub items: Vec<InventoryItem>,
+    pub items: Vec<spt_profile_serializer::InventoryItem>,
     pub width: u16,
     pub height: u16,
 }
@@ -132,7 +125,7 @@ pub struct BsgItem {
 }
 
 pub fn convert_profile_to_ui(
-    tarkov_profile: TarkovProfile,
+    tarkov_profile: spt_profile_serializer::TarkovProfile,
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
     globals: &HashMap<String, Value>,
@@ -241,12 +234,12 @@ pub fn convert_profile_to_ui(
         bsg_items,
         spt_version: None,
         locale: locale_root.clone(),
-        preset_items: find_all_item_presets(globals, bsg_items_root),
+        preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
     })
 }
 
 fn parse_items(
-    profile_items: Vec<InventoryItem>,
+    profile_items: Vec<spt_profile_serializer::InventoryItem>,
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
@@ -271,11 +264,12 @@ fn parse_items(
                 item._id
             ));
         }
-        let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
-            xy
-        } else {
-            panic!("oh no, wrong item: {}", item._id);
-        };
+        let location_in_stash =
+            if let spt_profile_serializer::Location::LocationInStash(xy) = location.unwrap() {
+                xy
+            } else {
+                panic!("oh no, wrong item: {}", item._id);
+            };
 
         let bsg_item_option = get_bsg_item(item, bsg_items_root);
         if bsg_item_option.is_none() {
@@ -374,11 +368,11 @@ fn parse_items(
         }
 
         let (size_x, size_y) =
-            calculate_item_size(item, &profile_items, bsg_items_root, is_container);
+            item_utils::calculate_item_size(item, &profile_items, bsg_items_root, is_container);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
-        let preset_image_id = find_id_from_encyclopedia(item._tpl.as_str(), globals);
+        let preset_image_id = global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals);
 
         let i = Item {
             id: item._id.to_string(),
@@ -408,7 +402,7 @@ fn parse_items(
 
 fn find_all_slots_from_parent(
     parent_id: &str,
-    items: &[InventoryItem],
+    items: &[spt_profile_serializer::InventoryItem],
     slot_id: &str,
 ) -> HashSet<SlotItem> {
     let mut result: HashSet<SlotItem> = HashSet::new();
@@ -431,11 +425,11 @@ fn find_all_slots_from_parent(
 }
 
 fn get_bsg_item(
-    item: &InventoryItem,
+    item: &spt_profile_serializer::InventoryItem,
     bsg_items_root: &HashMap<String, Value>,
-) -> Option<spt::spt_bsg_items_serializer::BsgItem> {
+) -> Option<spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
-    load_item(parent_item.to_string().as_str()).ok()
+    spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
 }
 
 #[cfg(test)]

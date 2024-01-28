@@ -1,8 +1,6 @@
-use crate::spt::spt_profile_serializer::InventoryItem;
-use crate::ui_profile::ui_profile_serializer::PresetItem;
-use crate::utils::item_utils::calculate_item_size;
-use serde_json::Value;
 use std::collections::HashMap;
+
+use crate::prelude::*;
 
 pub fn find_id_from_encyclopedia(
     encyclopedia_id: &str,
@@ -37,7 +35,7 @@ pub fn find_all_item_presets(
                 .map(|obj| {
                     let mut width = 0;
                     let mut height = 0;
-                    let items: Vec<InventoryItem> =
+                    let items: Vec<spt_profile_serializer::InventoryItem> =
                         serde_json::from_value(obj.get("_items").unwrap().clone()).unwrap();
 
                     let mut encyclopedia = None;
@@ -48,8 +46,12 @@ pub fn find_all_item_presets(
                             .find(|i| i._tpl == encyclopedia.clone().unwrap())
                             .unwrap();
 
-                        (width, height) =
-                            calculate_item_size(main_item, &items, bsg_items_root, false);
+                        (width, height) = item_utils::calculate_item_size(
+                            main_item,
+                            &items,
+                            bsg_items_root,
+                            false,
+                        );
                     }
 
                     PresetItem {

@@ -1,29 +1,32 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+pub mod spt;
+pub mod stash;
+pub mod ui_profile;
+pub mod utils;
+
+mod prelude {
+    pub use crate::spt::*;
+    pub use crate::stash::stash_utils::*;
+    pub use crate::ui_profile::ui_profile_serializer::*;
+    pub use crate::utils::*;
+    pub use serde::de::Deserializer;
+    pub use serde::{Deserialize, Serialize};
+    pub use serde_json::{json, Error, Value};
+}
+
+use prelude::*;
+
 use log::{info, LevelFilter};
 use std::collections::HashMap;
 use std::fs;
 use std::net::TcpStream;
 use std::path::Path;
 use std::sync::Mutex;
-
-use serde_json::{Error, Value};
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 use tauri_plugin_log::LogTarget;
-
-use crate::spt::spt_profile_serializer::load_profile;
-use crate::stash::stash_utils::{
-    add_new_item, add_new_preset, delete_item, update_durability, update_item_amount,
-    update_spawned_in_session, NewItem,
-};
-use crate::ui_profile::ui_profile_serializer::{convert_profile_to_ui, Item, UIProfile};
-
-pub mod spt;
-pub mod stash;
-pub mod ui_profile;
-pub mod utils;
 
 struct TarkovStashState {
     pub state: Mutex<MutexState>,
@@ -188,7 +191,7 @@ async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfi
                 internal_state.globals = Some(globals_root);
 
                 let content = fs::read_to_string(profile_file_path).unwrap();
-                let tarkov_profile = load_profile(content.as_str());
+                let tarkov_profile = spt_profile_serializer::load_profile(content.as_str());
                 match tarkov_profile {
                     Ok(p) => {
                         let ui_profile_result = convert_profile_to_ui(
