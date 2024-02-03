@@ -120,7 +120,7 @@ mod tests {
         .unwrap();
 
         let all_presets = find_all_item_presets(&globals, &bsg_items_root);
-        assert_eq!(all_presets.len(), 122);
+        assert_eq!(all_presets.len(), 222);
     }
 
     #[test]
