@@ -87,12 +87,20 @@
   }
 
   function handleOpenClick(item: Item | undefined) {
-    if (!item) return;
+    if (!item) {
+      secondaryItemMenuId = '-1';
+      return;
+    }
     if (secondaryItemMenuId === item.id) {
       secondaryItemMenuId = '-1';
     } else {
       secondaryItemMenuId = item.id;
     }
+  }
+
+  function handleOpenDetails(item: Item | undefined) {
+    if (!item) return;
+    onOptionClicked('details', item);
   }
 
   function handleOptionClicked(option: Option, item: Item | undefined) {
@@ -119,8 +127,8 @@
 {#if nestedLevel === 1}
   <button class="primary" on:click={openNewItemModal}>Add item</button>
   <button class="primary" on:click={openPresetItemModal}
-    ><img alt="weapon logo" src={WeaponIcon} />Add weapon preset</button
-  >
+    ><img alt="weapon logo" src={WeaponIcon} />Add weapon preset
+  </button>
 {/if}
 {#if isNewItemModalOpen}
   <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
@@ -141,7 +149,7 @@
   {#each orderedItems as item}
     <div class="grid-item">
       {#if item}
-        <StashItem {locale} {handleOpenClick} {item} />
+        <StashItem {locale} {handleOpenClick} {handleOpenDetails} {item} />
       {:else}
         <div class="empty" />
       {/if}
@@ -155,7 +163,7 @@
             role="button"
             on:click={() => handleOptionClicked('details', item)}
           >
-            See details
+            Inspect
           </div>
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -209,7 +217,7 @@
               role="button"
               on:click={() => handleOptionClicked('delete', item)}
             >
-              Delete item
+              Discard
             </div>
           {/if}
         </div>
@@ -273,17 +281,23 @@
 
   .options {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10px;
     background-color: var(--color-background);
-    border: 1px solid var(--color-text);
+    border: 1px solid var(--color-background);
     font-size: 12px;
     z-index: 5;
     min-width: 120px;
   }
 
   .options .option {
-    padding: 8px 4px;
+    font-size: 11px;
+    padding: 4px 10px;
+    margin: 2px 0;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-transform: uppercase;
+    background-color: var(--color-menu);
   }
 
   .options .option.destructive {
@@ -297,13 +311,13 @@
 
   .options .title {
     font-weight: bold;
-    border-bottom: 1px solid var(--color-text);
+    border-bottom: 1px solid var(--color-menu);
   }
 
   .options .option:hover {
     cursor: pointer;
-    background-color: rgba(44, 42, 42, 0.7);
-    color: var(--color-highlight);
+    background-color: var(--color-text);
+    color: var(--color-background);
   }
 
   button img {

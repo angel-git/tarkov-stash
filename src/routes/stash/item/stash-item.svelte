@@ -6,6 +6,7 @@
   export let item: Item;
   export let locale: Record<string, string>;
   export let handleOpenClick: (item: Item | undefined) => void;
+  export let handleOpenDetails: (item: Item | undefined) => void;
 
   function calculateSizeStyle(item: Item) {
     return `z-index: 2; position: relative; height: ${item.sizeY * 64}px; width: ${
@@ -43,7 +44,9 @@
   role="button"
   class="item-clickable"
   style={calculateSizeStyle(item)}
-  on:click={() => handleOpenClick(item)}
+  on:click={() => handleOpenClick(undefined)}
+  on:contextmenu|preventDefault={() => handleOpenClick(item)}
+  on:dblclick={() => handleOpenDetails(item)}
 >
   <div class="item-image">
     <div style={calculateBackgroundStyle(item)} />
@@ -71,6 +74,10 @@
 
   .item-clickable:hover {
     background-color: rgba(44, 42, 42, 0.7) !important;
+  }
+
+  .item-clickable:focus {
+    outline: none;
   }
 
   .fir {
