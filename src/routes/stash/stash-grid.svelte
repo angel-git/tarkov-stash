@@ -44,11 +44,12 @@
   .filter input {
     padding: 8px;
     background-color: var(--color-background);
+    border: 1px solid var(--color-text);
     color: var(--color-text);
   }
 
   .filter input:focus {
     outline: none;
-    border: 2px solid var(--color-highlight);
+    border: 1px solid var(--color-highlight);
   }
 </style>

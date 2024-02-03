@@ -13,6 +13,7 @@
   --color-secondary: rgb(60, 99, 148);
   --color-destructive: rgb(148, 60, 60);
   --color-background: rgb(14, 14, 14);
+  --color-menu: rgb(31, 33, 36);
   --column-width: 42rem;
   --column-margin-top: 4rem;
   font-family: var(--font-body);
@@ -25,6 +26,9 @@ body {
   background-attachment: fixed;
   background-color: var(--color-background);
   background-size: 100vw 100vh;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 h1,
