@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { calculateBackgroundColor, getAttachmentBackground, getShortName } from '../../../helper';
+  import {
+    calculateBackgroundColor,
+    getAttachmentBackground,
+    getShortName,
+    getName,
+  } from '../../../helper';
   import type { BsgItem, SlotKind, PresetItemItem, SlotItem } from '../../../types';
   export let locale: Record<string, string>;
   export let slots: Array<string>;
@@ -11,7 +16,7 @@
   }
 
   function findSlotName(slotId: string) {
-    return locale[slotId.toUpperCase()] ?? locale[slotId.toLowerCase()];
+    return locale[slotId.toUpperCase()] ?? locale[slotId.toLowerCase()] ?? slotId;
   }
 
   function getEmptyAttachmentBackgroundUrl(slotId: string) {
@@ -32,7 +37,9 @@
               bsgItems[itemInSlot.tpl].backgroundColor,
             )}`}
           >
-            <div class="slots-grid-item-name">{getShortName(itemInSlot.tpl, locale)}</div>
+            <div class="slots-grid-item-name">
+              {getShortName(itemInSlot.tpl, locale) || getName(itemInSlot.tpl, locale)}
+            </div>
             <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`} />
           </div>
         {/each}
