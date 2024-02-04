@@ -167,10 +167,52 @@ pub fn get_upd_props_from_item(item: &Value) -> spt_profile_serializer::UPD {
     }
 }
 
+pub fn is_headwear_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Headwear").is_some()
+}
+pub fn is_vest_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Vest").is_some()
+}
+
+pub fn is_armor_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Armor").is_some()
+}
+
+pub fn is_ammo_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Ammo").is_some()
+}
+
+pub fn is_weapon_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Weapon").is_some()
+}
+
+pub fn is_magazine_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Magazine").is_some()
+}
+
+fn find_parent_by_name(
+    bsg_items_root: &HashMap<String, Value>,
+    current_id: &str,
+    target_name: &str,
+) -> Option<Value> {
+    if let Some(node) = bsg_items_root.get(current_id) {
+        let name = node.get("_name").unwrap().as_str().unwrap();
+        if name == target_name {
+            Some(node.clone())
+        } else if let Some(parent_id) = node.get("_parent") {
+            find_parent_by_name(bsg_items_root, parent_id.as_str().unwrap(), target_name)
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, InventoryItem, UPD};
-    use crate::utils::item_utils::{calculate_item_size, get_upd_props_from_item};
+    use crate::utils::item_utils::{calculate_item_size, get_upd_props_from_item, is_armor_item};
     use serde_json::Value;
     use std::collections::HashMap;
 
@@ -389,5 +431,17 @@ mod tests {
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
         assert_eq!(upd.med_kit.unwrap().hp_resource, 50);
         assert_eq!(upd.food_drink.unwrap().hp_percent, 100);
+    }
+
+    #[test]
+    fn should_find_paca_as_armor() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(is_armor_item("5648a7494bdc2d9d488b4583", &bsg_items_root));
     }
 }

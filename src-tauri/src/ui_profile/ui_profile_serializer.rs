@@ -372,7 +372,8 @@ fn parse_items(
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
-        let preset_image_id = global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals);
+        let preset_image_id =
+            global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals, bsg_items_root);
 
         let i = Item {
             id: item._id.to_string(),

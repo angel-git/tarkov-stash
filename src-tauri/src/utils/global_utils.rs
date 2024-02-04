@@ -5,7 +5,12 @@ use crate::prelude::*;
 pub fn find_id_from_encyclopedia(
     encyclopedia_id: &str,
     globals: &HashMap<String, Value>,
+    bsg_items: &HashMap<String, Value>,
 ) -> Option<String> {
+    // armors from encyclopedia don't have proper pictures
+    if ignore_encyclopedia_item(encyclopedia_id, bsg_items) {
+        return None;
+    }
     globals
         .get("ItemPresets")
         .and_then(|item_presets| item_presets.as_object())
@@ -69,6 +74,12 @@ pub fn find_all_item_presets(
     items.unwrap_or_default()
 }
 
+fn ignore_encyclopedia_item(item_id: &str, bsg_items: &HashMap<String, Value>) -> bool {
+    item_utils::is_armor_item(item_id, bsg_items)
+        || item_utils::is_vest_item(item_id, bsg_items)
+        || item_utils::is_headwear_item(item_id, bsg_items)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
@@ -77,6 +88,13 @@ mod tests {
 
     #[test]
     fn should_find_id_from_a_known_encyclopedia() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
         let globals: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/Aki_Data/Server/database/globals.json"
@@ -84,12 +102,19 @@ mod tests {
             .as_ref(),
         )
         .unwrap();
-        let id = find_id_from_encyclopedia("5cadc190ae921500103bb3b6", &globals);
+        let id = find_id_from_encyclopedia("5cadc190ae921500103bb3b6", &globals, &bsg_items_root);
         assert_eq!(id, Some("5d3f0bc986f7743cb332abdc".to_string()));
     }
 
     #[test]
     fn should_not_find_id_from_a_unknown_encyclopedia() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
         let globals: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/Aki_Data/Server/database/globals.json"
@@ -97,7 +122,27 @@ mod tests {
             .as_ref(),
         )
         .unwrap();
-        let id = find_id_from_encyclopedia("fake", &globals);
+        let id = find_id_from_encyclopedia("fake", &globals, &bsg_items_root);
+        assert_eq!(id, None);
+    }
+
+    #[test]
+    fn should_not_find_id_from_a_paca_since_has_plates() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let globals: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/globals.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let id = find_id_from_encyclopedia("5648a7494bdc2d9d488b4583", &globals, &bsg_items_root);
         assert_eq!(id, None);
     }
 
