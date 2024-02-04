@@ -69,6 +69,7 @@
 
 <style>
   .item-clickable {
+    border: 1px solid var(--color-menu);
     cursor: pointer;
   }
 
