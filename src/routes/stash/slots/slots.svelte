@@ -10,6 +10,10 @@
     return itemsInSlots?.filter((slotItem) => slotItem.slotId === slotId);
   }
 
+  function findSlotName(slotId: string) {
+    return locale[slotId.toUpperCase()] ?? locale[slotId.toLowerCase()];
+  }
+
   function getEmptyAttachmentBackgroundUrl(slotId: string) {
     return getAttachmentBackground(slotId as SlotKind);
   }
@@ -38,7 +42,7 @@
             class="slots-grid-item-empty"
             style={`background-image: url(${getEmptyAttachmentBackgroundUrl(slotId)}`}
           />
-          <div class="slots-grid-item-name">{locale[slotId.toUpperCase()]}</div>
+          <div class="slots-grid-item-name">{findSlotName(slotId)}</div>
         </div>
       {/if}
     {/each}
