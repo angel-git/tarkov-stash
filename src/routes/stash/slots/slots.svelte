@@ -66,7 +66,7 @@
   }
 
   .slots-grid-item {
-    background-image: url($lib/images/empty-slot.png);
+    background-image: url($lib/images/grid_cell.png);
     height: 64px;
     width: 64px;
     display: flex;
