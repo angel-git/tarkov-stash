@@ -256,7 +256,7 @@
     padding: 16px;
   }
 
-  .img-details img {
+  .img-details .img {
     background-image: url($lib/images/background.png);
     background-position: center;
     background-repeat: no-repeat;
