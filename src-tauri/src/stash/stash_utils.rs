@@ -208,11 +208,15 @@ pub fn add_new_item(
             locked_slots.iter().for_each(|locked_slot| {
                 let tpl = locked_slot._tpl.to_string();
                 let slot_id = locked_slot.slot_id.to_string();
+                let upd = item_utils::get_upd_props_from_item(
+                    bsg_items.get(tpl.as_str()).expect("No slot item"),
+                );
                 cloned_items.push(json!({
                             "_id": hash_utils::generate(),
                             "_tpl": tpl,
                             "parentId": item_id,
                             "slotId": slot_id,
+                            "upd": upd,
                 }));
             })
         }
