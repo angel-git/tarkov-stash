@@ -269,7 +269,8 @@
     height: 64px;
     width: 64px;
     position: relative;
-    background-image: url($lib/images/empty.png);
+    background-image: url($lib/images/grid_cell.png);
+    background-size: cover;
   }
 
   .nested-grid {
