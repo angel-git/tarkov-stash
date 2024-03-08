@@ -1,0 +1,38 @@
+name: Build branch
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-tauri:
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Setup pnpm 7
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install frontend dependencies
+        run: pnpm install
+      - name: Build Portable Binaries (Windows)
+        run: |
+          pnpm tauri build
+          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarkov-stash
+          path: ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
