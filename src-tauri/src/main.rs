@@ -48,6 +48,7 @@ fn main() {
     let apta_key = load_apta_key();
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    // TODO add help menu and include telemetry
     let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
     let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
     let locale_fr = CustomMenuItem::new("locale_fr".to_string(), "French");
