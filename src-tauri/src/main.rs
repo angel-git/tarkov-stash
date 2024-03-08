@@ -1,5 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+extern crate dotenv;
 
 pub mod spt;
 pub mod stash;
@@ -16,9 +17,9 @@ mod prelude {
     pub use serde_json::{json, Error, Value};
 }
 
+use dotenv::dotenv;
+use log::{error, info, LevelFilter};
 use prelude::*;
-
-use log::{info, LevelFilter};
 use std::collections::HashMap;
 use std::fs;
 use std::net::TcpStream;
@@ -26,6 +27,7 @@ use std::path::Path;
 use std::sync::Mutex;
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
+use tauri_plugin_aptabase::EventTracker;
 use tauri_plugin_log::LogTarget;
 
 struct TarkovStashState {
@@ -41,6 +43,9 @@ struct MutexState {
 }
 
 fn main() {
+    dotenv().ok();
+
+    let apta_key = load_apta_key();
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
@@ -84,7 +89,8 @@ fn main() {
         .add_submenu(locale_submenu);
 
     tauri::Builder::default()
-            .plugin(tauri_plugin_log::Builder::default()
+        .plugin(tauri_plugin_aptabase::Builder::new(apta_key.as_str()).build())
+        .plugin(tauri_plugin_log::Builder::default()
                 .targets([
                          LogTarget::LogDir,
                          LogTarget::Stdout,
@@ -157,6 +163,10 @@ fn main() {
             }
             _ => {}
         })
+        .setup(|app| {
+            app.track_event("app_started", None);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item, remove_item, add_preset])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -221,30 +231,38 @@ async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfi
 
 #[tauri::command]
 async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event("change_amount", Some(json!({"item_id": item.id.as_str()})));
     info!("Changing amount to item {}", item.id.as_str());
     with_state_do(item, app, update_item_amount)
 }
 
 #[tauri::command]
 async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event("change_fir", Some(json!({"item_id": item.id.as_str()})));
     info!("Setting fir to item {}", item.id.as_str());
     with_state_do(item, app, update_spawned_in_session)
 }
 
 #[tauri::command]
 async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event(
+        "restore_durability",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
     info!("Restoring durability to item {}", item.id.as_str());
     with_state_do(item, app, update_durability)
 }
 
 #[tauri::command]
 async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event("remove_item", Some(json!({"item_id": item.id.as_str()})));
     info!("Deleting item {}", item.id.as_str());
     with_state_do(item, app, delete_item)
 }
 
 #[tauri::command]
 async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event("add_item", Some(json!({"item_id": item.id.as_str()})));
     info!(
         "Adding item {} on [{},{}]",
         item.id.as_str(),
@@ -278,6 +296,7 @@ async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String
 
 #[tauri::command]
 async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+    app.track_event("add_preset", Some(json!({"item_id": item.id.as_str()})));
     info!(
         "Adding preset id {} on [{},{}]",
         item.id.as_str(),
@@ -427,4 +446,12 @@ fn verify_spt_folder(profile_file_path: &String) -> bool {
         .unwrap()
         .join("Aki_Data")
         .exists()
+}
+
+fn load_apta_key() -> String {
+    // TODO if user opt-out this should return ""
+    std::env::var("APTABASE_KEY").unwrap_or_else(|_r| {
+        error!("Can't load APTABASE_KEY from environment");
+        "".to_string()
+    })
 }
