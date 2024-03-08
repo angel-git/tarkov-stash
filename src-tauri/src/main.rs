@@ -124,7 +124,6 @@ fn main() {
             }
             "view_source_code" => {
                 let window = event.window();
-                let path = window.app_handle().path_resolver().app_log_dir().unwrap();
                 let scope = window.app_handle().shell_scope();
                 if let Err(e) = open(&scope, "https://github.com/angel-git/tarkov-stash", None) {
                     error!("Can't open browser: {e}");
