@@ -18,13 +18,14 @@ mod prelude {
 
 use prelude::*;
 
-use log::{info, LevelFilter};
+use log::{error, info, LevelFilter};
 use std::collections::HashMap;
 use std::fs;
 use std::net::TcpStream;
 use std::path::Path;
 use std::sync::Mutex;
 use tauri::api::dialog::FileDialogBuilder;
+use tauri::api::shell::open;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
 use tauri_plugin_log::LogTarget;
 
@@ -41,57 +42,15 @@ struct MutexState {
 }
 
 fn main() {
-    let open = CustomMenuItem::new("open".to_string(), "Open profile");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
-    let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
-    let locale_fr = CustomMenuItem::new("locale_fr".to_string(), "French");
-    let locale_ge = CustomMenuItem::new("locale_ge".to_string(), "German");
-    let locale_hu = CustomMenuItem::new("locale_hu".to_string(), "Hungarian");
-    let locale_it = CustomMenuItem::new("locale_it".to_string(), "Italian");
-    let locale_jp = CustomMenuItem::new("locale_jp".to_string(), "Japanese");
-    let locale_kr = CustomMenuItem::new("locale_kr".to_string(), "Korean");
-    let locale_pl = CustomMenuItem::new("locale_pl".to_string(), "Polish");
-    let locale_po = CustomMenuItem::new("locale_po".to_string(), "Portugal");
-    let locale_sk = CustomMenuItem::new("locale_sk".to_string(), "Slovak");
-    let locale_es = CustomMenuItem::new("locale_es".to_string(), "Spanish");
-    let locale_es_mx = CustomMenuItem::new("locale_es-mx".to_string(), "Spanish Mexico");
-    let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
-    let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
-    let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
-    let locale_submenu = Submenu::new(
-        "Locale",
-        Menu::new()
-            .add_item(locale_cz)
-            .add_item(locale_en)
-            .add_item(locale_fr)
-            .add_item(locale_ge)
-            .add_item(locale_hu)
-            .add_item(locale_it)
-            .add_item(locale_jp)
-            .add_item(locale_kr)
-            .add_item(locale_pl)
-            .add_item(locale_po)
-            .add_item(locale_sk)
-            .add_item(locale_es)
-            .add_item(locale_es_mx)
-            .add_item(locale_tu)
-            .add_item(locale_ru),
-    );
-
-    let menu = Menu::new()
-        .add_submenu(file_submenu)
-        .add_submenu(locale_submenu);
-
     tauri::Builder::default()
             .plugin(tauri_plugin_log::Builder::default()
                 .targets([
                          LogTarget::LogDir,
                          LogTarget::Stdout,
                 ])
-                .level(LevelFilter::Debug)
+                .level(LevelFilter::Info)
                 .build())
-        .menu(menu)
+        .menu(build_menu())
         .manage(TarkovStashState {
             state: Mutex::new(MutexState {
                 bsg_items: None,
@@ -154,6 +113,21 @@ fn main() {
                     menu_handle.get_item("locale_ru").set_selected(false).expect("Can't find menu item for locale_ru");
                     menu_handle.get_item(&menu_item_id).set_selected(true).expect("Can't find selected menu item");
                 });
+            }
+            "open_logs" => {
+                let window = event.window();
+                let path = window.app_handle().path_resolver().app_log_dir().unwrap();
+                let scope = window.app_handle().shell_scope();
+                if let Err(e) = open(&scope, path.display().to_string(), None) {
+                    error!("Can't open logs folder: {e}");
+                }
+            }
+            "view_source_code" => {
+                let window = event.window();
+                let scope = window.app_handle().shell_scope();
+                if let Err(e) = open(&scope, "https://github.com/angel-git/tarkov-stash", None) {
+                    error!("Can't open browser: {e}");
+                }
             }
             _ => {}
         })
@@ -307,6 +281,59 @@ async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, Stri
         }
         Err(e) => Err(e.to_string()),
     }
+}
+
+fn build_menu() -> Menu {
+    let open = CustomMenuItem::new("open".to_string(), "Open profile");
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
+    let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
+    let locale_fr = CustomMenuItem::new("locale_fr".to_string(), "French");
+    let locale_ge = CustomMenuItem::new("locale_ge".to_string(), "German");
+    let locale_hu = CustomMenuItem::new("locale_hu".to_string(), "Hungarian");
+    let locale_it = CustomMenuItem::new("locale_it".to_string(), "Italian");
+    let locale_jp = CustomMenuItem::new("locale_jp".to_string(), "Japanese");
+    let locale_kr = CustomMenuItem::new("locale_kr".to_string(), "Korean");
+    let locale_pl = CustomMenuItem::new("locale_pl".to_string(), "Polish");
+    let locale_po = CustomMenuItem::new("locale_po".to_string(), "Portugal");
+    let locale_sk = CustomMenuItem::new("locale_sk".to_string(), "Slovak");
+    let locale_es = CustomMenuItem::new("locale_es".to_string(), "Spanish");
+    let locale_es_mx = CustomMenuItem::new("locale_es-mx".to_string(), "Spanish Mexico");
+    let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
+    let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
+    let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
+    let locale_submenu = Submenu::new(
+        "Locale",
+        Menu::new()
+            .add_item(locale_cz)
+            .add_item(locale_en)
+            .add_item(locale_fr)
+            .add_item(locale_ge)
+            .add_item(locale_hu)
+            .add_item(locale_it)
+            .add_item(locale_jp)
+            .add_item(locale_kr)
+            .add_item(locale_pl)
+            .add_item(locale_po)
+            .add_item(locale_sk)
+            .add_item(locale_es)
+            .add_item(locale_es_mx)
+            .add_item(locale_tu)
+            .add_item(locale_ru),
+    );
+
+    let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
+    let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
+
+    let help_submenu = Submenu::new(
+        "Help",
+        Menu::new().add_item(open_logs).add_item(source_code),
+    );
+
+    Menu::new()
+        .add_submenu(file_submenu)
+        .add_submenu(locale_submenu)
+        .add_submenu(help_submenu)
 }
 
 type UpdateFunction = fn(
