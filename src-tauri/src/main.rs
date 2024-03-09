@@ -1,35 +1,37 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::collections::HashMap;
+use std::fs;
+use std::net::TcpStream;
+use std::path::{Path, PathBuf};
+use std::sync::{Mutex, MutexGuard};
+
+use log::{error, info, LevelFilter};
+use tauri::api::dialog::FileDialogBuilder;
+use tauri::api::shell::open;
+use tauri::window::MenuHandle;
+use tauri::{App, CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent, Wry};
+use tauri_plugin_log::LogTarget;
+use tauri_plugin_store::{Store, StoreBuilder};
+
+use prelude::*;
+
 pub mod spt;
 pub mod stash;
 pub mod ui_profile;
 pub mod utils;
 
 mod prelude {
+    pub use serde::de::Deserializer;
+    pub use serde::{Deserialize, Serialize};
+    pub use serde_json::{json, Error, Value};
+
     pub use crate::spt::*;
     pub use crate::stash::stash_utils::*;
     pub use crate::ui_profile::ui_profile_serializer::*;
     pub use crate::utils::*;
-    pub use serde::de::Deserializer;
-    pub use serde::{Deserialize, Serialize};
-    pub use serde_json::{json, Error, Value};
 }
-
-use prelude::*;
-
-use log::{error, info, LevelFilter};
-use std::collections::HashMap;
-use std::fs;
-use std::net::TcpStream;
-use std::path::Path;
-use std::sync::Mutex;
-use tauri::api::dialog::FileDialogBuilder;
-use tauri::api::shell::open;
-use tauri::window::MenuHandle;
-use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, Wry};
-use tauri_plugin_log::LogTarget;
-use tauri_plugin_store::{Store, StoreBuilder};
 
 const SETTING_LOCALE: &str = "locale";
 const DEFAULT_LOCALE: &str = "en";
@@ -112,48 +114,37 @@ fn main() {
                 });
             }
             "open_logs" => {
-                let window = event.window();
-                let path = window.app_handle().path_resolver().app_log_dir().unwrap();
-                let scope = window.app_handle().shell_scope();
-                if let Err(e) = open(&scope, path.display().to_string(), None) {
-                    error!("Can't open logs folder: {e}");
-                }
+                let path = event.window().app_handle().path_resolver().app_log_dir().unwrap();
+                open_directory(&event, path, "Can't open logs folder");
+
             }
             "open_config" => {
-                let window = event.window();
-                let path = window.app_handle().path_resolver().app_data_dir().unwrap();
-                let scope = window.app_handle().shell_scope();
-                if let Err(e) = open(&scope, path.display().to_string(), None) {
-                    error!("Can't open config folder: {e}");
-                }
+                let path = event.window().app_handle().path_resolver().app_data_dir().unwrap();
+                open_directory(&event, path, "Can't open config folder");
             }
             "view_source_code" => {
-                let window = event.window();
-                let scope = window.app_handle().shell_scope();
-                if let Err(e) = open(&scope, "https://github.com/angel-git/tarkov-stash", None) {
-                    error!("Can't open browser: {e}");
-                }
+                open_url(&event, "https://github.com/angel-git/tarkov-stash")
             }
             _ => {}
         })
         .setup(|app| {
             let state: State<TarkovStashState>  = app.state();
             let mut internal_state = state.state.lock().unwrap();
-            let mut store = StoreBuilder::new(app.handle(), "config.json".parse().expect("can't create config file")).build();
-            let _ = store.load();
-            if store.has(SETTING_LOCALE) {
-                let locale_from_settings = store.get(SETTING_LOCALE).unwrap().as_str().unwrap();
-                internal_state.locale_lang = locale_from_settings.to_string();
-                let locale_id = format!("locale_{}", locale_from_settings);
-                let main_window = app.get_window("main").unwrap();
-                let menu_handle = main_window.menu_handle();
-                std::thread::spawn(move || {
-                    update_selected_menu_locale(menu_handle, &locale_id)
-                });
-            } else {
+            let mut store = initialize_store(app);
+            update_state_locale_from_store(&store, &mut internal_state);
+            if !store.has(SETTING_LOCALE) {
                 let _ = store.insert(SETTING_LOCALE.to_string(), json!(DEFAULT_LOCALE));
                 let _ = store.save();
             }
+
+            let locale_id = format!("locale_{}", internal_state.locale_lang.clone());
+
+            let main_window = app.get_window("main").unwrap();
+            let menu_handle = main_window.menu_handle();
+            std::thread::spawn(move || {
+                update_selected_menu_locale(menu_handle, &locale_id)
+            });
+
             internal_state.store = Some(store);
             Ok(())
         })
@@ -393,6 +384,43 @@ fn with_state_do(item: Item, app: tauri::AppHandle, f: UpdateFunction) -> Result
         }
         Err(e) => Err(e.to_string()),
     }
+}
+
+fn initialize_store(app: &App) -> Store<Wry> {
+    let mut store = StoreBuilder::new(
+        app.handle(),
+        "config.json".parse().expect("can't create config file"),
+    )
+    .build();
+    let _ = store.load();
+    store
+}
+
+fn update_state_locale_from_store(store: &Store<Wry>, internal_state: &mut MutexGuard<MutexState>) {
+    if store.has(SETTING_LOCALE) {
+        let locale_from_settings = store.get(SETTING_LOCALE).unwrap().as_str().unwrap();
+        internal_state.locale_lang = locale_from_settings.to_string();
+    }
+}
+
+fn open_directory(event: &WindowMenuEvent, path: PathBuf, error_msg: &'static str) {
+    let window = event.window();
+    let scope = window.app_handle().shell_scope();
+    if let Err(e) = open(&scope, path.display().to_string(), None) {
+        handle_error(error_msg, e)
+    }
+}
+
+fn open_url(event: &WindowMenuEvent, url: &'static str) {
+    let window = event.window();
+    let scope = window.app_handle().shell_scope();
+    if let Err(e) = open(&scope, url, None) {
+        handle_error("Can't open browser!", e)
+    }
+}
+
+fn handle_error(error_msg: &str, e: tauri::api::Error) {
+    error!("{}: {}", error_msg, e);
 }
 
 fn update_selected_menu_locale(menu_handle: MenuHandle, id: &str) {
