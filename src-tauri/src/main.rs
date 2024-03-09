@@ -26,8 +26,13 @@ use std::path::Path;
 use std::sync::Mutex;
 use tauri::api::dialog::FileDialogBuilder;
 use tauri::api::shell::open;
-use tauri::{CustomMenuItem, Manager, Menu, State, Submenu};
+use tauri::window::MenuHandle;
+use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, Wry};
 use tauri_plugin_log::LogTarget;
+use tauri_plugin_store::{Store, StoreBuilder};
+
+const SETTING_LOCALE: &str = "locale";
+const DEFAULT_LOCALE: &str = "en";
 
 struct TarkovStashState {
     pub state: Mutex<MutexState>,
@@ -39,10 +44,12 @@ struct MutexState {
     pub globals: Option<HashMap<String, Value>>,
     pub locale: Option<HashMap<String, Value>>,
     pub locale_lang: String,
+    pub store: Option<Store<Wry>>,
 }
 
 fn main() {
     tauri::Builder::default()
+            .plugin(tauri_plugin_store::Builder::default().build())
             .plugin(tauri_plugin_log::Builder::default()
                 .targets([
                          LogTarget::LogDir,
@@ -57,7 +64,8 @@ fn main() {
                 globals: None,
                 locale: None,
                 profile_file_path: None,
-                locale_lang: "en".to_string(),
+                locale_lang: DEFAULT_LOCALE.to_string(),
+                store: None,
             })
 
         })
@@ -87,31 +95,20 @@ fn main() {
                 let menu_handle = window.menu_handle();
                 let state: State<TarkovStashState>  = window.state();
                 let mut internal_state = state.state.lock().unwrap();
-                internal_state.locale_lang = event.menu_item_id().replace("locale_", "").to_string();
+                let locale_lang = event.menu_item_id().replace("locale_", "").to_string();
+                internal_state.locale_lang = locale_lang.clone();
                 let menu_item_id = event.menu_item_id().to_string();
 
+                {
+                    let _ = internal_state.store.as_mut().unwrap().insert(SETTING_LOCALE.to_string(), json!(locale_lang));
+                    let _ = internal_state.store.as_mut().unwrap().save();
+                }
                 if internal_state.profile_file_path.is_some() {
                     window.emit("profile_loaded", "").expect("Can't emit event to window!");
                 }
 
-
                 std::thread::spawn(move || {
-                    menu_handle.get_item("locale_cz").set_selected(false).expect("Can't find menu item for locale_cz");
-                    menu_handle.get_item("locale_en").set_selected(false).expect("Can't find menu item for locale_en");
-                    menu_handle.get_item("locale_fr").set_selected(false).expect("Can't find menu item for locale_fr");
-                    menu_handle.get_item("locale_ge").set_selected(false).expect("Can't find menu item for locale_ge");
-                    menu_handle.get_item("locale_hu").set_selected(false).expect("Can't find menu item for locale_hu");
-                    menu_handle.get_item("locale_it").set_selected(false).expect("Can't find menu item for locale_it");
-                    menu_handle.get_item("locale_jp").set_selected(false).expect("Can't find menu item for locale_jp");
-                    menu_handle.get_item("locale_kr").set_selected(false).expect("Can't find menu item for locale_kr");
-                    menu_handle.get_item("locale_pl").set_selected(false).expect("Can't find menu item for locale_pl");
-                    menu_handle.get_item("locale_po").set_selected(false).expect("Can't find menu item for locale_po");
-                    menu_handle.get_item("locale_sk").set_selected(false).expect("Can't find menu item for locale_sk");
-                    menu_handle.get_item("locale_es").set_selected(false).expect("Can't find menu item for locale_es");
-                    menu_handle.get_item("locale_es-mx").set_selected(false).expect("Can't find menu item for locale_es-mx");
-                    menu_handle.get_item("locale_tu").set_selected(false).expect("Can't find menu item for locale_tu");
-                    menu_handle.get_item("locale_ru").set_selected(false).expect("Can't find menu item for locale_ru");
-                    menu_handle.get_item(&menu_item_id).set_selected(true).expect("Can't find selected menu item");
+                    update_selected_menu_locale(menu_handle, &menu_item_id)
                 });
             }
             "open_logs" => {
@@ -122,6 +119,14 @@ fn main() {
                     error!("Can't open logs folder: {e}");
                 }
             }
+            "open_config" => {
+                let window = event.window();
+                let path = window.app_handle().path_resolver().app_data_dir().unwrap();
+                let scope = window.app_handle().shell_scope();
+                if let Err(e) = open(&scope, path.display().to_string(), None) {
+                    error!("Can't open config folder: {e}");
+                }
+            }
             "view_source_code" => {
                 let window = event.window();
                 let scope = window.app_handle().shell_scope();
@@ -130,6 +135,27 @@ fn main() {
                 }
             }
             _ => {}
+        })
+        .setup(|app| {
+            let state: State<TarkovStashState>  = app.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let mut store = StoreBuilder::new(app.handle(), "config.json".parse().expect("can't create config file")).build();
+            let _ = store.load();
+            if store.has(SETTING_LOCALE) {
+                let locale_from_settings = store.get(SETTING_LOCALE).unwrap().as_str().unwrap();
+                internal_state.locale_lang = locale_from_settings.to_string();
+                let locale_id = format!("locale_{}", locale_from_settings);
+                let main_window = app.get_window("main").unwrap();
+                let menu_handle = main_window.menu_handle();
+                std::thread::spawn(move || {
+                    update_selected_menu_locale(menu_handle, &locale_id)
+                });
+            } else {
+                let _ = store.insert(SETTING_LOCALE.to_string(), json!(DEFAULT_LOCALE));
+                let _ = store.save();
+            }
+            internal_state.store = Some(store);
+            Ok(())
         })
         .invoke_handler(tauri::generate_handler![load_profile_file, change_amount, change_fir, restore_durability, add_item, remove_item, add_preset])
         .run(tauri::generate_context!())
@@ -324,10 +350,14 @@ fn build_menu() -> Menu {
 
     let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
     let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
+    let config = CustomMenuItem::new("open_config".to_string(), "Open config");
 
     let help_submenu = Submenu::new(
         "Help",
-        Menu::new().add_item(open_logs).add_item(source_code),
+        Menu::new()
+            .add_item(open_logs)
+            .add_item(config)
+            .add_item(source_code),
     );
 
     Menu::new()
@@ -363,6 +393,73 @@ fn with_state_do(item: Item, app: tauri::AppHandle, f: UpdateFunction) -> Result
         }
         Err(e) => Err(e.to_string()),
     }
+}
+
+fn update_selected_menu_locale(menu_handle: MenuHandle, id: &str) {
+    menu_handle
+        .get_item("locale_cz")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_cz");
+    menu_handle
+        .get_item("locale_en")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_en");
+    menu_handle
+        .get_item("locale_fr")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_fr");
+    menu_handle
+        .get_item("locale_ge")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_ge");
+    menu_handle
+        .get_item("locale_hu")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_hu");
+    menu_handle
+        .get_item("locale_it")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_it");
+    menu_handle
+        .get_item("locale_jp")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_jp");
+    menu_handle
+        .get_item("locale_kr")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_kr");
+    menu_handle
+        .get_item("locale_pl")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_pl");
+    menu_handle
+        .get_item("locale_po")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_po");
+    menu_handle
+        .get_item("locale_sk")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_sk");
+    menu_handle
+        .get_item("locale_es")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_es");
+    menu_handle
+        .get_item("locale_es-mx")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_es-mx");
+    menu_handle
+        .get_item("locale_tu")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_tu");
+    menu_handle
+        .get_item("locale_ru")
+        .set_selected(false)
+        .expect("Can't find menu item for locale_ru");
+    menu_handle
+        .get_item(id)
+        .set_selected(true)
+        .expect("Can't find selected menu item");
 }
 
 fn is_server_running() -> bool {
