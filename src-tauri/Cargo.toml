@@ -17,7 +17,7 @@ tauri-build = { version = "1.5.1", features = [] }
 [dependencies]
 serde_json = "1.0.111"
 serde = { version = "1.0.195", features = ["derive"] }
-tauri = { version = "1.5.4", features = ["dialog"] }
+tauri = { version = "1.5.4", features = ["dialog", "shell-open-api"] }
 log = "0.4.20"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 ring = "0.17.7"
