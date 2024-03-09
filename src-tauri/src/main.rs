@@ -1,6 +1,5 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-extern crate dotenv;
 
 pub mod spt;
 pub mod stash;
@@ -17,7 +16,6 @@ mod prelude {
     pub use serde_json::{json, Error, Value};
 }
 
-use dotenv::dotenv;
 use log::{error, info, LevelFilter};
 use prelude::*;
 use std::collections::HashMap;
@@ -43,8 +41,6 @@ struct MutexState {
 }
 
 fn main() {
-    dotenv().ok();
-
     let apta_key = load_apta_key();
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
@@ -451,8 +447,10 @@ fn verify_spt_folder(profile_file_path: &String) -> bool {
 
 fn load_apta_key() -> String {
     // TODO if user opt-out this should return ""
-    std::env::var("APTABASE_KEY").unwrap_or_else(|_r| {
-        error!("Can't load APTABASE_KEY from environment");
-        "".to_string()
-    })
+    option_env!("APTABASE_KEY")
+        .unwrap_or_else(|| {
+            error!("Can't load APTABASE_KEY from environment");
+            ""
+        })
+        .to_string()
 }
