@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 pub use crate::prelude::*;
+use crate::spt::spt_profile_serializer::TarkovProfile;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -126,28 +127,13 @@ pub struct BsgItem {
 }
 
 pub fn convert_profile_to_ui(
-    tarkov_profile: spt_profile_serializer::TarkovProfile,
+    tarkov_profile: TarkovProfile,
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
     globals: &HashMap<String, Value>,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
-    let stash_bonuses = &tarkov_profile
-        .characters
-        .pmc
-        .bonuses
-        .iter()
-        .filter(|b| b.t.eq("StashSize"))
-        .count();
-    let stash_size_y = if stash_bonuses <= &1 {
-        28
-    } else if stash_bonuses == &2 {
-        38
-    } else if stash_bonuses == &3 {
-        48
-    } else {
-        68
-    };
+    let stash_size_y = calculate_stash_size_y(&tarkov_profile);
 
     let items: Vec<Item> = parse_items(
         tarkov_profile.characters.pmc.inventory.items,
@@ -457,10 +443,44 @@ fn get_bsg_item(
     spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
 }
 
+fn calculate_stash_size_y(tarkov_profile: &TarkovProfile) -> u16 {
+    let stash_bonuses = &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .filter(|b| b.t.eq("StashSize"))
+        .count();
+    let mut stash_size_y = if stash_bonuses <= &1 {
+        28
+    } else if stash_bonuses == &2 {
+        38
+    } else if stash_bonuses == &3 {
+        48
+    } else {
+        68
+    };
+    let extra_rows = match &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .find(|b| b.t.eq("StashRows"))
+        .map(|b| b.value.as_ref().unwrap().as_u64().unwrap() as u16)
+    {
+        Some(value) => *value,
+        _ => 0,
+    };
+
+    stash_size_y += extra_rows;
+    stash_size_y
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
 
+    use crate::prelude::convert_profile_to_ui;
     use serde_json::Value;
 
     use crate::spt::spt_profile_serializer::{load_profile, InventoryItem};
@@ -474,7 +494,34 @@ mod tests {
             ))
             .as_ref(),
         );
+
         assert!(tarkov_profile.is_ok())
+    }
+
+    #[test]
+    fn should_calculate_item_stash_bonuses() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/380-bonus-stash.json"
+            ))
+            .as_ref(),
+        );
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(tarkov_profile.is_ok());
+        let profile_ui = convert_profile_to_ui(
+            tarkov_profile.unwrap(),
+            &bsg_items_root,
+            &HashMap::new(),
+            &HashMap::new(),
+        );
+        assert!(profile_ui.is_ok());
+        assert_eq!(profile_ui.unwrap().size_y, 70);
     }
 
     #[test]

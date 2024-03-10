@@ -56,6 +56,8 @@ pub struct InventoryItem {
 pub struct Bonuses {
     #[serde(rename = "type")]
     pub t: String,
+    #[serde(rename = "value")]
+    pub value: Option<Value>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
