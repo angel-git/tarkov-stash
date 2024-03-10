@@ -73,7 +73,7 @@ pub struct LocationInStash {
     pub r: String, // "Horizontal" | "Vertical" | u16
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct UPD {
     #[serde(rename = "StackObjectsCount")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -107,51 +107,51 @@ pub struct UPD {
     pub fire_mode: Option<FireMode>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct FoodDrink {
     #[serde(rename = "HpPercent")]
     pub hp_percent: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct MedKit {
     #[serde(rename = "HpResource")]
     #[serde(deserialize_with = "deserialize_to_integer")]
     pub hp_resource: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Resource {
     #[serde(rename = "Value")]
     #[serde(deserialize_with = "deserialize_to_integer")]
     pub value: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Key {
     #[serde(rename = "NumberOfUsages")]
     pub number_of_usages: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Foldable {
     #[serde(rename = "Folded")]
     pub folded: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Togglable {
     #[serde(rename = "On")]
     pub on: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct FireMode {
     #[serde(rename = "FireMode")]
     pub fire_mode: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Repairable {
     #[serde(rename = "Durability")]
     #[serde(deserialize_with = "deserialize_to_integer")]

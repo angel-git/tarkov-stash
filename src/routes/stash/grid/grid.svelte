@@ -300,7 +300,7 @@
     border: 1px solid var(--color-background);
     font-size: 12px;
     z-index: 5;
-    min-width: 150px;
+    min-width: 170px;
   }
 
   .options .option {

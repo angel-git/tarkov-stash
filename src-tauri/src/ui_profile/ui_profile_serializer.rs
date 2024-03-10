@@ -71,6 +71,7 @@ pub struct SlotItem {
     pub tpl: String,
     #[serde(rename = "slotId")]
     pub slot_id: String,
+    pub upd: Option<spt_profile_serializer::UPD>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -309,28 +310,11 @@ fn parse_items(
             }
         }
 
-        let has_slots =
-            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
-
-        let mut slot_items: Option<HashSet<SlotItem>> = None;
-        if has_slots {
-            slot_items = Some(HashSet::new());
-            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
-                let all_slots_from_item = find_all_slots_from_parent(
-                    item._id.as_str(),
-                    &profile_items,
-                    bsg_t._name.as_str(),
-                );
-
-                slot_items.as_mut().unwrap().extend(all_slots_from_item);
-            })
-        }
-
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
-
-        let max_resource = None
+        // TODO calculate max resource from slots
+        let mut max_resource = None
             .or(bsg_item._props.max_resource)
             .or(bsg_item._props.max_hp_resource)
             .or(bsg_item._props.maximum_number_of_usages)
@@ -364,6 +348,40 @@ fn parse_items(
                             - udp.key.as_ref().unwrap().number_of_usages,
                     );
                 }
+            }
+        }
+
+        let has_slots =
+            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
+
+        let mut slot_items: Option<HashSet<SlotItem>> = None;
+        if has_slots {
+            slot_items = Some(HashSet::new());
+            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
+                let all_slots_from_item = find_all_slots_from_parent(
+                    item._id.as_str(),
+                    &profile_items,
+                    bsg_t._name.as_str(),
+                );
+
+                slot_items.as_mut().unwrap().extend(all_slots_from_item);
+            });
+
+            if let Some(ref slot_items_set) = slot_items {
+                let mut slot_resource = 0;
+                let mut slot_max_resource = 0;
+
+                slot_items_set.iter().for_each(|slot_item| {
+                    if let Some(slot_upd) = slot_item.upd.as_ref() {
+                        if let Some(repairable) = slot_upd.repairable.as_ref() {
+                            slot_resource += repairable.durability;
+                            slot_max_resource += repairable.max_durability;
+                        }
+                    }
+                });
+
+                resource = Some(slot_resource);
+                max_resource = Some(slot_max_resource);
             }
         }
 
@@ -414,7 +432,13 @@ fn find_all_slots_from_parent(
                 let id = i._id.to_string();
                 let tpl = i._tpl.to_string();
                 let slot_id = i.slot_id.as_ref().unwrap().to_string();
-                result.insert(SlotItem { id, tpl, slot_id });
+                let upd = i.upd.as_ref().cloned();
+                result.insert(SlotItem {
+                    id,
+                    tpl,
+                    slot_id,
+                    upd,
+                });
             }
 
             let sub_items = find_all_slots_from_parent(&i._id, items, "");

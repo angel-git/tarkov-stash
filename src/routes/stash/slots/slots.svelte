@@ -6,6 +6,7 @@
     getName,
   } from '../../../helper';
   import type { BsgItem, SlotKind, PresetItemItem, SlotItem } from '../../../types';
+
   export let locale: Record<string, string>;
   export let slots: Array<string>;
   export let bsgItems: Record<string, BsgItem>;
@@ -40,6 +41,13 @@
             <div class="slots-grid-item-name">
               {getShortName(itemInSlot.tpl, locale) || getName(itemInSlot.tpl, locale)}
             </div>
+            {#if itemInSlot.upd?.Repairable}
+              <div class="resource">
+                {`${
+                  itemInSlot.upd.Repairable.Durability || itemInSlot.upd.Repairable.MaxDurability
+                }/${itemInSlot.upd.Repairable.MaxDurability}`}
+              </div>
+            {/if}
             <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`} />
           </div>
         {/each}
@@ -96,5 +104,14 @@
     max-height: 100%;
     max-width: 100%;
     margin: 8px;
+  }
+
+  .resource {
+    font-size: 13px;
+    color: orangered;
+    z-index: 2;
+    position: absolute;
+    bottom: 0;
+    right: 0;
   }
 </style>
