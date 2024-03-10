@@ -1,10 +1,11 @@
 use crate::prelude::{
     add_new_item, add_new_preset, convert_profile_to_ui, delete_item, spt_profile_serializer,
-    update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile,
+    track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
+    UIProfile,
 };
 use crate::TarkovStashState;
 use log::info;
-use serde_json::{Error, Value};
+use serde_json::{json, Error, Value};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
@@ -70,24 +71,44 @@ pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIP
 #[tauri::command]
 pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Changing amount to item {}", item.id.as_str());
+    track_event(
+        &app,
+        "change_amount",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
     with_state_do(item, app, update_item_amount)
 }
 
 #[tauri::command]
 pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Setting fir to item {}", item.id.as_str());
+    track_event(
+        &app,
+        "change_fir",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
     with_state_do(item, app, update_spawned_in_session)
 }
 
 #[tauri::command]
 pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Restoring durability to item {}", item.id.as_str());
+    track_event(
+        &app,
+        "restore_durability",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
     with_state_do(item, app, update_durability)
 }
 
 #[tauri::command]
 pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!("Deleting item {}", item.id.as_str());
+    track_event(
+        &app,
+        "remove_item",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
     with_state_do(item, app, delete_item)
 }
 
@@ -99,6 +120,7 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
         item.location_x,
         item.location_y
     );
+    track_event(&app, "add_item", Some(json!({"item_id": item.id.as_str()})));
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();
     let profile_file_path_option = &internal_state.profile_file_path;
@@ -131,6 +153,11 @@ pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, 
         item.id.as_str(),
         item.location_x,
         item.location_y
+    );
+    track_event(
+        &app,
+        "add_preset",
+        Some(json!({"item_id": item.id.as_str()})),
     );
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();

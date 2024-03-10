@@ -25,6 +25,7 @@ mod prelude {
     pub use crate::app::handles::*;
     pub use crate::app::menu::*;
     pub use crate::app::store::*;
+    pub use crate::app::telemetry::*;
     pub use crate::spt::*;
     pub use crate::stash::stash_utils::*;
     pub use crate::ui_profile::ui_profile_serializer::*;
@@ -48,7 +49,9 @@ pub struct MutexState {
 }
 
 fn main() {
+    let apta_key = load_apta_key();
     tauri::Builder::default()
+        .plugin(tauri_plugin_aptabase::Builder::new(apta_key.as_str()).build())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -69,6 +72,7 @@ fn main() {
         })
         .on_menu_event(handle_menu_event)
         .setup(|app| {
+            track_event(&app.handle(), "app_started", None);
             let state: State<TarkovStashState> = app.state();
             let mut internal_state = state.state.lock().unwrap();
             let mut store = initialize_store(app);
