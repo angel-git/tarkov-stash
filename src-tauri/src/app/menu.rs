@@ -8,7 +8,7 @@ use tauri::api::shell::open;
 use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 
-use crate::prelude::insert_and_save;
+use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -96,11 +96,9 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
         | "locale_es-mx" | "locale_tu" | "locale_ru" => {
             let window = event.window();
-            let menu_handle = window.menu_handle();
             let state: State<TarkovStashState> = window.state();
             let mut internal_state = state.state.lock().unwrap();
             let locale_lang = event.menu_item_id().replace("locale_", "").to_string();
-            internal_state.locale_lang = locale_lang.clone();
             let menu_item_id = event.menu_item_id().to_string();
 
             {
@@ -113,7 +111,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                     .expect("Can't emit event to window!");
             }
 
-            update_selected_menu_locale(menu_handle, menu_item_id)
+            update_selected_menu_locale(window.menu_handle(), menu_item_id);
         }
         "open_logs" => {
             let path = event
@@ -135,7 +133,17 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
         }
         "view_source_code" => open_url(&event, "https://github.com/angel-git/tarkov-stash"),
         "telemetry" => {
-            // TODO toggle telemetry
+            let window = event.window();
+            let state: State<TarkovStashState> = window.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let store = internal_state.store.as_mut().unwrap();
+            let telemetry_toggled = !store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+            insert_and_save(
+                store,
+                SETTING_TELEMETRY.to_string(),
+                json!(telemetry_toggled),
+            );
+            update_selected_menu_telemetry(window.menu_handle(), telemetry_toggled);
         }
         _ => {}
     }

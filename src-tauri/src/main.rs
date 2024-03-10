@@ -32,10 +32,6 @@ mod prelude {
     pub use crate::utils::*;
 }
 
-const SETTING_LOCALE: &str = "locale";
-const SETTING_TELEMETRY: &str = "telemetry";
-const DEFAULT_LOCALE: &str = "en";
-
 pub struct TarkovStashState {
     pub state: Mutex<MutexState>,
 }
@@ -46,9 +42,6 @@ pub struct MutexState {
     pub globals: Option<HashMap<String, Value>>,
     pub locale: Option<HashMap<String, Value>>,
     pub store: Option<Store<Wry>>,
-    // TODO we should just use store and not this
-    pub locale_lang: String,
-    pub telemetry_enabled: bool,
 }
 
 fn main() {
@@ -69,8 +62,6 @@ fn main() {
                 globals: None,
                 locale: None,
                 profile_file_path: None,
-                locale_lang: DEFAULT_LOCALE.to_string(),
-                telemetry_enabled: true,
                 store: None,
             }),
         })
@@ -80,13 +71,15 @@ fn main() {
                 let state: State<TarkovStashState> = app.state();
                 let mut internal_state = state.state.lock().unwrap();
                 let store = initialize_store(app);
-                update_state_locale_from_store(&store, &mut internal_state);
-                update_state_telemetry_from_store(&store, &mut internal_state);
 
                 let main_window = app.get_window("main").unwrap();
-                let menu_handle = main_window.menu_handle();
-                let locale_id = format!("locale_{}", internal_state.locale_lang.clone());
-                update_selected_menu_locale(menu_handle, locale_id);
+                let locale_id = format!(
+                    "locale_{}",
+                    store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
+                );
+                let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+                update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
+                update_selected_menu_locale(main_window.menu_handle(), locale_id);
                 internal_state.store = Some(store);
             }
             // track event needs its own lock

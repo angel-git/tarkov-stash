@@ -1,7 +1,7 @@
 use crate::prelude::{
     add_new_item, add_new_preset, convert_profile_to_ui, delete_item, spt_profile_serializer,
     track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
-    UIProfile,
+    UIProfile, SETTING_LOCALE,
 };
 use crate::TarkovStashState;
 use log::info;
@@ -22,9 +22,17 @@ pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIP
             if verify_spt_folder(profile_file_path) {
                 create_backup(profile_file_path);
                 // save to state internal data
-                let locale = load_locale(profile_file_path, internal_state.locale_lang.clone());
+                let locale_from_settings = internal_state
+                    .store
+                    .as_mut()
+                    .unwrap()
+                    .get(SETTING_LOCALE)
+                    .unwrap()
+                    .as_str()
+                    .unwrap();
+                let locale = load_locale(profile_file_path, locale_from_settings.to_string());
                 if locale.is_err() {
-                    return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", internal_state.locale_lang.clone()));
+                    return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", locale_from_settings));
                 }
                 let bsg_items = load_bsg_items(profile_file_path);
                 let globals = load_globals(profile_file_path);
