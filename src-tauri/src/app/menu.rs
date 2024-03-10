@@ -1,5 +1,15 @@
+use std::net::TcpStream;
+use std::path::PathBuf;
+
+use log::error;
+use serde_json::json;
+use tauri::api::dialog::FileDialogBuilder;
+use tauri::api::shell::open;
 use tauri::window::MenuHandle;
-use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
+
+use crate::prelude::insert_and_save;
+use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
@@ -56,6 +66,74 @@ pub fn build_menu() -> Menu {
         .add_submenu(file_submenu)
         .add_submenu(locale_submenu)
         .add_submenu(help_submenu)
+}
+
+pub fn handle_menu_event(event: WindowMenuEvent) {
+    match event.menu_item_id() {
+        "quit" => {
+            std::process::exit(0);
+        }
+        "open" => {
+            FileDialogBuilder::default()
+                .add_filter("json", &["json"])
+                .pick_file(move |path_buf| if let Some(p) = path_buf {
+                    let window = event.window();
+                    let is_server_running = is_server_running();
+                    if is_server_running {
+                        window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
+                    } else {
+                        let state: State<TarkovStashState> = window.state();
+                        let mut internal_state = state.state.lock().unwrap();
+                        internal_state.profile_file_path =
+                            Some(p.as_path().to_str().unwrap().to_string());
+                        window.emit("profile_loaded", "").expect("Can't emit event to window!");
+                    }
+                });
+        }
+        "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it"
+        | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
+        | "locale_es-mx" | "locale_tu" | "locale_ru" => {
+            let window = event.window();
+            let menu_handle = window.menu_handle();
+            let state: State<TarkovStashState> = window.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let locale_lang = event.menu_item_id().replace("locale_", "").to_string();
+            internal_state.locale_lang = locale_lang.clone();
+            let menu_item_id = event.menu_item_id().to_string();
+
+            {
+                let store = internal_state.store.as_mut().unwrap();
+                insert_and_save(store, SETTING_LOCALE.to_string(), json!(locale_lang));
+            }
+            if internal_state.profile_file_path.is_some() {
+                window
+                    .emit("profile_loaded", "")
+                    .expect("Can't emit event to window!");
+            }
+
+            update_selected_menu_locale(menu_handle, menu_item_id)
+        }
+        "open_logs" => {
+            let path = event
+                .window()
+                .app_handle()
+                .path_resolver()
+                .app_log_dir()
+                .unwrap();
+            open_directory(&event, path, "Can't open logs folder");
+        }
+        "open_config" => {
+            let path = event
+                .window()
+                .app_handle()
+                .path_resolver()
+                .app_data_dir()
+                .unwrap();
+            open_directory(&event, path, "Can't open config folder");
+        }
+        "view_source_code" => open_url(&event, "https://github.com/angel-git/tarkov-stash"),
+        _ => {}
+    }
 }
 
 pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {
@@ -125,4 +203,28 @@ pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {
             .set_selected(true)
             .expect("Can't find selected menu item");
     });
+}
+
+fn is_server_running() -> bool {
+    TcpStream::connect("127.0.0.1:6969").is_ok()
+}
+
+fn open_directory(event: &WindowMenuEvent, path: PathBuf, error_msg: &'static str) {
+    let window = event.window();
+    let scope = window.app_handle().shell_scope();
+    if let Err(e) = open(&scope, path.display().to_string(), None) {
+        handle_error(error_msg, e)
+    }
+}
+
+fn open_url(event: &WindowMenuEvent, url: &'static str) {
+    let window = event.window();
+    let scope = window.app_handle().shell_scope();
+    if let Err(e) = open(&scope, url, None) {
+        handle_error("Can't open browser!", e)
+    }
+}
+
+fn handle_error(error_msg: &str, e: tauri::api::Error) {
+    error!("{}: {}", error_msg, e);
 }
