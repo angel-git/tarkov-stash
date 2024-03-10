@@ -2,6 +2,8 @@ name: 'publish'
 on:
   release:
     types: [created]
+env:
+  APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
 
 jobs:
   publish-tauri:

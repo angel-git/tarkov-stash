@@ -8,7 +8,7 @@ use tauri::api::shell::open;
 use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 
-use crate::prelude::insert_and_save;
+use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -53,13 +53,15 @@ pub fn build_menu() -> Menu {
     let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
     let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
     let config = CustomMenuItem::new("open_config".to_string(), "Open config");
+    let telemetry = CustomMenuItem::new("telemetry".to_string(), "Enable telemetry");
 
     let help_submenu = Submenu::new(
         "Help",
         Menu::new()
             .add_item(open_logs)
             .add_item(config)
-            .add_item(source_code),
+            .add_item(source_code)
+            .add_item(telemetry),
     );
 
     Menu::new()
@@ -94,11 +96,9 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
         | "locale_es-mx" | "locale_tu" | "locale_ru" => {
             let window = event.window();
-            let menu_handle = window.menu_handle();
             let state: State<TarkovStashState> = window.state();
             let mut internal_state = state.state.lock().unwrap();
             let locale_lang = event.menu_item_id().replace("locale_", "").to_string();
-            internal_state.locale_lang = locale_lang.clone();
             let menu_item_id = event.menu_item_id().to_string();
 
             {
@@ -111,7 +111,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                     .expect("Can't emit event to window!");
             }
 
-            update_selected_menu_locale(menu_handle, menu_item_id)
+            update_selected_menu_locale(window.menu_handle(), menu_item_id);
         }
         "open_logs" => {
             let path = event
@@ -132,8 +132,30 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
             open_directory(&event, path, "Can't open config folder");
         }
         "view_source_code" => open_url(&event, "https://github.com/angel-git/tarkov-stash"),
+        "telemetry" => {
+            let window = event.window();
+            let state: State<TarkovStashState> = window.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let store = internal_state.store.as_mut().unwrap();
+            let telemetry_toggled = !store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+            insert_and_save(
+                store,
+                SETTING_TELEMETRY.to_string(),
+                json!(telemetry_toggled),
+            );
+            update_selected_menu_telemetry(window.menu_handle(), telemetry_toggled);
+        }
         _ => {}
     }
+}
+
+pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
+    std::thread::spawn(move || {
+        menu_handle
+            .get_item("telemetry")
+            .set_selected(selected)
+            .expect("Can't find menu item for telemetry");
+    });
 }
 
 pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {

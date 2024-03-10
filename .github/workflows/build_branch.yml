@@ -2,6 +2,9 @@ name: Build branch
 on:
   workflow_dispatch:
 
+env:
+  APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+
 jobs:
   publish-tauri:
     env:

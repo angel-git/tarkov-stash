@@ -25,14 +25,12 @@ mod prelude {
     pub use crate::app::handles::*;
     pub use crate::app::menu::*;
     pub use crate::app::store::*;
+    pub use crate::app::telemetry::*;
     pub use crate::spt::*;
     pub use crate::stash::stash_utils::*;
     pub use crate::ui_profile::ui_profile_serializer::*;
     pub use crate::utils::*;
 }
-
-const SETTING_LOCALE: &str = "locale";
-const DEFAULT_LOCALE: &str = "en";
 
 pub struct TarkovStashState {
     pub state: Mutex<MutexState>,
@@ -43,12 +41,13 @@ pub struct MutexState {
     pub bsg_items: Option<HashMap<String, Value>>,
     pub globals: Option<HashMap<String, Value>>,
     pub locale: Option<HashMap<String, Value>>,
-    pub locale_lang: String,
     pub store: Option<Store<Wry>>,
 }
 
 fn main() {
+    let apta_key = load_apta_key();
     tauri::Builder::default()
+        .plugin(tauri_plugin_aptabase::Builder::new(apta_key.as_str()).build())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -63,28 +62,30 @@ fn main() {
                 globals: None,
                 locale: None,
                 profile_file_path: None,
-                locale_lang: DEFAULT_LOCALE.to_string(),
                 store: None,
             }),
         })
         .on_menu_event(handle_menu_event)
         .setup(|app| {
-            let state: State<TarkovStashState> = app.state();
-            let mut internal_state = state.state.lock().unwrap();
-            let mut store = initialize_store(app);
-            update_state_locale_from_store(&store, &mut internal_state);
-            if !store.has(SETTING_LOCALE) {
-                insert_and_save(
-                    &mut store,
-                    SETTING_LOCALE.to_string(),
-                    json!(DEFAULT_LOCALE),
-                )
+            {
+                let state: State<TarkovStashState> = app.state();
+                let mut internal_state = state.state.lock().unwrap();
+                let store = initialize_store(app);
+
+                let main_window = app.get_window("main").unwrap();
+                let locale_id = format!(
+                    "locale_{}",
+                    store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
+                );
+                let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+                update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
+                update_selected_menu_locale(main_window.menu_handle(), locale_id);
+                internal_state.store = Some(store);
             }
-            let main_window = app.get_window("main").unwrap();
-            let menu_handle = main_window.menu_handle();
-            let locale_id = format!("locale_{}", internal_state.locale_lang.clone());
-            update_selected_menu_locale(menu_handle, locale_id);
-            internal_state.store = Some(store);
+            // track event needs its own lock
+            {
+                track_event(&app.handle(), "app_started", None);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
