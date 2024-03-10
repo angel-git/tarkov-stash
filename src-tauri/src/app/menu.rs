@@ -53,13 +53,15 @@ pub fn build_menu() -> Menu {
     let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
     let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
     let config = CustomMenuItem::new("open_config".to_string(), "Open config");
+    let telemetry = CustomMenuItem::new("telemetry".to_string(), "Enable telemetry");
 
     let help_submenu = Submenu::new(
         "Help",
         Menu::new()
             .add_item(open_logs)
             .add_item(config)
-            .add_item(source_code),
+            .add_item(source_code)
+            .add_item(telemetry),
     );
 
     Menu::new()
@@ -132,8 +134,20 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
             open_directory(&event, path, "Can't open config folder");
         }
         "view_source_code" => open_url(&event, "https://github.com/angel-git/tarkov-stash"),
+        "telemetry" => {
+            // TODO toggle telemetry
+        }
         _ => {}
     }
+}
+
+pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
+    std::thread::spawn(move || {
+        menu_handle
+            .get_item("telemetry")
+            .set_selected(selected)
+            .expect("Can't find menu item for telemetry");
+    });
 }
 
 pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {

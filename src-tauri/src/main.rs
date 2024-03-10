@@ -33,6 +33,7 @@ mod prelude {
 }
 
 const SETTING_LOCALE: &str = "locale";
+const SETTING_TELEMETRY: &str = "telemetry";
 const DEFAULT_LOCALE: &str = "en";
 
 pub struct TarkovStashState {
@@ -44,8 +45,10 @@ pub struct MutexState {
     pub bsg_items: Option<HashMap<String, Value>>,
     pub globals: Option<HashMap<String, Value>>,
     pub locale: Option<HashMap<String, Value>>,
-    pub locale_lang: String,
     pub store: Option<Store<Wry>>,
+    // TODO we should just use store and not this
+    pub locale_lang: String,
+    pub telemetry_enabled: bool,
 }
 
 fn main() {
@@ -67,28 +70,39 @@ fn main() {
                 locale: None,
                 profile_file_path: None,
                 locale_lang: DEFAULT_LOCALE.to_string(),
+                telemetry_enabled: true,
                 store: None,
             }),
         })
         .on_menu_event(handle_menu_event)
         .setup(|app| {
-            track_event(&app.handle(), "app_started", None);
-            let state: State<TarkovStashState> = app.state();
-            let mut internal_state = state.state.lock().unwrap();
-            let mut store = initialize_store(app);
-            update_state_locale_from_store(&store, &mut internal_state);
-            if !store.has(SETTING_LOCALE) {
-                insert_and_save(
-                    &mut store,
-                    SETTING_LOCALE.to_string(),
-                    json!(DEFAULT_LOCALE),
-                )
+            {
+                let state: State<TarkovStashState> = app.state();
+                let mut internal_state = state.state.lock().unwrap();
+                let mut store = initialize_store(app);
+                update_state_locale_from_store(&store, &mut internal_state);
+                update_state_telemetry_from_store(&store, &mut internal_state);
+                // TODO move this 2 to some add defaults settings into store
+                if !store.has(SETTING_LOCALE) {
+                    insert_and_save(
+                        &mut store,
+                        SETTING_LOCALE.to_string(),
+                        json!(DEFAULT_LOCALE),
+                    )
+                }
+                if !store.has(SETTING_TELEMETRY) {
+                    insert_and_save(&mut store, SETTING_TELEMETRY.to_string(), json!(true))
+                }
+                let main_window = app.get_window("main").unwrap();
+                let menu_handle = main_window.menu_handle();
+                let locale_id = format!("locale_{}", internal_state.locale_lang.clone());
+                update_selected_menu_locale(menu_handle, locale_id);
+                internal_state.store = Some(store);
             }
-            let main_window = app.get_window("main").unwrap();
-            let menu_handle = main_window.menu_handle();
-            let locale_id = format!("locale_{}", internal_state.locale_lang.clone());
-            update_selected_menu_locale(menu_handle, locale_id);
-            internal_state.store = Some(store);
+            // track event needs its own lock
+            {
+                track_event(&app.handle(), "app_started", None);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
