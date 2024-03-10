@@ -8,7 +8,7 @@ use tauri::api::shell::open;
 use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 
-use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
+use crate::prelude::{insert_and_save, track_event, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -144,6 +144,11 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 json!(telemetry_toggled),
             );
             update_selected_menu_telemetry(window.menu_handle(), telemetry_toggled);
+            if telemetry_toggled {
+                track_event(&window.app_handle(), "telemetry_enabled", None)
+            } else {
+                track_event(&window.app_handle(), "telemetry_disabled", None)
+            }
         }
         _ => {}
     }
