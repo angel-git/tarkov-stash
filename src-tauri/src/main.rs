@@ -79,20 +79,10 @@ fn main() {
             {
                 let state: State<TarkovStashState> = app.state();
                 let mut internal_state = state.state.lock().unwrap();
-                let mut store = initialize_store(app);
+                let store = initialize_store(app);
                 update_state_locale_from_store(&store, &mut internal_state);
                 update_state_telemetry_from_store(&store, &mut internal_state);
-                // TODO move this 2 to some add defaults settings into store
-                if !store.has(SETTING_LOCALE) {
-                    insert_and_save(
-                        &mut store,
-                        SETTING_LOCALE.to_string(),
-                        json!(DEFAULT_LOCALE),
-                    )
-                }
-                if !store.has(SETTING_TELEMETRY) {
-                    insert_and_save(&mut store, SETTING_TELEMETRY.to_string(), json!(true))
-                }
+
                 let main_window = app.get_window("main").unwrap();
                 let menu_handle = main_window.menu_handle();
                 let locale_id = format!("locale_{}", internal_state.locale_lang.clone());

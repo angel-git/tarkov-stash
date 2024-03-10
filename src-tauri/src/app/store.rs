@@ -1,4 +1,5 @@
-use crate::{MutexState, SETTING_LOCALE, SETTING_TELEMETRY};
+use crate::{MutexState, DEFAULT_LOCALE, SETTING_LOCALE, SETTING_TELEMETRY};
+use serde_json::json;
 use std::sync::MutexGuard;
 use tauri::{App, Wry};
 use tauri_plugin_store::{JsonValue, Store, StoreBuilder};
@@ -10,7 +11,17 @@ pub fn initialize_store(app: &App) -> Store<Wry> {
     )
     .build();
     let _ = store.load();
+    add_defaults(&mut store);
     store
+}
+
+fn add_defaults(store: &mut Store<Wry>) {
+    if !store.has(SETTING_LOCALE) {
+        insert_and_save(store, SETTING_LOCALE.to_string(), json!(DEFAULT_LOCALE))
+    }
+    if !store.has(SETTING_TELEMETRY) {
+        insert_and_save(store, SETTING_TELEMETRY.to_string(), json!(true))
+    }
 }
 
 pub fn update_state_locale_from_store(
