@@ -1,7 +1,7 @@
-name: 'publish'
+name: Build branch
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+
 env:
   APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
 
@@ -34,6 +34,8 @@ jobs:
       - name: Build Portable Binaries (Windows)
         run: |
           pnpm tauri build
-          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe
-      - name: Upload Portable Binaries (Windows)
-        run: bash -c 'gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe --clobber'
+          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarkov-stash
+          path: ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
