@@ -25,6 +25,8 @@
   let categories: Array<string>;
   let notEnoughSpaceError = false;
 
+  const UNKNOWN_CATEGORY = '??';
+
   const sortByName = (a: BsgItemWithParent, b: BsgItemWithParent) => {
     if (a.name < b.name) {
       return -1;
@@ -62,6 +64,7 @@
       // remove wrong categories
       categories = Array.from(categoriesSet)
         .filter((c) => c !== 'inventory')
+        .filter((c) => c !== UNKNOWN_CATEGORY)
         .sort();
 
       parsedItems = Object.keys(allItems)
@@ -123,7 +126,7 @@
     return (
       getName(parsedNodes[item.parentId]?.id, locale) ||
       getName(parsedNodes[item.parentId]?.parentId, locale) ||
-      '??'
+      UNKNOWN_CATEGORY
     );
   }
 
@@ -187,7 +190,7 @@
   .modal-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
     height: 90%;
   }
 
