@@ -1,6 +1,12 @@
 <script lang="ts">
-  import { calculateBackgroundColor, getAttachmentBackground, getShortName } from '../../../helper';
+  import {
+    calculateBackgroundColor,
+    getAttachmentBackground,
+    getShortName,
+    getName,
+  } from '../../../helper';
   import type { BsgItem, SlotKind, PresetItemItem, SlotItem } from '../../../types';
+
   export let locale: Record<string, string>;
   export let slots: Array<string>;
   export let bsgItems: Record<string, BsgItem>;
@@ -8,6 +14,10 @@
 
   function findItemsInSlot(slotId: string) {
     return itemsInSlots?.filter((slotItem) => slotItem.slotId === slotId);
+  }
+
+  function findSlotName(slotId: string) {
+    return locale[slotId.toUpperCase()] ?? locale[slotId.toLowerCase()] ?? slotId;
   }
 
   function getEmptyAttachmentBackgroundUrl(slotId: string) {
@@ -28,8 +38,17 @@
               bsgItems[itemInSlot.tpl].backgroundColor,
             )}`}
           >
-            <div class="slots-grid-item-name">{getShortName(itemInSlot.tpl, locale)}</div>
-            <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.png`} />
+            <div class="slots-grid-item-name">
+              {getShortName(itemInSlot.tpl, locale) || getName(itemInSlot.tpl, locale)}
+            </div>
+            {#if itemInSlot.upd?.Repairable}
+              <div class="resource">
+                {`${
+                  itemInSlot.upd.Repairable.Durability || itemInSlot.upd.Repairable.MaxDurability
+                }/${itemInSlot.upd.Repairable.MaxDurability}`}
+              </div>
+            {/if}
+            <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-512.webp`} />
           </div>
         {/each}
       {:else}
@@ -38,7 +57,7 @@
             class="slots-grid-item-empty"
             style={`background-image: url(${getEmptyAttachmentBackgroundUrl(slotId)}`}
           />
-          <div class="slots-grid-item-name">{locale[slotId.toUpperCase()]}</div>
+          <div class="slots-grid-item-name">{findSlotName(slotId)}</div>
         </div>
       {/if}
     {/each}
@@ -55,7 +74,7 @@
   }
 
   .slots-grid-item {
-    background-image: url($lib/images/empty-slot.png);
+    background-image: url($lib/images/grid_cell.png);
     height: 64px;
     width: 64px;
     display: flex;
@@ -85,5 +104,14 @@
     max-height: 100%;
     max-width: 100%;
     margin: 8px;
+  }
+
+  .resource {
+    font-size: 13px;
+    color: orangered;
+    z-index: 2;
+    position: absolute;
+    bottom: 0;
+    right: 0;
   }
 </style>

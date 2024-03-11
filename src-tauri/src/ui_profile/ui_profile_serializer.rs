@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 pub use crate::prelude::*;
+use crate::spt::spt_profile_serializer::TarkovProfile;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -71,6 +72,7 @@ pub struct SlotItem {
     pub tpl: String,
     #[serde(rename = "slotId")]
     pub slot_id: String,
+    pub upd: Option<spt_profile_serializer::UPD>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -125,28 +127,13 @@ pub struct BsgItem {
 }
 
 pub fn convert_profile_to_ui(
-    tarkov_profile: spt_profile_serializer::TarkovProfile,
+    tarkov_profile: TarkovProfile,
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
     globals: &HashMap<String, Value>,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
-    let stash_bonuses = &tarkov_profile
-        .characters
-        .pmc
-        .bonuses
-        .iter()
-        .filter(|b| b.t.eq("StashSize"))
-        .count();
-    let stash_size_y = if stash_bonuses <= &1 {
-        28
-    } else if stash_bonuses == &2 {
-        38
-    } else if stash_bonuses == &3 {
-        48
-    } else {
-        68
-    };
+    let stash_size_y = calculate_stash_size_y(&tarkov_profile);
 
     let items: Vec<Item> = parse_items(
         tarkov_profile.characters.pmc.inventory.items,
@@ -309,28 +296,11 @@ fn parse_items(
             }
         }
 
-        let has_slots =
-            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
-
-        let mut slot_items: Option<HashSet<SlotItem>> = None;
-        if has_slots {
-            slot_items = Some(HashSet::new());
-            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
-                let all_slots_from_item = find_all_slots_from_parent(
-                    item._id.as_str(),
-                    &profile_items,
-                    bsg_t._name.as_str(),
-                );
-
-                slot_items.as_mut().unwrap().extend(all_slots_from_item);
-            })
-        }
-
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
-
-        let max_resource = None
+        // TODO calculate max resource from slots
+        let mut max_resource = None
             .or(bsg_item._props.max_resource)
             .or(bsg_item._props.max_hp_resource)
             .or(bsg_item._props.maximum_number_of_usages)
@@ -367,12 +337,47 @@ fn parse_items(
             }
         }
 
+        let has_slots =
+            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
+
+        let mut slot_items: Option<HashSet<SlotItem>> = None;
+        if has_slots {
+            slot_items = Some(HashSet::new());
+            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
+                let all_slots_from_item = find_all_slots_from_parent(
+                    item._id.as_str(),
+                    &profile_items,
+                    bsg_t._name.as_str(),
+                );
+
+                slot_items.as_mut().unwrap().extend(all_slots_from_item);
+            });
+
+            if let Some(ref slot_items_set) = slot_items {
+                let mut slot_resource = 0;
+                let mut slot_max_resource = 0;
+
+                slot_items_set.iter().for_each(|slot_item| {
+                    if let Some(slot_upd) = slot_item.upd.as_ref() {
+                        if let Some(repairable) = slot_upd.repairable.as_ref() {
+                            slot_resource += repairable.durability;
+                            slot_max_resource += repairable.max_durability;
+                        }
+                    }
+                });
+
+                resource = Some(slot_resource);
+                max_resource = Some(slot_max_resource);
+            }
+        }
+
         let (size_x, size_y) =
             item_utils::calculate_item_size(item, &profile_items, bsg_items_root, is_container);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
-        let preset_image_id = global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals);
+        let preset_image_id =
+            global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals, bsg_items_root);
 
         let i = Item {
             id: item._id.to_string(),
@@ -413,7 +418,13 @@ fn find_all_slots_from_parent(
                 let id = i._id.to_string();
                 let tpl = i._tpl.to_string();
                 let slot_id = i.slot_id.as_ref().unwrap().to_string();
-                result.insert(SlotItem { id, tpl, slot_id });
+                let upd = i.upd.as_ref().cloned();
+                result.insert(SlotItem {
+                    id,
+                    tpl,
+                    slot_id,
+                    upd,
+                });
             }
 
             let sub_items = find_all_slots_from_parent(&i._id, items, "");
@@ -432,10 +443,44 @@ fn get_bsg_item(
     spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
 }
 
+fn calculate_stash_size_y(tarkov_profile: &TarkovProfile) -> u16 {
+    let stash_bonuses = &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .filter(|b| b.t.eq("StashSize"))
+        .count();
+    let mut stash_size_y = if stash_bonuses <= &1 {
+        28
+    } else if stash_bonuses == &2 {
+        38
+    } else if stash_bonuses == &3 {
+        48
+    } else {
+        68
+    };
+    let extra_rows = match &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .find(|b| b.t.eq("StashRows"))
+        .map(|b| b.value.as_ref().unwrap().as_u64().unwrap() as u16)
+    {
+        Some(value) => *value,
+        _ => 0,
+    };
+
+    stash_size_y += extra_rows;
+    stash_size_y
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
 
+    use crate::prelude::convert_profile_to_ui;
     use serde_json::Value;
 
     use crate::spt::spt_profile_serializer::{load_profile, InventoryItem};
@@ -449,7 +494,34 @@ mod tests {
             ))
             .as_ref(),
         );
+
         assert!(tarkov_profile.is_ok())
+    }
+
+    #[test]
+    fn should_calculate_item_stash_bonuses() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/380-bonus-stash.json"
+            ))
+            .as_ref(),
+        );
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(tarkov_profile.is_ok());
+        let profile_ui = convert_profile_to_ui(
+            tarkov_profile.unwrap(),
+            &bsg_items_root,
+            &HashMap::new(),
+            &HashMap::new(),
+        );
+        assert!(profile_ui.is_ok());
+        assert_eq!(profile_ui.unwrap().size_y, 70);
     }
 
     #[test]

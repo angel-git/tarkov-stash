@@ -2,7 +2,7 @@ import { invoke } from '@tauri-apps/api';
 import { loading } from '../store';
 import type { Item, SlotKind } from '../types';
 
-import empty from '$lib/images/empty-slot.png';
+import empty from '$lib/images/grid_cell.png';
 import patron_in_weapon from '$lib/images/attachments/patron_in_weapon.png';
 import tactical from '$lib/images/attachments/tactical.png';
 import scope from '$lib/images/attachments/scope.png';

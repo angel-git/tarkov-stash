@@ -9,7 +9,7 @@
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
 
-  const supported_version = '3.7';
+  const supported_version = '3.8';
 
   $: isLoading = $loading;
   let selectedOption: Option | undefined;

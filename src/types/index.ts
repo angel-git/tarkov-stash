@@ -36,6 +36,7 @@ export interface SlotItem {
   tpl: string;
   slotId: string;
   parentId: string;
+  upd: any;
 }
 
 export interface GridItem {
