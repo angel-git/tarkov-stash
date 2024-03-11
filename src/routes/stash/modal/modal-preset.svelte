@@ -138,6 +138,10 @@
   function isAnyItemInCategory(cat: string) {
     return parsedItems.some((item) => item.category === cat);
   }
+
+  function fallbackImage(ev: any) {
+    ev.target.src = `https://assets.tarkov.dev/${$addNewPreset.item?.encyclopedia}-base-image.png`;
+  }
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm} fullHeight={true}>
@@ -177,6 +181,7 @@
           <img
             alt="item"
             src={`https://assets.tarkov.dev/${$addNewPreset.item.id}-base-image.png`}
+            on:error={fallbackImage}
           />
           <div class="details">
             {getDescription($addNewPreset.item.encyclopedia, locale)}
