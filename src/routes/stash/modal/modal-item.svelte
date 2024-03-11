@@ -172,7 +172,7 @@
         >
           <div>{getShortName($addNewItem.item.id, locale)}</div>
           <div>{$addNewItem.item.width}x{$addNewItem.item.height}</div>
-          <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.png`} />
+          <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-512.webp`} />
           <div class="details">
             {getDescription($addNewItem.item.id, locale)}
           </div>
@@ -266,5 +266,9 @@
 
   li button:hover {
     color: var(--color-highlight);
+  }
+
+  img {
+    max-width: 128px;
   }
 </style>
