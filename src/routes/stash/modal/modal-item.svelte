@@ -269,6 +269,6 @@
   }
 
   img {
-    max-width: 128px;
+    max-width: 50%;
   }
 </style>
