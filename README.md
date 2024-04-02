@@ -1,6 +1,7 @@
 ## Tarkov stash
 
-Simple stash editor with a simple UI. If you need more advanced features I recommend to use [SPT-API Profile editor](https://hub.sp-tarkov.com/files/file/184-spt-aki-profile-editor/)
+Simple stash editor with a simple UI. If you need more advanced features I recommend to
+use [SPT-API Profile editor](https://hub.sp-tarkov.com/files/file/184-spt-aki-profile-editor/)
 
 This is based out of another project of mine: [task-stash-console](https://github.com/angel-git/tarkov-stash-console):
 
@@ -18,8 +19,10 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Limitations
 
-- Right now custom items like https://hub.sp-tarkov.com/files/file/488-holtzman-shield/ won't work, **if you have them, you can move the items inside your equipped items, like your backpack** and try again.
-- The profile you want to edit must be a valid one, ie: you have started the game with that profile and configure your character
+- Right now custom items like https://hub.sp-tarkov.com/files/file/488-holtzman-shield/ won't work, **if you have them,
+  you can move the items inside your equipped items, like your backpack** and try again.
+- The profile you want to edit must be a valid one, ie: you have started the game with that profile and configure your
+  character
 - Some profile items don't have location and currently breaks the app, still investigating when this happens
 - Some images are not accurate as they don't include all attachments
 - Some images are not found, since I rely on `https://assets.tarkov.dev` and some IDs don't match for some reason 🤷‍
@@ -84,6 +87,16 @@ Add item:
 Never run any `.exe` file that you have downloaded from internet. Including this. Use it at your own risk.
 
 See the [releases](https://github.com/angel-git/tarkov-stash/releases) page.
+
+### Telemetry
+
+There are features I would like to remove since they make the development slower, since I have no idea if any of you is
+using them I decided to add [aptabase](https://aptabase.com), it collects your country and which actions you are doing,
+you can see an example of what I see:
+![telemetry.png](telemetry.png)
+This was added on
+this [commit](https://github.com/angel-git/tarkov-stash/commit/fda48224ebc93283b6d9b58f9bbb8e69496122cf). If you think
+this is against your privacy, you can click on the help menu and disable it :-)
 
 ### Development notes
 
