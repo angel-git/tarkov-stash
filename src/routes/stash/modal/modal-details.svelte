@@ -162,10 +162,8 @@
   const stats = calculateStats();
   const slots = mergeSlots();
 
-  function getImageUrl() {
-    return item.presetImageId
-      ? `https://assets.tarkov.dev/${item.presetImageId}-base-image.png`
-      : `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
+  function fallbackImage(ev: any) {
+    ev.target.src = `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
   }
 </script>
 
@@ -177,7 +175,11 @@
   <div>
     <div class="img-details">
       <div class="img">
-        <img alt="item" src={getImageUrl()} />
+        <img
+          alt="item"
+          src={`https://assets.tarkov.dev/${item.presetImageId}-base-image.png`}
+          on:error={fallbackImage}
+        />
       </div>
       <div class="details">
         {getDescription(item.tpl, locale)}
@@ -254,6 +256,12 @@
 <style>
   .img-details {
     padding: 16px;
+  }
+
+  .img-details .img {
+    background-image: url($lib/images/background.png);
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .img-details .details {

@@ -2,8 +2,6 @@
   import { listen } from '@tauri-apps/api/event';
   import { goto } from '$app/navigation';
 
-  document.addEventListener('contextmenu', (event) => event.preventDefault());
-
   listen('profile_loaded', () => {
     goto('/stash');
   });

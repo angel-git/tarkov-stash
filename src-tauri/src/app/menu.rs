@@ -29,6 +29,7 @@ pub fn build_menu() -> Menu {
     let locale_es = CustomMenuItem::new("locale_es".to_string(), "Spanish");
     let locale_es_mx = CustomMenuItem::new("locale_es-mx".to_string(), "Spanish Mexico");
     let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
+    let locale_ro = CustomMenuItem::new("locale_ro".to_string(), "Romanian");
     let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
     let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
     let locale_submenu = Submenu::new(
@@ -48,6 +49,7 @@ pub fn build_menu() -> Menu {
             .add_item(locale_es)
             .add_item(locale_es_mx)
             .add_item(locale_tu)
+            .add_item(locale_ro)
             .add_item(locale_ru),
     );
 
@@ -95,7 +97,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
         }
         "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it"
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
-        | "locale_es-mx" | "locale_tu" | "locale_ru" => {
+        | "locale_es-mx" | "locale_tu" | "locale_ru" | "locale_ro" => {
             let window = event.window();
             let state: State<TarkovStashState> = window.state();
             let mut internal_state = state.state.lock().unwrap();
@@ -223,6 +225,10 @@ pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {
             .get_item("locale_tu")
             .set_selected(false)
             .expect("Can't find menu item for locale_tu");
+        menu_handle
+            .get_item("locale_ro")
+            .set_selected(false)
+            .expect("Can't find menu item for locale_ro");
         menu_handle
             .get_item("locale_ru")
             .set_selected(false)
