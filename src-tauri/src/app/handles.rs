@@ -86,7 +86,7 @@ pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, 
     track_event(
         &app,
         "change_amount",
-        Some(json!({"item_tpl": item.tpl.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_item_amount)
 }
@@ -101,7 +101,7 @@ pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, Str
     track_event(
         &app,
         "change_fir",
-        Some(json!({"item_tpl": item.tpl.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_spawned_in_session)
 }
@@ -116,7 +116,7 @@ pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<Str
     track_event(
         &app,
         "restore_durability",
-        Some(json!({"item_tpl": item.tpl.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_durability)
 }
@@ -131,7 +131,7 @@ pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, St
     track_event(
         &app,
         "remove_item",
-        Some(json!({"item_tpl": item.tpl.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, delete_item)
 }
