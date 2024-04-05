@@ -13,5 +13,6 @@ interface AddNewPreset {
 
 export const profile = writable<Profile | undefined>();
 export const loading = writable<boolean>(false);
+export const addItemFeatureEnabled = writable<boolean>(true);
 export const addNewItem = writable<AddNewItem>({ input: '' });
 export const addNewPreset = writable<AddNewPreset>({ input: '' });

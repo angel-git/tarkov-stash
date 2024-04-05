@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Item, Option, Profile } from '../../types';
-  import { profile, loading } from '../../store';
+  import { profile, loading, addItemFeatureEnabled } from '../../store';
   import StashGrid from './stash-grid.svelte';
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
@@ -70,9 +70,12 @@
     {/if}
     {#if $profile.unknownItems.length > 0}
       <h4 style="color: orangered">
-        {`Your profile contains custom items, they will be ignored and some features will be disabled, you can enable them from the File menu and be on your own risk, backups are created in your SPT profile folder`}
+        {`Your profile contains custom items, they will be ignored and some features will be disabled, you can enable them from the File menu and be on your own risk.`}
         <br />
-        {`The first unknown item is at position (${$profile.unknownItems[0].x}x,${$profile.unknownItems[0].y}y) from your top left corner of the stash`}
+        {`>> A backup is created in your SPT profile folder after every start <<`}
+        <br />
+        <br />
+        {`The first unknown item is at position (${$profile.unknownItems[0].x}x,${$profile.unknownItems[0].y}y) from your top left corner of the stash.`}
       </h4>
     {/if}
     <h3>
@@ -102,7 +105,11 @@
     {#if selectedItem && selectedOption && selectedOption === 'delete'}
       <DeleteModal item={selectedItem} locale={$profile.locale} onClose={handleCloseModal} />
     {/if}
-    <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />
+    <StashGrid
+      profile={$profile}
+      disabledAddButtons={!$addItemFeatureEnabled}
+      onOptionClicked={handleOptionClicked}
+    />
   {:else}
     <p>loading profile....</p>
   {/if}

@@ -78,8 +78,10 @@ fn main() {
                     store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
                 );
                 let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+                let add_item_selected = store.get(SETTING_ADD_ITEM).unwrap().as_bool().unwrap();
                 update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
                 update_selected_menu_locale(main_window.menu_handle(), locale_id);
+                update_selected_menu_add_item(main_window.menu_handle(), add_item_selected);
                 internal_state.store = Some(store);
             }
             // track event needs its own lock

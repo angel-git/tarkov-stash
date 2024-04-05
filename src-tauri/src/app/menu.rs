@@ -9,12 +9,22 @@ use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 use tauri_plugin_aptabase::EventTracker;
 
-use crate::prelude::{insert_and_save, track_event, SETTING_TELEMETRY};
+use crate::prelude::{insert_and_save, track_event, SETTING_ADD_ITEM, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
     let open = CustomMenuItem::new("open".to_string(), "Open profile");
+    let enable_add_items =
+        CustomMenuItem::new("enable_add_items".to_string(), "Enable add items feature").selected();
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    let file_submenu = Submenu::new(
+        "File",
+        Menu::new()
+            .add_item(open)
+            .add_item(enable_add_items)
+            .add_item(quit),
+    );
+
     let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
     let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
     let locale_fr = CustomMenuItem::new("locale_fr".to_string(), "French");
@@ -31,7 +41,6 @@ pub fn build_menu() -> Menu {
     let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
     let locale_ro = CustomMenuItem::new("locale_ro".to_string(), "Romanian");
     let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
-    let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
     let locale_submenu = Submenu::new(
         "Locale",
         Menu::new()
@@ -158,8 +167,24 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 window.app_handle().track_event("telemetry_disabled", None);
             }
         }
+        "enable_add_items" => {
+            update_enable_add_items(event.window(), None);
+        }
         _ => {}
     }
+}
+
+pub fn update_enable_add_items(window: &tauri::Window, enabled: Option<bool>) {
+    let state: State<TarkovStashState> = window.state();
+    let mut internal_state = state.state.lock().unwrap();
+    let store = internal_state.store.as_mut().unwrap();
+    let add_item_enabled =
+        enabled.unwrap_or(!store.get(SETTING_ADD_ITEM).unwrap().as_bool().unwrap());
+    insert_and_save(store, SETTING_ADD_ITEM.to_string(), json!(add_item_enabled));
+    update_selected_menu_add_item(window.menu_handle(), add_item_enabled);
+    window
+        .emit("add_item_enabled", add_item_enabled)
+        .expect("Can't emit event to window!");
 }
 
 pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
@@ -168,6 +193,15 @@ pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
             .get_item("telemetry")
             .set_selected(selected)
             .expect("Can't find menu item for telemetry");
+    });
+}
+
+pub fn update_selected_menu_add_item(menu_handle: MenuHandle, selected: bool) {
+    std::thread::spawn(move || {
+        menu_handle
+            .get_item("enable_add_items")
+            .set_selected(selected)
+            .expect("Can't find menu item for enable_add_items");
     });
 }
 

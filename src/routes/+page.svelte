@@ -1,9 +1,13 @@
 <script lang="ts">
   import { listen } from '@tauri-apps/api/event';
   import { goto } from '$app/navigation';
+  import { addItemFeatureEnabled } from '../store';
 
   listen('profile_loaded', () => {
     goto('/stash');
+  });
+  listen('add_item_enabled', (event) => {
+    addItemFeatureEnabled.set(event.payload as boolean);
   });
   listen('error', (event) => {
     goto(`/error?message=${event.payload}`);

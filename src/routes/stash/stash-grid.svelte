@@ -4,6 +4,7 @@
   import { getName, getShortName } from '../../helper';
 
   export let profile: Profile;
+  export let disabledAddButtons: boolean;
   export let onOptionClicked: (option: Option, item: Item) => void;
   let filteredItems: Array<Item | undefined>;
   $: filteredItems = [];
@@ -28,7 +29,7 @@
 <Grid
   locale={profile.locale}
   nestedLevel={1}
-  disabledAddButtons={profile.unknownItems.length > 0}
+  {disabledAddButtons}
   bsgItems={profile.bsgItems}
   presetItems={profile.presetItems}
   items={filteredItems}

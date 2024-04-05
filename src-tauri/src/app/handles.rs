@@ -1,7 +1,7 @@
 use crate::prelude::{
     add_new_item, add_new_preset, convert_profile_to_ui, delete_item, spt_profile_serializer,
-    track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
-    UIProfile, SETTING_LOCALE,
+    track_event, update_durability, update_enable_add_items, update_item_amount,
+    update_spawned_in_session, Item, NewItem, UIProfile, SETTING_LOCALE,
 };
 use crate::TarkovStashState;
 use log::info;
@@ -12,7 +12,10 @@ use std::path::Path;
 use tauri::{Manager, State};
 
 #[tauri::command]
-pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfile, String> {
+pub async fn load_profile_file(
+    state: State<'_, TarkovStashState>,
+    window: tauri::Window,
+) -> Result<UIProfile, String> {
     let mut internal_state = state.state.lock().unwrap();
     let b = &internal_state.profile_file_path;
     let b_clone = b.clone();
@@ -59,8 +62,12 @@ pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIP
                         );
                         match ui_profile_result {
                             Ok(mut ui_profile) => {
+                                drop(internal_state);
                                 ui_profile.spt_version =
                                     Some(get_server_version(profile_file_path));
+                                if ui_profile.unknown_items.len() > 0 {
+                                    update_enable_add_items(&window, Some(false));
+                                }
                                 Ok(ui_profile)
                             }
                             Err(e) => Err(e),
