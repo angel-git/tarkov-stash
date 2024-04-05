@@ -9,7 +9,7 @@ use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 use tauri_plugin_aptabase::EventTracker;
 
-use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
+use crate::prelude::{insert_and_save, track_event, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -113,7 +113,11 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                     .emit("profile_loaded", "")
                     .expect("Can't emit event to window!");
             }
-
+            track_event(
+                &window.app_handle(),
+                "change_locale",
+                Some(json!({"locale": menu_item_id})),
+            );
             update_selected_menu_locale(window.menu_handle(), menu_item_id);
         }
         "open_logs" => {
