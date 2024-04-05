@@ -28,6 +28,7 @@
 <Grid
   locale={profile.locale}
   nestedLevel={1}
+  disabledAddButtons={profile.unknownItems.length > 0}
   bsgItems={profile.bsgItems}
   presetItems={profile.presetItems}
   items={filteredItems}

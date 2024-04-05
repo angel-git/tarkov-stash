@@ -143,6 +143,17 @@ button.primary {
   border-color: var(--color-highlight);
 }
 
+button.primary[disabled] {
+  opacity: 0.2;
+}
+
+button.primary[disabled]:hover {
+  cursor: not-allowed;
+  color: var(--color-highlight);
+  border-color: var(--color-highlight);
+  background-color: var(--color-background);
+}
+
 button.primary:hover {
   background-color: var(--color-highlight);
   color: var(--color-background);

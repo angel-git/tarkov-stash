@@ -3,10 +3,18 @@ export interface Profile {
   sizeX: number;
   sizeY: number;
   items: Array<Item>;
+  unknownItems: Array<UnknownItem>;
   bsgItems: Record<string, BsgItem>;
   sptVersion: string;
   locale: Record<string, string>;
   presetItems: Array<PresetItem>;
+}
+
+export interface UnknownItem {
+  id: string;
+  tpl: string;
+  x: number;
+  y: number;
 }
 
 export interface Item {

@@ -19,6 +19,7 @@
   export let sizeY: number;
   export let sizeX: number;
   export let nestedLevel: number;
+  export let disabledAddButtons: boolean;
   export let bsgItems: Record<string, BsgItem>;
   export let presetItems: Array<PresetItem>;
   export let onOptionClicked: (option: Option, item: Item) => void;
@@ -131,8 +132,9 @@
 </script>
 
 {#if nestedLevel === 1}
-  <button class="primary" on:click={openNewItemModal}>Add item</button>
-  <button class="primary" on:click={openPresetItemModal}
+  <button class="primary" disabled={disabledAddButtons} on:click={openNewItemModal}>Add item</button
+  >
+  <button class="primary" disabled={disabledAddButtons} on:click={openPresetItemModal}
     ><img alt="weapon logo" src={WeaponIcon} />Add preset
   </button>
 {/if}
@@ -244,6 +246,7 @@
             <Grid
               {locale}
               nestedLevel={nestedLevel + 1}
+              disabledAddButtons={true}
               {bsgItems}
               items={gridItem.items}
               sizeX={gridItem.cellsH}
