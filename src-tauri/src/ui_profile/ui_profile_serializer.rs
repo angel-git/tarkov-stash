@@ -19,6 +19,16 @@ pub struct UIProfile {
     pub locale: HashMap<String, Value>,
     #[serde(rename = "presetItems")]
     pub preset_items: Vec<PresetItem>,
+    #[serde(rename = "unknownItems")]
+    pub unknown_items: Vec<UnknownItem>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UnknownItem {
+    pub id: String,
+    pub tpl: String,
+    pub x: u16,
+    pub y: u16,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -135,7 +145,7 @@ pub fn convert_profile_to_ui(
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let stash_size_y = calculate_stash_size_y(&tarkov_profile);
 
-    let items: Vec<Item> = parse_items(
+    let items: (Vec<Item>, Vec<UnknownItem>) = parse_items(
         tarkov_profile.characters.pmc.inventory.items,
         bsg_items_root,
         stash.as_str(),
@@ -217,7 +227,8 @@ pub fn convert_profile_to_ui(
         name: tarkov_profile.characters.pmc.info.nickname,
         size_x: 10,
         size_y: stash_size_y,
-        items,
+        items: items.0,
+        unknown_items: items.1,
         bsg_items,
         spt_version: None,
         locale: locale_root.clone(),
@@ -231,8 +242,9 @@ fn parse_items(
     parent_slot: &str,
     parent_item_slot: &str,
     globals: &HashMap<String, Value>,
-) -> Result<Vec<Item>, String> {
+) -> Result<(Vec<Item>, Vec<UnknownItem>), String> {
     let mut items: Vec<Item> = Vec::new();
+    let mut unknown_items: Vec<UnknownItem> = Vec::new();
 
     for item in profile_items.iter() {
         let parent_id = item.parent_id.as_ref();
@@ -260,10 +272,13 @@ fn parse_items(
 
         let bsg_item_option = get_bsg_item(item, bsg_items_root);
         if bsg_item_option.is_none() {
-            return Err(format!(
-                "Item with id [{}] and template [{}] can't be read, if you have custom items (from a mod), please move them to your character equipment and try again",
-                item._id, item._tpl
-            ));
+            unknown_items.push(UnknownItem {
+                y: location_in_stash.y,
+                x: location_in_stash.x,
+                tpl: item._tpl.clone(),
+                id: item._id.clone(),
+            });
+            continue;
         }
         let bsg_item = bsg_item_option.unwrap();
 
@@ -289,7 +304,7 @@ fn parse_items(
                     _name: grid_name.clone(),
                     cells_v: grid._props.cells_v,
                     cells_h: grid._props.cells_h,
-                    items: items_inside_container,
+                    items: items_inside_container.0,
                 };
 
                 grid_items.as_mut().unwrap().insert(0, grid_item);
@@ -402,7 +417,7 @@ fn parse_items(
         };
         items.push(i)
     }
-    Ok(items)
+    Ok((items, unknown_items))
 }
 
 fn find_all_slots_from_parent(
@@ -576,6 +591,7 @@ mod tests {
         .unwrap();
 
         let backpack = items
+            .0
             .iter()
             .find(|i| i.id == "e7d8a69bdd2554dca61cd984")
             .unwrap();
@@ -617,10 +633,37 @@ mod tests {
         .unwrap();
 
         let vpo = items
+            .0
             .iter()
             .find(|i| i.id == "1d0832b091d9e1e36e17666b")
             .unwrap();
         let slot_items = vpo.slot_items.as_ref().unwrap().len();
         assert_eq!(slot_items, 14);
+    }
+
+    #[test]
+    fn should_return_unknown_items() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/custom-items.json"
+            ))
+            .as_ref(),
+        );
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(tarkov_profile.is_ok());
+        let profile_ui = convert_profile_to_ui(
+            tarkov_profile.unwrap(),
+            &bsg_items_root,
+            &HashMap::new(),
+            &HashMap::new(),
+        );
+        assert!(profile_ui.is_ok());
+        assert_eq!(profile_ui.unwrap().unknown_items.len(), 2);
     }
 }
