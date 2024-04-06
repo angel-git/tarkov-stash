@@ -194,7 +194,7 @@ pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
     });
 }
 
-pub fn update_selected_menu_add_item(menu_handle: MenuHandle, selected: bool) {
+fn update_selected_menu_add_item(menu_handle: MenuHandle, selected: bool) {
     std::thread::spawn(move || {
         menu_handle
             .get_item("enable_add_items")
