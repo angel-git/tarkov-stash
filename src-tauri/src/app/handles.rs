@@ -88,44 +88,60 @@ pub async fn load_profile_file(
 
 #[tauri::command]
 pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    info!("Changing amount to item {}", item.id.as_str());
+    info!(
+        "Changing amount to id {} and tpl {}",
+        item.id.as_str(),
+        item.tpl.as_str()
+    );
     track_event(
         &app,
         "change_amount",
-        Some(json!({"item_id": item.id.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_item_amount)
 }
 
 #[tauri::command]
 pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    info!("Setting fir to item {}", item.id.as_str());
+    info!(
+        "Setting fir to item id {} and tpl {}",
+        item.id.as_str(),
+        item.tpl.as_str()
+    );
     track_event(
         &app,
         "change_fir",
-        Some(json!({"item_id": item.id.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_spawned_in_session)
 }
 
 #[tauri::command]
 pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    info!("Restoring durability to item {}", item.id.as_str());
+    info!(
+        "Restoring durability to item {} and tpl {}",
+        item.id.as_str(),
+        item.tpl.as_str()
+    );
     track_event(
         &app,
         "restore_durability",
-        Some(json!({"item_id": item.id.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, update_durability)
 }
 
 #[tauri::command]
 pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    info!("Deleting item {}", item.id.as_str());
+    info!(
+        "Deleting item {} and tpl {}",
+        item.id.as_str(),
+        item.tpl.as_str()
+    );
     track_event(
         &app,
         "remove_item",
-        Some(json!({"item_id": item.id.as_str()})),
+        Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, app, delete_item)
 }
