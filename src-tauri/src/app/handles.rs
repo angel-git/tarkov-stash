@@ -68,6 +68,8 @@ pub async fn load_profile_file(
                                 // let's disable add items feature if custom items are present
                                 if !ui_profile.unknown_items.is_empty() {
                                     update_enable_add_items(&window, Some(false));
+                                } else {
+                                    update_enable_add_items(&window, Some(true));
                                 }
                                 Ok(ui_profile)
                             }

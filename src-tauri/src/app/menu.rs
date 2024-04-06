@@ -9,7 +9,7 @@ use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 use tauri_plugin_aptabase::EventTracker;
 
-use crate::prelude::{insert_and_save, track_event, SETTING_ADD_ITEM, SETTING_TELEMETRY};
+use crate::prelude::{insert_and_save, track_event, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -177,11 +177,9 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
 pub fn update_enable_add_items(window: &tauri::Window, enabled: Option<bool>) {
     let state: State<TarkovStashState> = window.state();
     let mut internal_state = state.state.lock().unwrap();
-    let store = internal_state.store.as_mut().unwrap();
-    let add_item_enabled =
-        enabled.unwrap_or(!store.get(SETTING_ADD_ITEM).unwrap().as_bool().unwrap());
-    insert_and_save(store, SETTING_ADD_ITEM.to_string(), json!(add_item_enabled));
+    let add_item_enabled = enabled.unwrap_or(!internal_state.add_items_feature_enabled);
     update_selected_menu_add_item(window.menu_handle(), add_item_enabled);
+    internal_state.add_items_feature_enabled = add_item_enabled;
     window
         .emit("add_item_enabled", add_item_enabled)
         .expect("Can't emit event to window!");
