@@ -9,6 +9,7 @@ use serde_json::{json, Error, Value};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use tauri::api::process::{Command, CommandEvent};
 use tauri::{Manager, State};
 
 #[tauri::command]
@@ -46,6 +47,20 @@ pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIP
                 internal_state.locale = Some(locale_root);
                 internal_state.bsg_items = Some(bsg_items_root);
                 internal_state.globals = Some(globals_root);
+
+                let (mut rx, _child) = Command::new_sidecar("nodejs")
+                    .expect("failed to create `my-sidecar` binary command")
+                    .spawn()
+                    .expect("Failed to spawn sidecar");
+
+                tauri::async_runtime::spawn(async move {
+                    // read events such as stdout
+                    while let Some(event) = rx.recv().await {
+                        if let CommandEvent::Stdout(line) = event {
+                            info!("got message from nodejs: {}", line);
+                        }
+                    }
+                });
 
                 let content = fs::read_to_string(profile_file_path).unwrap();
                 let tarkov_profile = spt_profile_serializer::load_profile(content.as_str());

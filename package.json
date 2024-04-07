@@ -1,6 +1,7 @@
 {
   "name": "delete-svelte",
   "version": "0.0.1",
+  "bin": "src-sidecar/index.js",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -10,7 +11,8 @@
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "format:check": "prettier --plugin-search-dir . --check .",
-    "hooks": "git config core.hooksPath ./git-hooks"
+    "hooks": "git config core.hooksPath ./git-hooks",
+    "package": "pkg package.json --output src-tauri/binaries/nodejs --compress GZip && node scripts/move-binary.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",
@@ -23,6 +25,8 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte": "^2.30.0",
+    "execa": "8.0.1",
+    "pkg": "5.8.1",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.10.1",
     "svelte": "^4.0.5",
