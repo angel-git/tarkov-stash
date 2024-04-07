@@ -26,6 +26,8 @@ jobs:
         run: pnpm install
       - name: check prettier
         run: pnpm format:check
+      - name: run package
+        run: pnpm package
       - name: check cargo fmt
         run: |
           cd src-tauri
