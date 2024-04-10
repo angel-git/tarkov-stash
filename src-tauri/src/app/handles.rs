@@ -1,8 +1,8 @@
 use crate::prelude::server::Session;
 use crate::prelude::{
-    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, spt_profile_serializer,
-    track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
-    UIProfile, SETTING_LOCALE,
+    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event,
+    update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile,
+    SETTING_LOCALE,
 };
 use crate::spt::server::{
     is_server_running, load_bsg_items_from_server, load_globals_from_server,
@@ -14,7 +14,7 @@ use log::info;
 use serde_json::{json, Error, Value};
 use std::collections::HashMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use tauri::{Manager, State};
 
 #[tauri::command]
@@ -77,6 +77,10 @@ pub async fn load_profile_from_spt(
         Ok(mut ui_profile) => {
             let internal_state = state.state.lock().unwrap();
             ui_profile.spt_version = internal_state.server_spt_version.clone();
+            let server_file_path = internal_state.server_file_path.as_ref().unwrap();
+            let session_id = internal_state.session_id.as_ref().unwrap();
+            let profile_file = get_profile_filename(server_file_path, session_id);
+            create_backup(profile_file.as_path().display().to_string().as_str());
             Ok(ui_profile)
         }
         Err(e) => Err(e),
@@ -220,9 +224,10 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
     track_event(&app, "add_item", Some(json!({"item_id": item.id.as_str()})));
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();
-    let profile_file_path_option = &internal_state.profile_file_path;
-    let profile_file_path = profile_file_path_option.as_ref().unwrap();
-    let profile_content = fs::read_to_string(profile_file_path).unwrap();
+    let server_file_path = internal_state.server_file_path.as_ref().unwrap();
+    let session_id = internal_state.session_id.as_ref().unwrap();
+    let profile_file_path = get_profile_filename(server_file_path, session_id);
+    let profile_content = fs::read_to_string(&profile_file_path).unwrap();
     let bsg_items_option = &internal_state.bsg_items;
     let bsg_items = bsg_items_option.as_ref().unwrap();
     let response = add_new_item(
@@ -234,7 +239,7 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
     );
     match response {
         Ok(new_content) => {
-            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
             app.emit_all("profile_loaded", "")
                 .expect("Can't emit event to window!");
             Ok("done".to_string())
@@ -258,9 +263,10 @@ pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, 
     );
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();
-    let profile_file_path_option = &internal_state.profile_file_path;
-    let profile_file_path = profile_file_path_option.as_ref().unwrap();
-    let profile_content = fs::read_to_string(profile_file_path).unwrap();
+    let server_file_path = internal_state.server_file_path.as_ref().unwrap();
+    let session_id = internal_state.session_id.as_ref().unwrap();
+    let profile_file_path = get_profile_filename(server_file_path, session_id);
+    let profile_content = fs::read_to_string(&profile_file_path).unwrap();
     let globals_option = &internal_state.globals;
     let globals = globals_option.as_ref().unwrap();
     let response = add_new_preset(
@@ -272,7 +278,7 @@ pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, 
     );
     match response {
         Ok(new_content) => {
-            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
             app.emit_all("profile_loaded", "")
                 .expect("Can't emit event to window!");
             Ok("done".to_string())
@@ -290,18 +296,25 @@ type UpdateFunction = fn(
 fn with_state_do(item: Item, app: tauri::AppHandle, f: UpdateFunction) -> Result<String, String> {
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();
-    let profile_file_path_option = &internal_state.profile_file_path;
+
+    let server_file_path_option = &internal_state.server_file_path;
+    let session_id_option = &internal_state.session_id;
     let bsg_items_option = &internal_state.bsg_items;
-    if profile_file_path_option.is_none() || bsg_items_option.is_none() {
+    if server_file_path_option.is_none()
+        || bsg_items_option.is_none()
+        || session_id_option.is_none()
+    {
         return Err("Could not find file inside app state".to_string());
     }
-    let profile_file_path = profile_file_path_option.as_ref().unwrap();
+    let session_id = session_id_option.as_ref().unwrap();
+    let server_file_path = server_file_path_option.as_ref().unwrap();
+    let profile_file_path = get_profile_filename(server_file_path, session_id);
     let bsg_items = bsg_items_option.as_ref().unwrap();
     let profile_content = fs::read_to_string(profile_file_path).unwrap();
     let new_profile = f(profile_content.as_str(), &item, bsg_items);
     match new_profile {
         Ok(new_content) => {
-            fs::write(profile_file_path, new_content).expect("Cant write profile file!");
+            fs::write(server_file_path, new_content).expect("Cant write profile file!");
             app.emit_all("profile_loaded", "")
                 .expect("Can't emit event to window!");
             Ok("updated".to_string())
@@ -310,25 +323,32 @@ fn with_state_do(item: Item, app: tauri::AppHandle, f: UpdateFunction) -> Result
     }
 }
 
-fn get_server_version(file: &String) -> String {
-    let core = Path::new(file)
-        .ancestors()
-        .nth(3)
-        .unwrap()
-        .join("Aki_Data")
-        .join("Server")
-        .join("configs")
-        .join("core.json");
-
-    let core_json: Value =
-        serde_json::from_str(fs::read_to_string(core).unwrap().as_str()).unwrap();
-    core_json
-        .get("akiVersion")
-        .unwrap()
-        .as_str()
-        .unwrap()
-        .to_string()
+fn get_profile_filename(server_file_path: &String, session_id: &String) -> PathBuf {
+    Path::new(server_file_path)
+        .join("user")
+        .join("profiles")
+        .join(format!("{}.json", session_id))
 }
+
+// fn get_server_version(file: &String) -> String {
+//     let core = Path::new(file)
+//         .ancestors()
+//         .nth(3)
+//         .unwrap()
+//         .join("Aki_Data")
+//         .join("Server")
+//         .join("configs")
+//         .join("core.json");
+//
+//     let core_json: Value =
+//         serde_json::from_str(fs::read_to_string(core).unwrap().as_str()).unwrap();
+//     core_json
+//         .get("akiVersion")
+//         .unwrap()
+//         .as_str()
+//         .unwrap()
+//         .to_string()
+// }
 
 fn create_backup(profile_path: &str) {
     let mut backup_number = 0;
@@ -340,59 +360,59 @@ fn create_backup(profile_path: &str) {
     fs::copy(profile_path, backup_path).unwrap();
 }
 
-fn load_bsg_items(file: &String) -> String {
-    let items = Path::new(file)
-        .ancestors()
-        .nth(3)
-        .unwrap()
-        .join("Aki_Data")
-        .join("Server")
-        .join("database")
-        .join("templates")
-        .join("items.json");
-    items.try_exists().expect(
-        "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
-    );
-    info!("Reading bsg_items from {}", items.display());
-    fs::read_to_string(items).unwrap()
-}
+// fn load_bsg_items(file: &String) -> String {
+//     let items = Path::new(file)
+//         .ancestors()
+//         .nth(3)
+//         .unwrap()
+//         .join("Aki_Data")
+//         .join("Server")
+//         .join("database")
+//         .join("templates")
+//         .join("items.json");
+//     items.try_exists().expect(
+//         "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
+//     );
+//     info!("Reading bsg_items from {}", items.display());
+//     fs::read_to_string(items).unwrap()
+// }
 
-fn load_globals(file: &String) -> String {
-    let items = Path::new(file)
-        .ancestors()
-        .nth(3)
-        .unwrap()
-        .join("Aki_Data")
-        .join("Server")
-        .join("database")
-        .join("globals.json");
-    items
-        .try_exists()
-        .expect("Can't find `globals.json` in your `SPT\\Aki_Data\\Server\\database` folder");
-    info!("Reading globals from {}", items.display());
-    fs::read_to_string(items).unwrap()
-}
+// fn load_globals(file: &String) -> String {
+//     let items = Path::new(file)
+//         .ancestors()
+//         .nth(3)
+//         .unwrap()
+//         .join("Aki_Data")
+//         .join("Server")
+//         .join("database")
+//         .join("globals.json");
+//     items
+//         .try_exists()
+//         .expect("Can't find `globals.json` in your `SPT\\Aki_Data\\Server\\database` folder");
+//     info!("Reading globals from {}", items.display());
+//     fs::read_to_string(items).unwrap()
+// }
 
-fn load_locale(file: &String, locale_menu_item: String) -> std::io::Result<String> {
-    let locale_id = format!("{}.json", locale_menu_item);
-    let locale = Path::new(file)
-        .ancestors()
-        .nth(3)
-        .unwrap()
-        .join("Aki_Data")
-        .join("Server")
-        .join("database")
-        .join("locales")
-        .join("global")
-        .join(locale_id.clone());
-    fs::read_to_string(locale)
-}
+// fn load_locale(file: &String, locale_menu_item: String) -> std::io::Result<String> {
+//     let locale_id = format!("{}.json", locale_menu_item);
+//     let locale = Path::new(file)
+//         .ancestors()
+//         .nth(3)
+//         .unwrap()
+//         .join("Aki_Data")
+//         .join("Server")
+//         .join("database")
+//         .join("locales")
+//         .join("global")
+//         .join(locale_id.clone());
+//     fs::read_to_string(locale)
+// }
 
-fn verify_spt_folder(profile_file_path: &String) -> bool {
-    Path::new(profile_file_path)
-        .ancestors()
-        .nth(3)
-        .unwrap()
-        .join("Aki_Data")
-        .exists()
-}
+// fn verify_spt_folder(profile_file_path: &String) -> bool {
+//     Path::new(profile_file_path)
+//         .ancestors()
+//         .nth(3)
+//         .unwrap()
+//         .join("Aki_Data")
+//         .exists()
+// }

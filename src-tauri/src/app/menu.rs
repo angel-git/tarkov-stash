@@ -1,9 +1,7 @@
-use std::net::TcpStream;
 use std::path::PathBuf;
 
 use log::error;
 use serde_json::json;
-use tauri::api::dialog::FileDialogBuilder;
 use tauri::api::shell::open;
 use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
@@ -13,7 +11,6 @@ use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
-    let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
     let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
@@ -31,7 +28,7 @@ pub fn build_menu() -> Menu {
     let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
     let locale_ro = CustomMenuItem::new("locale_ro".to_string(), "Romanian");
     let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
-    let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
+    let file_submenu = Submenu::new("File", Menu::new().add_item(quit));
     let locale_submenu = Submenu::new(
         "Locale",
         Menu::new()
@@ -78,23 +75,6 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
         "quit" => {
             std::process::exit(0);
         }
-        "open" => {
-            FileDialogBuilder::default()
-                .add_filter("json", &["json"])
-                .pick_file(move |path_buf| if let Some(p) = path_buf {
-                    let window = event.window();
-                    let is_server_running = is_server_running();
-                    if is_server_running {
-                        window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
-                    } else {
-                        let state: State<TarkovStashState> = window.state();
-                        let mut internal_state = state.state.lock().unwrap();
-                        internal_state.profile_file_path =
-                            Some(p.as_path().to_str().unwrap().to_string());
-                        window.emit("profile_loaded", "").expect("Can't emit event to window!");
-                    }
-                });
-        }
         "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it"
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
         | "locale_es-mx" | "locale_tu" | "locale_ru" | "locale_ro" => {
@@ -108,7 +88,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 let store = internal_state.store.as_mut().unwrap();
                 insert_and_save(store, SETTING_LOCALE.to_string(), json!(locale_lang));
             }
-            if internal_state.profile_file_path.is_some() {
+            if internal_state.session_id.is_some() {
                 window
                     .emit("profile_loaded", "")
                     .expect("Can't emit event to window!");
@@ -238,10 +218,6 @@ pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {
             .set_selected(true)
             .expect("Can't find selected menu item");
     });
-}
-
-fn is_server_running() -> bool {
-    TcpStream::connect("127.0.0.1:6969").is_ok()
 }
 
 fn open_directory(event: &WindowMenuEvent, path: PathBuf, error_msg: &'static str) {

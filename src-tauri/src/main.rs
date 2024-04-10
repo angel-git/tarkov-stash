@@ -39,8 +39,6 @@ pub struct TarkovStashState {
 
 pub struct MutexState {
     pub server_props: Option<server::ServerProps>,
-    // TODO delete profile_file_path
-    pub profile_file_path: Option<String>,
     pub session_id: Option<String>,
     pub server_file_path: Option<String>,
     pub server_spt_version: Option<String>,
@@ -68,7 +66,6 @@ fn main() {
                 bsg_items: None,
                 globals: None,
                 locale: None,
-                profile_file_path: None,
                 server_file_path: None,
                 session_id: None,
                 server_spt_version: None,
