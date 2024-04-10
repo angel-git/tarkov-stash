@@ -1,7 +1,9 @@
+import path from 'node:path';
 import { DependencyContainer } from 'tsyringe';
 import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
 import { SaveServer } from '@spt-aki/servers/SaveServer';
 import { LogTextColor } from '@spt-aki/models/spt/logging/LogTextColor';
+import { Watermark } from '@spt-aki/utils/Watermark';
 import type { IPreAkiLoadMod } from '@spt-aki/models/external/IPreAkiLoadMod';
 import type { ILogger } from '@spt-aki/models/spt/utils/ILogger';
 import type { StaticRouterModService } from '@spt-aki/services/mod/staticRouter/StaticRouterModService';
@@ -11,7 +13,7 @@ class TarkovStash implements IPreAkiLoadMod {
     const logger = container.resolve<ILogger>('WinstonLogger');
     const databaseServer = container.resolve<DatabaseServer>('DatabaseServer');
     const saveServer = container.resolve<SaveServer>('SaveServer');
-    // const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
+    const watermark = container.resolve<Watermark>('Watermark');
 
     const staticRouterModService =
       container.resolve<StaticRouterModService>('StaticRouterModService');
@@ -21,10 +23,26 @@ class TarkovStash implements IPreAkiLoadMod {
       'TarkovStashModRouter',
       [
         {
+          url: '/tarkov-stash/server',
+          action: (url, info, sessionId, output) => {
+            logger.log(`[tarkov-stash] Loading server info`, LogTextColor.GREEN);
+            const version = watermark.getVersionTag();
+            const serverPath = path.resolve();
+            return JSON.stringify({ version, path: serverPath });
+          },
+        },
+        {
           url: '/tarkov-stash/profiles',
           action: (url, info, sessionId, output) => {
             logger.log(`[tarkov-stash] Loading profiles`, LogTextColor.GREEN);
             return JSON.stringify(saveServer.getProfiles());
+          },
+        },
+        {
+          url: '/tarkov-stash/profile',
+          action: (url, info, sessionId, output) => {
+            logger.log(`[tarkov-stash] Loading profile [${sessionId}]`, LogTextColor.GREEN);
+            return JSON.stringify(saveServer.getProfile(sessionId));
           },
         },
         {
