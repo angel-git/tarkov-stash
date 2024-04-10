@@ -1,7 +1,13 @@
+use crate::prelude::server::Session;
 use crate::prelude::{
     add_new_item, add_new_preset, convert_profile_to_ui, delete_item, spt_profile_serializer,
     track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
     UIProfile, SETTING_LOCALE,
+};
+use crate::spt::server::{
+    is_server_running, load_bsg_items_from_server, load_globals_from_server,
+    load_locale_from_server, load_profile_from_server, load_server_info, load_sessions_from_server,
+    ServerProps,
 };
 use crate::TarkovStashState;
 use log::info;
@@ -12,69 +18,136 @@ use std::path::Path;
 use tauri::{Manager, State};
 
 #[tauri::command]
-pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfile, String> {
-    let mut internal_state = state.state.lock().unwrap();
-    let b = &internal_state.profile_file_path;
-    let b_clone = b.clone();
-    let binding = b_clone.as_ref();
-    match binding {
-        Some(profile_file_path) => {
-            if verify_spt_folder(profile_file_path) {
-                create_backup(profile_file_path);
-                // save to state internal data
-                let locale_from_settings = internal_state
-                    .store
-                    .as_mut()
-                    .unwrap()
-                    .get(SETTING_LOCALE)
-                    .unwrap()
-                    .as_str()
-                    .unwrap();
-                let locale = load_locale(profile_file_path, locale_from_settings.to_string());
-                if locale.is_err() {
-                    return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", locale_from_settings));
-                }
-                let bsg_items = load_bsg_items(profile_file_path);
-                let globals = load_globals(profile_file_path);
-                let bsg_items_root: HashMap<String, Value> =
-                    serde_json::from_str(bsg_items.as_str()).unwrap();
-                let locale_root: HashMap<String, Value> =
-                    serde_json::from_str(locale.unwrap().as_str()).unwrap();
-                let globals_root: HashMap<String, Value> =
-                    serde_json::from_str(globals.as_str()).unwrap();
-
-                internal_state.locale = Some(locale_root);
-                internal_state.bsg_items = Some(bsg_items_root);
-                internal_state.globals = Some(globals_root);
-
-                let content = fs::read_to_string(profile_file_path).unwrap();
-                let tarkov_profile = spt_profile_serializer::load_profile(content.as_str());
-                match tarkov_profile {
-                    Ok(p) => {
-                        let ui_profile_result = convert_profile_to_ui(
-                            p,
-                            internal_state.bsg_items.as_ref().unwrap(),
-                            internal_state.locale.as_ref().unwrap(),
-                            internal_state.globals.as_ref().unwrap(),
-                        );
-                        match ui_profile_result {
-                            Ok(mut ui_profile) => {
-                                ui_profile.spt_version =
-                                    Some(get_server_version(profile_file_path));
-                                Ok(ui_profile)
-                            }
-                            Err(e) => Err(e),
-                        }
-                    }
-                    Err(e) => Err(e.to_string()),
-                }
-            } else {
-                Err("I can't load your SPT files, your profile file must be located under SPT\\user\\profiles for me to work fine".to_string())
-            }
+pub async fn connect_to_server(
+    server: ServerProps,
+    app: tauri::AppHandle,
+) -> Result<Vec<Session>, String> {
+    if !is_server_running(&server) {
+        Err(format!("Server is not running at {}", server))
+    } else {
+        {
+            let state: State<TarkovStashState> = app.state();
+            let mut internal_state = state.state.lock().unwrap();
+            internal_state.server_props = Some(server.clone());
         }
-        None => Err("Could not file loaded into memory".to_string()),
+        let server_info = load_server_info(&server).await.unwrap();
+        {
+            let state: State<TarkovStashState> = app.state();
+            let mut internal_state = state.state.lock().unwrap();
+            internal_state.server_file_path = Some(server_info.path);
+            internal_state.server_spt_version = Some(server_info.version)
+        }
+
+        load_sessions_from_server(&server)
+            .await
+            .map_err(|e| e.to_string())
     }
 }
+
+#[tauri::command]
+pub async fn load_profile_from_spt(
+    session: Session,
+    app: tauri::AppHandle,
+) -> Result<UIProfile, String> {
+    let state: State<TarkovStashState> = app.state();
+
+    let server_props = {
+        let internal_state = state.state.lock().unwrap();
+        internal_state
+            .server_props
+            .clone()
+            .expect("Server details not found!")
+    };
+
+    {
+        let mut internal_state = state.state.lock().unwrap();
+        internal_state.session_id = Some(session.id.clone());
+    }
+
+    let bsg_items = load_bsg_items_from_server(&server_props).await.unwrap();
+    let globals = load_globals_from_server(&server_props).await.unwrap();
+    let profile = load_profile_from_server(&server_props, &session)
+        .await
+        .unwrap();
+    // TODO locale from settings
+    let locale = load_locale_from_server(&server_props, "en").await.unwrap();
+
+    let ui_profile_result = convert_profile_to_ui(profile, &bsg_items, &locale, &globals);
+    match ui_profile_result {
+        Ok(mut ui_profile) => {
+            let internal_state = state.state.lock().unwrap();
+            ui_profile.spt_version = internal_state.server_spt_version.clone();
+            Ok(ui_profile)
+        }
+        Err(e) => Err(e),
+    }
+}
+
+// TODO delete
+// #[tauri::command]
+// pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfile, String> {
+//     let mut internal_state = state.state.lock().unwrap();
+//     let b = &internal_state.profile_file_path;
+//     let b_clone = b.clone();
+//     let binding = b_clone.as_ref();
+//     match binding {
+//         Some(profile_file_path) => {
+//             if verify_spt_folder(profile_file_path) {
+//                 create_backup(profile_file_path);
+//                 // save to state internal data
+//                 let locale_from_settings = internal_state
+//                     .store
+//                     .as_mut()
+//                     .unwrap()
+//                     .get(SETTING_LOCALE)
+//                     .unwrap()
+//                     .as_str()
+//                     .unwrap();
+//                 let locale = load_locale(profile_file_path, locale_from_settings.to_string());
+//                 if locale.is_err() {
+//                     return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", locale_from_settings));
+//                 }
+//                 let bsg_items = load_bsg_items(profile_file_path);
+//                 let globals = load_globals(profile_file_path);
+//                 let bsg_items_root: HashMap<String, Value> =
+//                     serde_json::from_str(bsg_items.as_str()).unwrap();
+//                 let locale_root: HashMap<String, Value> =
+//                     serde_json::from_str(locale.unwrap().as_str()).unwrap();
+//                 let globals_root: HashMap<String, Value> =
+//                     serde_json::from_str(globals.as_str()).unwrap();
+//
+//                 internal_state.locale = Some(locale_root);
+//                 internal_state.bsg_items = Some(bsg_items_root);
+//                 internal_state.globals = Some(globals_root);
+//
+//                 let content = fs::read_to_string(profile_file_path).unwrap();
+//                 let tarkov_profile = spt_profile_serializer::load_profile(content.as_str());
+//                 match tarkov_profile {
+//                     Ok(p) => {
+//                         let ui_profile_result = convert_profile_to_ui(
+//                             p,
+//                             internal_state.bsg_items.as_ref().unwrap(),
+//                             internal_state.locale.as_ref().unwrap(),
+//                             internal_state.globals.as_ref().unwrap(),
+//                         );
+//                         match ui_profile_result {
+//                             Ok(mut ui_profile) => {
+//                                 ui_profile.spt_version =
+//                                     Some(get_server_version(profile_file_path));
+//                                 Ok(ui_profile)
+//                             }
+//                             Err(e) => Err(e),
+//                         }
+//                     }
+//                     Err(e) => Err(e.to_string()),
+//                 }
+//             } else {
+//                 Err("I can't load your SPT files, your profile file must be located under SPT\\user\\profiles for me to work fine".to_string())
+//             }
+//         }
+//         None => Err("Could not file loaded into memory".to_string()),
+//     }
+// }
 
 #[tauri::command]
 pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {

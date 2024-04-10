@@ -5,7 +5,7 @@
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
   import DetailsModal from './modal/modal-details.svelte';
-  import { afterNavigate, goto } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
 
@@ -14,16 +14,6 @@
   $: isLoading = $loading;
   let selectedOption: Option | undefined;
   let selectedItem: Item | undefined;
-
-  afterNavigate(() => {
-    invokeWithLoader<Profile>('load_profile_file', {})
-      .then((p) => {
-        profile.set(p);
-      })
-      .catch((error) => {
-        goto(`/error?message=${error}`);
-      });
-  });
 
   function handleOptionClicked(option: Option, item: Item) {
     switch (option) {
