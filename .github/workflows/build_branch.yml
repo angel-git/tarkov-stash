@@ -36,9 +36,9 @@ jobs:
           pnpm tauri build
           mkdir "dist/user/mods/tarkov-stash-${{ github.sha }}"
           copy ./src-spt-mod/* ./dist/user/mods/tarkov-stash-${{ github.sha }}/
-          mv ./src-tauri/target/release/tarkov-stash.exe /dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
-          Compress-Archive -Path ./dist/* -Destination tarkov-stash-${{ github.sha }}.zip
+          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
       - uses: actions/upload-artifact@v4
         with:
           name: tarkov-stash
-          path: ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          path: ./tarkov-stash-${{ github.sha }}.zip
