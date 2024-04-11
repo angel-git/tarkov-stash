@@ -164,72 +164,6 @@ pub async fn refresh_profile_from_spt(
     }
 }
 
-// TODO delete
-// #[tauri::command]
-// pub async fn load_profile_file(state: State<'_, TarkovStashState>) -> Result<UIProfile, String> {
-//     let mut internal_state = state.state.lock().unwrap();
-//     let b = &internal_state.profile_file_path;
-//     let b_clone = b.clone();
-//     let binding = b_clone.as_ref();
-//     match binding {
-//         Some(profile_file_path) => {
-//             if verify_spt_folder(profile_file_path) {
-//                 create_backup(profile_file_path);
-//                 // save to state internal data
-//                 let locale_from_settings = internal_state
-//                     .store
-//                     .as_mut()
-//                     .unwrap()
-//                     .get(SETTING_LOCALE)
-//                     .unwrap()
-//                     .as_str()
-//                     .unwrap();
-//                 let locale = load_locale(profile_file_path, locale_from_settings.to_string());
-//                 if locale.is_err() {
-//                     return Err(format!("Can't load your locale selection, please check that this file exists: [SPT]\\Aki_Data\\database\\locales\\global\\{}.json", locale_from_settings));
-//                 }
-//                 let bsg_items = load_bsg_items(profile_file_path);
-//                 let globals = load_globals(profile_file_path);
-//                 let bsg_items_root: HashMap<String, Value> =
-//                     serde_json::from_str(bsg_items.as_str()).unwrap();
-//                 let locale_root: HashMap<String, Value> =
-//                     serde_json::from_str(locale.unwrap().as_str()).unwrap();
-//                 let globals_root: HashMap<String, Value> =
-//                     serde_json::from_str(globals.as_str()).unwrap();
-//
-//                 internal_state.locale = Some(locale_root);
-//                 internal_state.bsg_items = Some(bsg_items_root);
-//                 internal_state.globals = Some(globals_root);
-//
-//                 let content = fs::read_to_string(profile_file_path).unwrap();
-//                 let tarkov_profile = spt_profile_serializer::load_profile(content.as_str());
-//                 match tarkov_profile {
-//                     Ok(p) => {
-//                         let ui_profile_result = convert_profile_to_ui(
-//                             p,
-//                             internal_state.bsg_items.as_ref().unwrap(),
-//                             internal_state.locale.as_ref().unwrap(),
-//                             internal_state.globals.as_ref().unwrap(),
-//                         );
-//                         match ui_profile_result {
-//                             Ok(mut ui_profile) => {
-//                                 ui_profile.spt_version =
-//                                     Some(get_server_version(profile_file_path));
-//                                 Ok(ui_profile)
-//                             }
-//                             Err(e) => Err(e),
-//                         }
-//                     }
-//                     Err(e) => Err(e.to_string()),
-//                 }
-//             } else {
-//                 Err("I can't load your SPT files, your profile file must be located under SPT\\user\\profiles for me to work fine".to_string())
-//             }
-//         }
-//         None => Err("Could not file loaded into memory".to_string()),
-//     }
-// }
-
 #[tauri::command]
 pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
     info!(
@@ -434,31 +368,11 @@ fn get_session_and_server(app: &tauri::AppHandle) -> (String, ServerProps) {
 }
 
 async fn refresh_profile(app: &tauri::AppHandle) {
-    let (session_id, server_props) = get_session_and_server(&app);
+    let (session_id, server_props) = get_session_and_server(app);
     let _ = refresh_profile_on_server(&server_props, &session_id).await;
     app.emit_all("profile_loaded", "")
         .expect("Can't emit event to window!");
 }
-
-// fn get_server_version(file: &String) -> String {
-//     let core = Path::new(file)
-//         .ancestors()
-//         .nth(3)
-//         .unwrap()
-//         .join("Aki_Data")
-//         .join("Server")
-//         .join("configs")
-//         .join("core.json");
-//
-//     let core_json: Value =
-//         serde_json::from_str(fs::read_to_string(core).unwrap().as_str()).unwrap();
-//     core_json
-//         .get("akiVersion")
-//         .unwrap()
-//         .as_str()
-//         .unwrap()
-//         .to_string()
-// }
 
 fn create_backup(profile_path: &str) {
     let mut backup_number = 0;
@@ -469,60 +383,3 @@ fn create_backup(profile_path: &str) {
     }
     fs::copy(profile_path, backup_path).unwrap();
 }
-
-// fn load_bsg_items(file: &String) -> String {
-//     let items = Path::new(file)
-//         .ancestors()
-//         .nth(3)
-//         .unwrap()
-//         .join("Aki_Data")
-//         .join("Server")
-//         .join("database")
-//         .join("templates")
-//         .join("items.json");
-//     items.try_exists().expect(
-//         "Can't find `items.json` in your `SPT\\Aki_Data\\Server\\database\\templates\\items` folder",
-//     );
-//     info!("Reading bsg_items from {}", items.display());
-//     fs::read_to_string(items).unwrap()
-// }
-
-// fn load_globals(file: &String) -> String {
-//     let items = Path::new(file)
-//         .ancestors()
-//         .nth(3)
-//         .unwrap()
-//         .join("Aki_Data")
-//         .join("Server")
-//         .join("database")
-//         .join("globals.json");
-//     items
-//         .try_exists()
-//         .expect("Can't find `globals.json` in your `SPT\\Aki_Data\\Server\\database` folder");
-//     info!("Reading globals from {}", items.display());
-//     fs::read_to_string(items).unwrap()
-// }
-
-// fn load_locale(file: &String, locale_menu_item: String) -> std::io::Result<String> {
-//     let locale_id = format!("{}.json", locale_menu_item);
-//     let locale = Path::new(file)
-//         .ancestors()
-//         .nth(3)
-//         .unwrap()
-//         .join("Aki_Data")
-//         .join("Server")
-//         .join("database")
-//         .join("locales")
-//         .join("global")
-//         .join(locale_id.clone());
-//     fs::read_to_string(locale)
-// }
-
-// fn verify_spt_folder(profile_file_path: &String) -> bool {
-//     Path::new(profile_file_path)
-//         .ancestors()
-//         .nth(3)
-//         .unwrap()
-//         .join("Aki_Data")
-//         .exists()
-// }
