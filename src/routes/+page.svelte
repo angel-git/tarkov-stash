@@ -12,7 +12,8 @@
   $: sessions = [];
 
   listen('profile_loaded', () => {
-    goto('/stash');
+    // TODO get the session
+    reloadProfile({ id: '65de135d00017a100e8b0215', username: 'a' });
   });
   listen('error', (event) => {
     goto(`/error?message=${event.payload}`);
@@ -24,6 +25,16 @@
     })
       .then((r: Array<Session>) => {
         sessions = r;
+      })
+      .catch((errorMessage) => goto(`/error?message=${errorMessage}`));
+  }
+
+  function reloadProfile(session: Session) {
+    invokeWithLoader<Profile>('refresh_profile_from_spt', { session })
+      .then((r) => {
+        console.log('got new profile freshed!', r);
+        profile.set(r);
+        goto('/stash');
       })
       .catch((errorMessage) => goto(`/error?message=${errorMessage}`));
   }

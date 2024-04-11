@@ -98,6 +98,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             connect_to_server,
             load_profile_from_spt,
+            refresh_profile_from_spt,
             change_amount,
             change_fir,
             restore_durability,

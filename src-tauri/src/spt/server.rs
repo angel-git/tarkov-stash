@@ -126,6 +126,27 @@ pub async fn load_locale_from_server(
     Ok(parse_locale(client.send(request).await?.read().await?.data))
 }
 
+pub async fn refresh_profile_on_server(
+    server_props: &ServerProps,
+    session_id: &String,
+) -> Result<String, tauri::Error> {
+    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
+
+    let request = HttpRequestBuilder::new(
+        "GET",
+        format!("http://{}/tarkov-stash/reload-profile", server_props),
+    )
+    .unwrap();
+    let request = request.header("debug", "1").unwrap();
+    let request = request
+        .header("Cookie", format!("PHPSESSID={}", session_id))
+        .unwrap();
+    Ok(
+        serde_json::from_value(client.send(request).await?.read().await?.data)
+            .expect("Can't parse refresh profile"),
+    )
+}
+
 fn parse_sessions(json_value: Value) -> Vec<Session> {
     let objects = json_value.as_object().expect("Whops, can't read profiles!");
     let mut sessions = Vec::new();

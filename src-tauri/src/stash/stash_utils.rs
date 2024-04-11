@@ -379,6 +379,8 @@ fn get_locked_slots(
                             slot["_props"]["filters"]
                                 .as_array()?
                                 .iter()
+                                // TODO test again armor with plates
+                                .filter(|filter| filter["Plate"].as_str().is_some())
                                 .map(|filter| Filter {
                                     plate: filter["Plate"].as_str().unwrap().to_string(),
                                     locked: filter["locked"].as_bool().unwrap(),
