@@ -2,18 +2,23 @@
   import { listen } from '@tauri-apps/api/event';
   import { goto } from '$app/navigation';
   import { invokeWithLoader } from '../helper';
-  import { profile } from '../store';
+  import { profile, loading } from '../store';
   import type { Profile, Session } from '../types';
+  import Loading from '$lib/images/loading.gif';
 
   let hostValue = '127.0.0.1';
   let portValue = 6969;
 
   let sessions: Array<Session>;
+  let selectedSession: Session | undefined;
+  $: selectedSession = undefined;
+  $: isLoading = $loading;
   $: sessions = [];
 
   listen('profile_loaded', () => {
-    // TODO get the session
-    reloadProfile({ id: '65de135d00017a100e8b0215', username: 'a' });
+    if (selectedSession) {
+      reloadProfile(selectedSession);
+    }
   });
   listen('error', (event) => {
     goto(`/error?message=${event.payload}`);
@@ -39,6 +44,7 @@
   }
 
   function loadProfile(session: Session) {
+    selectedSession = session;
     invokeWithLoader<Profile>('load_profile_from_spt', { session })
       .then((r) => {
         profile.set(r);
@@ -58,6 +64,9 @@
     Welcome to <span class="highlight">tarkov-stash</span> mod
   </h1>
   <h4>Your SPT server must be running, enter the connection details:</h4>
+  {#if isLoading}
+    <img class="loading" src={Loading} alt="loading gif" width="40" height="40" />
+  {/if}
   <form>
     <input name="host" type="text" bind:value={hostValue} />
     <input name="port" type="number" bind:value={portValue} />
@@ -75,6 +84,13 @@
 </div>
 
 <style>
+  .loading {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+  }
+
   .session {
     display: flex;
     justify-content: space-between;
