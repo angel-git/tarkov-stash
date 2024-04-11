@@ -87,7 +87,12 @@ pub async fn load_globals_from_server(
     )
     .unwrap();
     let request = request.header("debug", "1").unwrap();
-    Ok(parse_as_map(client.send(request).await?.read().await?.data))
+    let globals_value = serde_json::to_value(client.send(request).await?.read().await?.data)
+        .expect("Can't parse globals from server");
+    let mut globals: HashMap<String, Value> = HashMap::new();
+    // for backwards compatibility, maybe to remove this in future
+    globals.insert("ItemPresets".to_string(), globals_value);
+    Ok(globals)
 }
 
 pub async fn load_profile_from_server(

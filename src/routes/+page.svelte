@@ -32,7 +32,6 @@
   function reloadProfile(session: Session) {
     invokeWithLoader<Profile>('refresh_profile_from_spt', { session })
       .then((r) => {
-        console.log('got new profile freshed!', r);
         profile.set(r);
         goto('/stash');
       })
