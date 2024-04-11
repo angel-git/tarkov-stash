@@ -44,7 +44,6 @@ pub struct MutexState {
     pub server_spt_version: Option<String>,
     pub bsg_items: Option<HashMap<String, Value>>,
     pub globals: Option<HashMap<String, Value>>,
-    pub locale: Option<HashMap<String, Value>>,
     pub store: Option<Store<Wry>>,
 }
 
@@ -65,7 +64,6 @@ fn main() {
                 server_props: None,
                 bsg_items: None,
                 globals: None,
-                locale: None,
                 server_file_path: None,
                 session_id: None,
                 server_spt_version: None,

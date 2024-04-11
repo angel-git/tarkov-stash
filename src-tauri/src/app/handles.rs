@@ -64,13 +64,25 @@ pub async fn load_profile_from_spt(
         internal_state.session_id = Some(session.id.clone());
     }
 
+    let locale_from_settings = {
+        let internal_state = state.state.lock().unwrap();
+        let store = internal_state.store.as_ref().unwrap();
+        store
+            .get(SETTING_LOCALE)
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+
     let bsg_items = load_bsg_items_from_server(&server_props).await.unwrap();
     let globals = load_globals_from_server(&server_props).await.unwrap();
     let profile = load_profile_from_server(&server_props, &session)
         .await
         .unwrap();
-    // TODO locale from settings
-    let locale = load_locale_from_server(&server_props, "en").await.unwrap();
+    let locale = load_locale_from_server(&server_props, locale_from_settings.as_str())
+        .await
+        .unwrap();
 
     let ui_profile_result = convert_profile_to_ui(profile, &bsg_items, &locale, &globals);
 
@@ -78,7 +90,6 @@ pub async fn load_profile_from_spt(
         let mut internal_state = state.state.lock().unwrap();
         internal_state.bsg_items = Some(bsg_items);
         internal_state.globals = Some(globals);
-        internal_state.locale = Some(locale);
     }
 
     match ui_profile_result {
@@ -110,6 +121,23 @@ pub async fn refresh_profile_from_spt(
             .expect("Server details not found!")
     };
 
+    let locale_from_settings = {
+        let internal_state = state.state.lock().unwrap();
+        let store = internal_state.store.as_ref().unwrap();
+        store
+            .get(SETTING_LOCALE)
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+
+    let locale_root = {
+        load_locale_from_server(&server_props, locale_from_settings.as_str())
+            .await
+            .unwrap()
+    };
+
     {
         let mut internal_state = state.state.lock().unwrap();
         internal_state.session_id = Some(session.id.clone());
@@ -122,9 +150,8 @@ pub async fn refresh_profile_from_spt(
     let ui_profile_result = {
         let internal_state = state.state.lock().unwrap();
         let bsg_items = internal_state.bsg_items.as_ref().unwrap();
-        let locale = internal_state.locale.as_ref().unwrap();
         let globals = internal_state.globals.as_ref().unwrap();
-        convert_profile_to_ui(profile, bsg_items, locale, globals)
+        convert_profile_to_ui(profile, bsg_items, &locale_root, globals)
     };
 
     match ui_profile_result {
