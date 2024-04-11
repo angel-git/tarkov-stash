@@ -11,6 +11,7 @@ use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
+    let open = CustomMenuItem::new("open".to_string(), "Open profile");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let locale_cz = CustomMenuItem::new("locale_cz".to_string(), "Czech");
     let locale_en = CustomMenuItem::new("locale_en".to_string(), "English").selected();
@@ -28,7 +29,7 @@ pub fn build_menu() -> Menu {
     let locale_tu = CustomMenuItem::new("locale_tu".to_string(), "Turkish");
     let locale_ro = CustomMenuItem::new("locale_ro".to_string(), "Romanian");
     let locale_ru = CustomMenuItem::new("locale_ru".to_string(), "Русский");
-    let file_submenu = Submenu::new("File", Menu::new().add_item(quit));
+    let file_submenu = Submenu::new("File", Menu::new().add_item(open).add_item(quit));
     let locale_submenu = Submenu::new(
         "Locale",
         Menu::new()
@@ -74,6 +75,12 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
     match event.menu_item_id() {
         "quit" => {
             std::process::exit(0);
+        }
+        "open" => {
+            let window = event.window();
+            window
+                .emit("go_to_main_page", "")
+                .expect("Can't emit event to window!");
         }
         "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it"
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"

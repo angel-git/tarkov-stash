@@ -8,12 +8,17 @@
   import { goto } from '$app/navigation';
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
+  import { listen } from '@tauri-apps/api/event';
 
   const supported_version = '3.8';
 
   $: isLoading = $loading;
   let selectedOption: Option | undefined;
   let selectedItem: Item | undefined;
+
+  listen('go_to_main_page', () => {
+    goto('/');
+  });
 
   function handleOptionClicked(option: Option, item: Item) {
     switch (option) {
