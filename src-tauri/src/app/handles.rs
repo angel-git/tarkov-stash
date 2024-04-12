@@ -15,7 +15,7 @@ use serde_json::{json, Error, Value};
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
-use tauri::{Manager, State};
+use tauri::{AppHandle, Manager, State};
 
 #[tauri::command]
 pub async fn connect_to_server(
@@ -176,7 +176,7 @@ pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, 
         "change_amount",
         Some(json!({"item_id": item.tpl.as_str()})),
     );
-    with_state_do(item, &app, update_item_amount)
+    with_state_do(item, &app, update_item_amount).await
 }
 
 #[tauri::command]
@@ -191,9 +191,7 @@ pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, Str
         "change_fir",
         Some(json!({"item_id": item.tpl.as_str()})),
     );
-    let r = with_state_do(item, &app, update_spawned_in_session);
-    refresh_profile(&app).await;
-    r
+    with_state_do(item, &app, update_spawned_in_session).await
 }
 
 #[tauri::command]
@@ -208,9 +206,7 @@ pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<Str
         "restore_durability",
         Some(json!({"item_id": item.tpl.as_str()})),
     );
-    let r = with_state_do(item, &app, update_durability);
-    refresh_profile(&app).await;
-    r
+    with_state_do(item, &app, update_durability).await
 }
 
 #[tauri::command]
@@ -225,9 +221,7 @@ pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, St
         "remove_item",
         Some(json!({"item_id": item.tpl.as_str()})),
     );
-    let r = with_state_do(item, &app, delete_item);
-    refresh_profile(&app).await;
-    r
+    with_state_do(item, &app, delete_item).await
 }
 
 #[tauri::command]
@@ -240,21 +234,12 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
     );
     track_event(&app, "add_item", Some(json!({"item_id": item.id.as_str()})));
 
-    let profile_file_path = {
-        let state: State<TarkovStashState> = app.state();
-        let internal_state = state.state.lock().unwrap();
-        let session_id = internal_state.session_id.as_ref().unwrap();
-        let server_file_path = internal_state.server_file_path.as_ref().unwrap();
-        get_profile_filename(server_file_path, session_id)
-    };
+    let profile_file_path = get_profile_file_path(&app);
 
     let response = {
         let state: State<TarkovStashState> = app.state();
         let internal_state = state.state.lock().unwrap();
-        let server_file_path = internal_state.server_file_path.as_ref().unwrap();
-        let session_id = internal_state.session_id.as_ref().unwrap();
-        let profile_file_path = get_profile_filename(server_file_path, session_id);
-        let profile_content = fs::read_to_string(profile_file_path).unwrap();
+        let profile_content = fs::read_to_string(profile_file_path.clone()).unwrap();
         let bsg_items_option = &internal_state.bsg_items;
         let bsg_items = bsg_items_option.as_ref().unwrap();
 
@@ -290,26 +275,28 @@ pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, 
         "add_preset",
         Some(json!({"item_id": item.id.as_str()})),
     );
-    let state: State<TarkovStashState> = app.state();
-    let internal_state = state.state.lock().unwrap();
-    let server_file_path = internal_state.server_file_path.as_ref().unwrap();
-    let session_id = internal_state.session_id.as_ref().unwrap();
-    let profile_file_path = get_profile_filename(server_file_path, session_id);
-    let profile_content = fs::read_to_string(&profile_file_path).unwrap();
-    let globals_option = &internal_state.globals;
-    let globals = globals_option.as_ref().unwrap();
-    let response = add_new_preset(
-        profile_content.as_str(),
-        item.id.as_str(),
-        item.location_x,
-        item.location_y,
-        globals,
-    );
+
+    let profile_file_path = get_profile_file_path(&app);
+
+    let response = {
+        let state: State<TarkovStashState> = app.state();
+        let internal_state = state.state.lock().unwrap();
+        let profile_content = fs::read_to_string(profile_file_path.clone()).unwrap();
+        let globals_option = &internal_state.globals;
+        let globals = globals_option.as_ref().unwrap();
+        add_new_preset(
+            profile_content.as_str(),
+            item.id.as_str(),
+            item.location_x,
+            item.location_y,
+            globals,
+        )
+    };
+
     match response {
         Ok(new_content) => {
             fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
-            app.emit_all("profile_loaded", "")
-                .expect("Can't emit event to window!");
+            refresh_profile(&app).await;
             Ok("done".to_string())
         }
         Err(e) => Err(e.to_string()),
@@ -322,32 +309,42 @@ type UpdateFunction = fn(
     bsg_items: &HashMap<String, Value>,
 ) -> Result<String, Error>;
 
-fn with_state_do(item: Item, app: &tauri::AppHandle, f: UpdateFunction) -> Result<String, String> {
-    let state: State<TarkovStashState> = app.state();
-    let internal_state = state.state.lock().unwrap();
-
-    let server_file_path_option = internal_state.server_file_path.clone();
-    let session_id_option = internal_state.session_id.clone();
-    let bsg_items_option = internal_state.bsg_items.clone();
-    if server_file_path_option.is_none()
-        || bsg_items_option.is_none()
-        || session_id_option.is_none()
-    {
-        return Err("Could not find file inside app state".to_string());
-    }
-    let session_id = session_id_option.as_ref().unwrap();
-    let server_file_path = server_file_path_option.as_ref().unwrap();
-    let profile_file_path = get_profile_filename(server_file_path, session_id);
-    let bsg_items = bsg_items_option.as_ref().unwrap();
-    let profile_content = fs::read_to_string(&profile_file_path).unwrap();
-    let new_profile = f(profile_content.as_str(), &item, bsg_items);
-    match new_profile {
-        Ok(new_content) => {
-            fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
-            Ok("updated".to_string())
+async fn with_state_do(
+    item: Item,
+    app: &tauri::AppHandle,
+    f: UpdateFunction,
+) -> Result<String, String> {
+    let result = {
+        let state: State<TarkovStashState> = app.state();
+        let internal_state = state.state.lock().unwrap();
+        let server_file_path_option = internal_state.server_file_path.clone();
+        let session_id_option = internal_state.session_id.clone();
+        let bsg_items_option = internal_state.bsg_items.clone();
+        if server_file_path_option.is_none()
+            || bsg_items_option.is_none()
+            || session_id_option.is_none()
+        {
+            return Err("Could not find file inside app state".to_string());
         }
-        Err(e) => Err(e.to_string()),
+        let session_id = session_id_option.as_ref().unwrap();
+        let server_file_path = server_file_path_option.as_ref().unwrap();
+        let profile_file_path = get_profile_filename(server_file_path, session_id);
+        let bsg_items = bsg_items_option.as_ref().unwrap();
+        let profile_content = fs::read_to_string(&profile_file_path).unwrap();
+        let new_profile = f(profile_content.as_str(), &item, bsg_items);
+        match new_profile {
+            Ok(new_content) => {
+                fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
+                Ok("updated".to_string())
+            }
+            Err(e) => Err(e.to_string()),
+        }
+    };
+
+    if result.is_ok() {
+        refresh_profile(app).await;
     }
+    result
 }
 
 fn get_profile_filename(server_file_path: &String, session_id: &String) -> PathBuf {
@@ -382,4 +379,15 @@ fn create_backup(profile_path: &str) {
         backup_path = format!("{profile_path}.back.{backup_number}");
     }
     fs::copy(profile_path, backup_path).unwrap();
+}
+
+fn get_profile_file_path(app: &AppHandle) -> PathBuf {
+    let profile_file_path = {
+        let state: State<TarkovStashState> = app.state();
+        let internal_state = state.state.lock().unwrap();
+        let session_id = internal_state.session_id.as_ref().unwrap();
+        let server_file_path = internal_state.server_file_path.as_ref().unwrap();
+        get_profile_filename(server_file_path, session_id)
+    };
+    profile_file_path
 }
