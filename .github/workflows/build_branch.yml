@@ -35,7 +35,7 @@ jobs:
         run: |
           pnpm tauri build
           mkdir "dist/user/mods/tarkov-stash-${{ github.sha }}"
-          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e /exclude:types
+          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e /exclude:types\*
           mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
           Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
       - uses: actions/upload-artifact@v4
