@@ -42,10 +42,13 @@ pub async fn load_server_info(server_props: &ServerProps) -> Result<ServerInfo, 
     )
     .unwrap();
     let request = request.header("debug", "1").unwrap();
-    Ok(
-        serde_json::from_value(client.send(request).await?.read().await?.data)
-            .expect("Can't load server info"),
-    )
+    if let Ok(response) = serde_json::from_value(client.send(request).await?.read().await?.data) {
+        Ok(response)
+    } else {
+        Err(tauri::Error::Io(std::io::Error::from(
+            std::io::ErrorKind::NotFound,
+        )))
+    }
 }
 
 pub async fn load_sessions_from_server(

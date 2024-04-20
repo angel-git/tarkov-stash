@@ -20,7 +20,7 @@ use tauri::{AppHandle, Manager, State};
 #[tauri::command]
 pub async fn connect_to_server(
     server: ServerProps,
-    app: tauri::AppHandle,
+    app: AppHandle,
 ) -> Result<Vec<Session>, String> {
     if !is_server_running(&server) {
         Err(format!("Server is not running at {}", server))
@@ -30,17 +30,22 @@ pub async fn connect_to_server(
             let mut internal_state = state.state.lock().unwrap();
             internal_state.server_props = Some(server.clone());
         }
-        let server_info = load_server_info(&server).await.unwrap();
-        {
-            let state: State<TarkovStashState> = app.state();
-            let mut internal_state = state.state.lock().unwrap();
-            internal_state.server_file_path = Some(server_info.path);
-            internal_state.server_spt_version = Some(server_info.version)
-        }
+        let server_info_result = load_server_info(&server).await;
+        if server_info_result.is_ok() {
+            let server_info = server_info_result.unwrap();
+            {
+                let state: State<TarkovStashState> = app.state();
+                let mut internal_state = state.state.lock().unwrap();
+                internal_state.server_file_path = Some(server_info.path);
+                internal_state.server_spt_version = Some(server_info.version)
+            }
 
-        load_sessions_from_server(&server)
-            .await
-            .map_err(|e| e.to_string())
+            load_sessions_from_server(&server)
+                .await
+                .map_err(|e| e.to_string())
+        } else {
+            Err("tarkov-stash is not installed in your [SPT\\user\\mods] folder.".to_string())
+        }
     }
 }
 
