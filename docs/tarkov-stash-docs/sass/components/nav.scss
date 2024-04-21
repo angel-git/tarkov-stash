@@ -1,0 +1,13 @@
+nav a {
+  margin-left: 8px;
+  font-size: 1.5rem;
+  border-bottom: 3px solid var(--primary-color);
+
+  &::before {
+    content: "/";
+  }
+
+  &.active {
+    color: var(--hover-color);
+  }
+}
