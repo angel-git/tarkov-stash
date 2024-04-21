@@ -1,18 +1,34 @@
 table {
+  width: 100%;
   border-spacing: 4px;
   border-collapse: collapse;
   border: 1px solid var(--text-secondary-color);
 
-  thead tr {
-    border-bottom: 1px solid var(--text-secondary-color);
+  thead th {
+    background-color: var(--text-secondary-color);
+    color: var(--bg-color);
+    padding: 4px;
+
   }
 
   td {
     padding: 4px;
+    border-bottom: 1px solid var(--text-secondary-color);
   }
 
   tr:nth-child(even) {
-    background-color: var(--text-secondary-color);
-    color: #16161D;
+    color: var(--text-secondary-color);
+  }
+
+  tbody tr {
+    td:nth-child(1) {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      img {
+        height: 32px;
+      }
+    }
   }
 }
