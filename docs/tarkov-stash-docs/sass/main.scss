@@ -1,0 +1,47 @@
+@import "components/table";
+@import "components/heading";
+@import "components/nav";
+@import "components/anchor";
+
+:root {
+  --font: monospace, monospace;
+  --bg-color: #16161D;
+  --text-color: #bdbdbd;
+  --text-secondary-color: rgba(255, 255, 255, 60%);
+  --primary-color: #ef5350;
+  --hover-color: white;
+}
+
+html {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font);
+  line-height: 1.6em;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 1000px;
+
+  .content {
+    padding: 16px;
+    .main-content {
+      padding: 16px;
+    }
+  }
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  time {
+    font-size: 1.0rem;
+    color: var(--text-secondary-color);
+  }
+
+  h2::before {
+    content: "# ";
+  }
+}
