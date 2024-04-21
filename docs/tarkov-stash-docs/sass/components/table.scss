@@ -13,7 +13,6 @@ table {
 
   td {
     padding: 4px;
-    border-bottom: 1px solid var(--text-secondary-color);
   }
 
   tr:nth-child(even) {
@@ -21,6 +20,7 @@ table {
   }
 
   tbody tr {
+    border-bottom: 1px solid var(--text-secondary-color);
     td:nth-child(1) {
       display: flex;
       align-items: center;
