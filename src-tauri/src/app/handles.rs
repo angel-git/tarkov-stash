@@ -5,7 +5,7 @@ use crate::prelude::{
     SETTING_LOCALE,
 };
 use crate::spt::server::{
-    is_server_running, load_bsg_items_from_server, load_globals_from_server,
+    is_server_running, is_tarkov_running, load_bsg_items_from_server, load_globals_from_server,
     load_locale_from_server, load_profile_from_server, load_server_info, load_sessions_from_server,
     refresh_profile_on_server, ServerProps,
 };
@@ -24,6 +24,8 @@ pub async fn connect_to_server(
 ) -> Result<Vec<Session>, String> {
     if !is_server_running(&server) {
         Err(format!("Server is not running at {}", server))
+    } else if is_tarkov_running() {
+        Err("Looks like Tarkov is running, quit the game before using this mod".to_string())
     } else {
         {
             let state: State<TarkovStashState> = app.state();
