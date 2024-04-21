@@ -1,8 +1,11 @@
 #!/bin/bash
 
-echo "Creating database under ../database/db.sqlite";
+HOME=$(dirname $0);
 
-mkdir ../database;
+echo "Creating database under database/db.sqlite";
+
+rm -rf $HOME/../database;
+mkdir $HOME/../database;
 
 cmds="create table items_locale
       (
@@ -56,7 +59,7 @@ cmds="create table items_locale
             );
       ";
 
-echo "$cmds" | sqlite3 ../database/db.sqlite
+echo "$cmds" | sqlite3 $HOME/../database/db.sqlite
 
 
 echo "Done";

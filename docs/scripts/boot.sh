@@ -1,9 +1,7 @@
 #!/bin/bash
 
-./_create_database.sh
-./_insert_locale.sh
-./_insert_presets.sh
+HOME=$(dirname $0);
 
-# the following scripts need to be updated with proper filename
-./_insert_add_item.sh
-./_insert_add_preset.sh
+$HOME/_create_database.sh
+$HOME/_insert_locale.sh
+$HOME/_insert_presets.sh

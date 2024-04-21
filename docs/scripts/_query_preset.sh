@@ -1,5 +1,7 @@
 #!/bin/bash
 
+HOME=$(dirname $0);
+
 echo "## Presets"
 echo ""
 echo "### Most added presets";
@@ -7,7 +9,7 @@ echo ""
 echo "| Item  | Times |"
 echo "|:------|------:|"
 
-sqlite3 ../database/db.sqlite "SELECT  il.name || ' ![image](https://assets.tarkov.dev/' || p.item_id || '-512.webp)' as name,  COUNT(*) "counter"
+sqlite3 $HOME/../database/db.sqlite "SELECT  il.name || ' ![image](https://assets.tarkov.dev/' || p.item_id || '-512.webp)' as name,  COUNT(*) "counter"
                                FROM add_preset_event aie
                                         INNER JOIN presets p ON p.item_id = aie.item_id
                                         INNER JOIN items_locale il ON p.encyclopedia = il.item_id
@@ -18,7 +20,7 @@ echo "### Less added presets";
 echo ""
 echo "| Item  | Times |"
 echo "|:------|------:|"
-sqlite3 ../database/db.sqlite "SELECT  il.name || ' ![image](https://assets.tarkov.dev/' || p.item_id || '-512.webp)' as name,  COUNT(*) "counter"
+sqlite3 $HOME/../database/db.sqlite "SELECT  il.name || ' ![image](https://assets.tarkov.dev/' || p.item_id || '-512.webp)' as name,  COUNT(*) "counter"
                                FROM add_preset_event aie
                                         INNER JOIN presets p ON p.item_id = aie.item_id
                                         INNER JOIN items_locale il ON p.encyclopedia = il.item_id
