@@ -20,13 +20,16 @@ html {
 }
 
 body {
-  margin: 16px;
-}
+  margin: 0 auto;
+  max-width: 1000px;
 
-.main-content {
-  margin: 16px;
+  .content {
+    padding: 16px;
+    .main-content {
+      padding: 16px;
+    }
+  }
 }
-
 
 .post-header {
   display: flex;
@@ -40,9 +43,5 @@ body {
 
   h2::before {
     content: "# ";
-  }
-
-  a {
-    border-bottom: 1px solid var(--primary-color);
   }
 }
