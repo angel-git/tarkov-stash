@@ -9,6 +9,11 @@ cmds="create table items_locale
           item_id text PRIMARY KEY,
           name text
       );
+      create table presets
+            (
+                item_id text PRIMARY KEY,
+                encyclopedia text
+            );
       create table add_item_event
       (
           timestamp        text,
