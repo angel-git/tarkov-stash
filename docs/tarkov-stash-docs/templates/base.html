@@ -1,0 +1,18 @@
+{% import "macros/macros.html" as post_macros %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% include "partials/head.html" %}
+
+<body>
+  <div class="content">
+    {% include "partials/header.html" %}
+
+    <div class="main-content">
+      {% block main_content %}
+        Nothing here?!
+      {% endblock main_content %}
+    </div>
+  </div>
+</body>
+</html>
