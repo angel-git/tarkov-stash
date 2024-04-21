@@ -1,0 +1,18 @@
+table {
+  border-spacing: 4px;
+  border-collapse: collapse;
+  border: 1px solid var(--text-secondary-color);
+
+  thead tr {
+    border-bottom: 1px solid var(--text-secondary-color);
+  }
+
+  td {
+    padding: 4px;
+  }
+
+  tr:nth-child(even) {
+    background-color: var(--text-secondary-color);
+    color: #16161D;
+  }
+}

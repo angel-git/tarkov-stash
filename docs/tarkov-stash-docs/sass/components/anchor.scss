@@ -1,0 +1,10 @@
+a {
+  border-bottom: 3px solid var(--primary-color);
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: var(--primary-color);
+  color: var(--hover-color);
+}
