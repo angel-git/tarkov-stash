@@ -74,12 +74,14 @@
   </form>
   {#if sessions.length > 0}
     <h5>Select profile to load:</h5>
-    {#each sessions as session}
-      <div class="session">
-        <div>{session.username} ({session.id})</div>
-        <button on:click={() => loadProfile(session)}>load</button>
-      </div>
-    {/each}
+    <div class="sessions">
+      {#each sessions as session}
+        <div class="session">
+          <div>{session.username} ({session.id})</div>
+          <button on:click={() => loadProfile(session)}>load</button>
+        </div>
+      {/each}
+    </div>
   {/if}
 </div>
 
@@ -91,9 +93,18 @@
     z-index: 10;
   }
 
-  .session {
+  .sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sessions .session {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+  }
+
+  .sessions .session:hover {
+    color: var(--color-highlight);
   }
 </style>
