@@ -1,9 +1,7 @@
-use std::net::TcpStream;
 use std::path::PathBuf;
 
 use log::error;
 use serde_json::json;
-use tauri::api::dialog::FileDialogBuilder;
 use tauri::api::shell::open;
 use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
@@ -79,21 +77,10 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
             std::process::exit(0);
         }
         "open" => {
-            FileDialogBuilder::default()
-                .add_filter("json", &["json"])
-                .pick_file(move |path_buf| if let Some(p) = path_buf {
-                    let window = event.window();
-                    let is_server_running = is_server_running();
-                    if is_server_running {
-                        window.emit("error", "Looks like your server is running, please stop it and try to open your profile again").expect("Can't emit event to window!");
-                    } else {
-                        let state: State<TarkovStashState> = window.state();
-                        let mut internal_state = state.state.lock().unwrap();
-                        internal_state.profile_file_path =
-                            Some(p.as_path().to_str().unwrap().to_string());
-                        window.emit("profile_loaded", "").expect("Can't emit event to window!");
-                    }
-                });
+            let window = event.window();
+            window
+                .emit("go_to_main_page", "")
+                .expect("Can't emit event to window!");
         }
         "locale_cz" | "locale_en" | "locale_fr" | "locale_ge" | "locale_hu" | "locale_it"
         | "locale_jp" | "locale_kr" | "locale_pl" | "locale_po" | "locale_sk" | "locale_es"
@@ -108,7 +95,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 let store = internal_state.store.as_mut().unwrap();
                 insert_and_save(store, SETTING_LOCALE.to_string(), json!(locale_lang));
             }
-            if internal_state.profile_file_path.is_some() {
+            if internal_state.session_id.is_some() {
                 window
                     .emit("profile_loaded", "")
                     .expect("Can't emit event to window!");
@@ -238,10 +225,6 @@ pub fn update_selected_menu_locale(menu_handle: MenuHandle, id: String) {
             .set_selected(true)
             .expect("Can't find selected menu item");
     });
-}
-
-fn is_server_running() -> bool {
-    TcpStream::connect("127.0.0.1:6969").is_ok()
 }
 
 fn open_directory(event: &WindowMenuEvent, path: PathBuf, error_msg: &'static str) {

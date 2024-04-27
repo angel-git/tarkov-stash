@@ -9,6 +9,7 @@ pub struct TarkovProfile {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Info {
     pub id: String,
+    pub username: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

@@ -34,8 +34,12 @@ jobs:
       - name: Build Portable Binaries (Windows)
         run: |
           pnpm tauri build
-          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          mkdir "dist/user/mods/tarkov-stash-${{ github.sha }}"
+          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e
+          Remove-Item -Path .\dist\user\mods\tarkov-stash-${{ github.sha }}\types -Force -Recurse
+          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
       - uses: actions/upload-artifact@v4
         with:
           name: tarkov-stash
-          path: ./src-tauri/target/release/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          path: ./tarkov-stash-${{ github.sha }}.zip
