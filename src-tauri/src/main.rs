@@ -67,25 +67,19 @@ fn main() {
         })
         .on_menu_event(handle_menu_event)
         .setup(|app| {
-            {
-                let state: State<TarkovStashState> = app.state();
-                let mut internal_state = state.state.lock().unwrap();
-                let store = initialize_store(app);
+            let state: State<TarkovStashState> = app.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let store = initialize_store(app);
 
-                let main_window = app.get_window("main").unwrap();
-                let locale_id = format!(
-                    "locale_{}",
-                    store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
-                );
-                let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
-                update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
-                update_selected_menu_locale(main_window.menu_handle(), locale_id);
-                internal_state.store = Some(store);
-            }
-            // track event needs its own lock
-            {
-                track_event(&app.handle(), "app_started", None);
-            }
+            let main_window = app.get_window("main").unwrap();
+            let locale_id = format!(
+                "locale_{}",
+                store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
+            );
+            let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+            update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
+            update_selected_menu_locale(main_window.menu_handle(), locale_id);
+            internal_state.store = Some(store);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
