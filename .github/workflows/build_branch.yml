@@ -38,8 +38,7 @@ jobs:
           xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e
           Remove-Item -Path .\dist\user\mods\tarkov-stash-${{ github.sha }}\types -Force -Recurse
           mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
-          Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: tarkov-stash
-          path: ./tarkov-stash-${{ github.sha }}.zip
+          name: tarkov-stash-${{ github.sha }}
+          path: ./dist
