@@ -108,6 +108,8 @@ pnpm tauri dev
 
 #### Release
 
-- Update version in `tauri.conf.json`
+- Update version in `src-tauri/tauri.conf.json`
+- Update version in `src-spt-mod/package.json`
+- commit and push (TODO: automate this in future)
 - Create a new release with proper tag
-- Github action will take over and upload the executable
+- Github action will take over and upload the zip

@@ -21,6 +21,7 @@ mod prelude {
     pub use serde::de::Deserializer;
     pub use serde::{Deserialize, Serialize};
     pub use serde_json::{json, Error, Value};
+    pub use tauri::api::http::*;
 
     pub use crate::app::handles::*;
     pub use crate::app::menu::*;
@@ -37,10 +38,12 @@ pub struct TarkovStashState {
 }
 
 pub struct MutexState {
-    pub profile_file_path: Option<String>,
+    pub server_props: Option<server::ServerProps>,
+    pub session_id: Option<String>,
+    pub server_file_path: Option<String>,
+    pub server_spt_version: Option<String>,
     pub bsg_items: Option<HashMap<String, Value>>,
     pub globals: Option<HashMap<String, Value>>,
-    pub locale: Option<HashMap<String, Value>>,
     pub store: Option<Store<Wry>>,
 }
 
@@ -58,10 +61,12 @@ fn main() {
         .menu(build_menu())
         .manage(TarkovStashState {
             state: Mutex::new(MutexState {
+                server_props: None,
                 bsg_items: None,
                 globals: None,
-                locale: None,
-                profile_file_path: None,
+                server_file_path: None,
+                session_id: None,
+                server_spt_version: None,
                 store: None,
             }),
         })
@@ -83,7 +88,9 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            load_profile_file,
+            connect_to_server,
+            load_profile_from_spt,
+            refresh_profile_from_spt,
             change_amount,
             change_fir,
             restore_durability,
