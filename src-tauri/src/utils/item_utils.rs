@@ -114,8 +114,8 @@ pub fn get_upd_props_from_item(item: &Value) -> spt_profile_serializer::UPD {
 
     if let Some(max_durability) = props.get("MaxDurability") {
         repairable = Some(spt_profile_serializer::Repairable {
-            max_durability: max_durability.as_u64().unwrap() as u16,
-            durability: max_durability.as_u64().unwrap() as u16,
+            max_durability: Some(max_durability.as_u64().unwrap() as u16),
+            durability: Some(max_durability.as_u64().unwrap() as u16),
         });
     }
 
@@ -424,8 +424,11 @@ mod tests {
         let upd = get_upd_props_from_item(&item);
         assert_eq!(upd.stack_objects_count, Some(1));
         assert_eq!(upd.spawned_in_session, Some(false));
-        assert_eq!(upd.repairable.as_ref().unwrap().durability, 100);
-        assert_eq!(upd.repairable.as_ref().unwrap().max_durability, 100);
+        assert_eq!(upd.repairable.as_ref().unwrap().durability.unwrap(), 100);
+        assert_eq!(
+            upd.repairable.as_ref().unwrap().max_durability.unwrap(),
+            100
+        );
         assert!(!upd.foldable.as_ref().unwrap().folded);
         assert!(upd.togglable.as_ref().unwrap().on);
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
