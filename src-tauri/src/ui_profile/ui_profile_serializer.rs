@@ -324,7 +324,7 @@ fn parse_items(
                     resource = Some(udp.resource.as_ref().unwrap().value);
                 }
                 if udp.repairable.is_some() {
-                    resource = Some(udp.repairable.as_ref().unwrap().durability);
+                    resource = udp.repairable.as_ref().unwrap().durability;
                     // we are showing the real max durability, not the current repaired one, uncomment the following code to show that
                     // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
                 }
@@ -360,8 +360,12 @@ fn parse_items(
                 slot_items_set.iter().for_each(|slot_item| {
                     if let Some(slot_upd) = slot_item.upd.as_ref() {
                         if let Some(repairable) = slot_upd.repairable.as_ref() {
-                            slot_resource += repairable.durability;
-                            slot_max_resource += repairable.max_durability;
+                            if let Some(durability) = repairable.durability {
+                                slot_resource += durability;
+                            }
+                            if let Some(max_durability) = repairable.max_durability {
+                                slot_max_resource += max_durability;
+                            }
                         }
                     }
                 });

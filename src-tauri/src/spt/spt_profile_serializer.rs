@@ -157,11 +157,15 @@ pub struct FireMode {
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Repairable {
     #[serde(rename = "Durability")]
-    #[serde(deserialize_with = "deserialize_to_integer")]
-    pub durability: u16,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_to_option_integer")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub durability: Option<u16>,
     #[serde(rename = "MaxDurability")]
-    #[serde(deserialize_with = "deserialize_to_integer")]
-    pub max_durability: u16,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_to_option_integer")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_durability: Option<u16>,
 }
 
 fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
@@ -183,6 +187,18 @@ where
 {
     let value: f64 = Deserialize::deserialize(deserializer)?;
     Ok(value as u16)
+}
+
+fn deserialize_to_option_integer<'de, D>(deserializer: D) -> Result<Option<u16>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value: Option<f64> = Deserialize::deserialize(deserializer)?;
+    if let Some(float_value) = value {
+        Ok(Some(float_value as u16))
+    } else {
+        Ok(None)
+    }
 }
 
 impl<'de> Deserialize<'de> for InventoryItem {
