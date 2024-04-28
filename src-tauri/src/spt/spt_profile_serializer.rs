@@ -244,3 +244,25 @@ impl<'de> Deserialize<'de> for InventoryItem {
 pub fn load_profile(profile_json: &str) -> Result<TarkovProfile, Error> {
     serde_json::from_str(profile_json)
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::spt::spt_profile_serializer::UPD;
+
+    #[test]
+    fn should_parse_empty_repairable_for_realism_mod() {
+        let upd_without_durability = r#"{
+            "Repairable": {}
+    }"#;
+
+        let upd_with_durability = r#"{
+            "Repairable": {
+                "Durability": 69.9,
+                "MaxDurability": 70
+            }
+    }"#;
+
+        let _update1: UPD = serde_json::from_str(upd_without_durability).unwrap();
+        let _update2: UPD = serde_json::from_str(upd_with_durability).unwrap();
+    }
+}

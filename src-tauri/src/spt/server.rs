@@ -1,13 +1,11 @@
+use crate::prelude::{ClientBuilder, Deserialize, HttpRequestBuilder, Serialize};
+use crate::spt::spt_profile_serializer::TarkovProfile;
+use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
 use std::net::TcpStream;
 use std::string::ToString;
-
-use serde_json::Value;
 use sysinfo::System;
-
-use crate::prelude::{ClientBuilder, Deserialize, HttpRequestBuilder, Serialize};
-use crate::spt::spt_profile_serializer::TarkovProfile;
 
 const TARKOV_PROCESS: &str = "EscapeFromTarkov.exe";
 
@@ -188,26 +186,4 @@ fn parse_as_map(json_value: Value) -> HashMap<String, Value> {
 fn parse_locale(json_value: Value) -> HashMap<String, Value> {
     serde_json::from_value(json_value.as_object().unwrap().get("data").unwrap().clone())
         .expect("Whops, can't read locales from api")
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::spt::spt_profile_serializer::UPD;
-
-    #[test]
-    fn should_parse_empty_repairable_for_realism_mod() {
-        let upd_without_durability = r#"{
-            "Repairable": {}
-    }"#;
-
-        let upd_with_durability = r#"{
-            "Repairable": {
-                "Durability": 69.9,
-                "MaxDurability": 70
-            }
-    }"#;
-
-        let _update1: UPD = serde_json::from_str(upd_without_durability).unwrap();
-        let _update2: UPD = serde_json::from_str(upd_with_durability).unwrap();
-    }
 }
