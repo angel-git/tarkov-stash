@@ -157,11 +157,15 @@ pub struct FireMode {
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Repairable {
     #[serde(rename = "Durability")]
-    #[serde(deserialize_with = "deserialize_to_integer")]
-    pub durability: u16,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_to_option_integer")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub durability: Option<u16>,
     #[serde(rename = "MaxDurability")]
-    #[serde(deserialize_with = "deserialize_to_integer")]
-    pub max_durability: u16,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_to_option_integer")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_durability: Option<u16>,
 }
 
 fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
@@ -183,6 +187,18 @@ where
 {
     let value: f64 = Deserialize::deserialize(deserializer)?;
     Ok(value as u16)
+}
+
+fn deserialize_to_option_integer<'de, D>(deserializer: D) -> Result<Option<u16>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value: Option<f64> = Deserialize::deserialize(deserializer)?;
+    if let Some(float_value) = value {
+        Ok(Some(float_value as u16))
+    } else {
+        Ok(None)
+    }
 }
 
 impl<'de> Deserialize<'de> for InventoryItem {
@@ -227,4 +243,26 @@ impl<'de> Deserialize<'de> for InventoryItem {
 
 pub fn load_profile(profile_json: &str) -> Result<TarkovProfile, Error> {
     serde_json::from_str(profile_json)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::spt::spt_profile_serializer::UPD;
+
+    #[test]
+    fn should_parse_empty_repairable_for_realism_mod() {
+        let upd_without_durability = r#"{
+            "Repairable": {}
+    }"#;
+
+        let upd_with_durability = r#"{
+            "Repairable": {
+                "Durability": 69.9,
+                "MaxDurability": 70
+            }
+    }"#;
+
+        let _update1: UPD = serde_json::from_str(upd_without_durability).unwrap();
+        let _update2: UPD = serde_json::from_str(upd_with_durability).unwrap();
+    }
 }
