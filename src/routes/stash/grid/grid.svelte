@@ -7,6 +7,12 @@
   import NewPresetModal from '../modal/modal-preset.svelte';
   import { getName } from '../../../helper';
   import WeaponIcon from '$lib/images/icon_weapons.png';
+  import FirIcon from '$lib/images/fir.png';
+  import InspectIcon from '$lib/images/inspect.png';
+  import OpenIcon from '$lib/images/open.png';
+  import RepairIcon from '$lib/images/repair.png';
+  import DiscardIcon from '$lib/images/discard.png';
+  import AmountIcon from '$lib/images/amount.png';
 
   export let items: Array<Item>;
   export let locale: Record<string, string>;
@@ -87,12 +93,20 @@
   }
 
   function handleOpenClick(item: Item | undefined) {
-    if (!item) return;
+    if (!item) {
+      secondaryItemMenuId = '-1';
+      return;
+    }
     if (secondaryItemMenuId === item.id) {
       secondaryItemMenuId = '-1';
     } else {
       secondaryItemMenuId = item.id;
     }
+  }
+
+  function handleOpenDetails(item: Item | undefined) {
+    if (!item) return;
+    onOptionClicked('details', item);
   }
 
   function handleOptionClicked(option: Option, item: Item | undefined) {
@@ -119,8 +133,8 @@
 {#if nestedLevel === 1}
   <button class="primary" on:click={openNewItemModal}>Add item</button>
   <button class="primary" on:click={openPresetItemModal}
-    ><img alt="weapon logo" src={WeaponIcon} />Add weapon preset</button
-  >
+    ><img alt="weapon logo" src={WeaponIcon} />Add preset
+  </button>
 {/if}
 {#if isNewItemModalOpen}
   <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
@@ -141,7 +155,7 @@
   {#each orderedItems as item}
     <div class="grid-item">
       {#if item}
-        <StashItem {locale} {handleOpenClick} {item} />
+        <StashItem {locale} {handleOpenClick} {handleOpenDetails} {item} />
       {:else}
         <div class="empty" />
       {/if}
@@ -155,7 +169,8 @@
             role="button"
             on:click={() => handleOptionClicked('details', item)}
           >
-            See details
+            <img alt="inspect logo" src={InspectIcon} />
+            <div>Inspect</div>
           </div>
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -165,7 +180,8 @@
               role="button"
               on:click={() => handleOptionClicked('open', item)}
             >
-              Open
+              <img alt="open logo" src={OpenIcon} />
+              <div>Open</div>
             </div>
           {/if}
           {#if item.isStockable}
@@ -176,7 +192,8 @@
               role="button"
               on:click={() => handleOptionClicked('amount', item)}
             >
-              Change amount
+              <img alt="amount logo" src={AmountIcon} />
+              <div>Change amount</div>
             </div>
           {/if}
           {#if !item.isFir}
@@ -187,7 +204,8 @@
               role="button"
               on:click={() => handleOptionClicked('fir', item)}
             >
-              Set fir
+              <img alt="fir logo" src={FirIcon} />
+              <div>Set fir</div>
             </div>
           {/if}
           {#if item.maxResource && item.maxResource !== 1 && item.resource !== item.maxResource}
@@ -198,7 +216,8 @@
               role="button"
               on:click={() => handleOptionClicked('resource', item)}
             >
-              Restore durability
+              <img alt="repair logo" src={RepairIcon} />
+              <div>Restore durability</div>
             </div>
           {/if}
           {#if !item.isContainer}
@@ -209,7 +228,8 @@
               role="button"
               on:click={() => handleOptionClicked('delete', item)}
             >
-              Delete item
+              <img alt="discard logo" src={DiscardIcon} />
+              <div>Discard</div>
             </div>
           {/if}
         </div>
@@ -249,7 +269,8 @@
     height: 64px;
     width: 64px;
     position: relative;
-    background-image: url($lib/images/empty.png);
+    background-image: url($lib/images/grid_cell.png);
+    background-size: cover;
   }
 
   .nested-grid {
@@ -273,17 +294,38 @@
 
   .options {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10px;
     background-color: var(--color-background);
-    border: 1px solid var(--color-text);
+    border: 1px solid var(--color-background);
     font-size: 12px;
     z-index: 5;
-    min-width: 120px;
+    min-width: 170px;
   }
 
   .options .option {
-    padding: 8px 4px;
+    font-size: 11px;
+    padding: 2px 10px;
+    margin: 2px 0;
+    border-top-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    text-transform: uppercase;
+    background-color: var(--color-menu);
+    display: flex;
+    gap: 16px;
+    justify-items: center;
+    align-self: center;
+    align-content: center;
+    align-items: center;
+  }
+
+  .options .option img {
+    max-height: 14px;
+    max-width: 14px;
+  }
+
+  .options .option:hover img {
+    filter: invert();
   }
 
   .options .option.destructive {
@@ -297,13 +339,13 @@
 
   .options .title {
     font-weight: bold;
-    border-bottom: 1px solid var(--color-text);
+    border-bottom: 1px solid var(--color-menu);
   }
 
   .options .option:hover {
     cursor: pointer;
-    background-color: rgba(44, 42, 42, 0.7);
-    color: var(--color-highlight);
+    background-color: var(--color-text);
+    color: var(--color-background);
   }
 
   button img {

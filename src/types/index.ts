@@ -1,3 +1,8 @@
+export interface Session {
+  id: string;
+  username: string;
+}
+
 export interface Profile {
   name: string;
   sizeX: number;
@@ -36,6 +41,7 @@ export interface SlotItem {
   tpl: string;
   slotId: string;
   parentId: string;
+  upd: any;
 }
 
 export interface GridItem {

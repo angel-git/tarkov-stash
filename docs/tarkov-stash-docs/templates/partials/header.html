@@ -1,0 +1,8 @@
+{% set current_path = current_path | default(value="/") %}
+{% set active_classname = "active" %}
+<header>
+<nav>
+  <a class="{% if current_path == "/" %} {{ active_classname }} {% endif %}" href={{ config.base_url }}>Home</a>
+  <a class="{% if current_path == "/stats/" %} {{ active_classname }} {% endif %}" href="{{ config.base_url }}/stats">Stats</a>
+</nav>
+</header>

@@ -1,0 +1,45 @@
+name: Build branch
+on:
+  workflow_dispatch:
+
+env:
+  APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
+
+jobs:
+  publish-tauri:
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Setup pnpm 7
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install frontend dependencies
+        run: pnpm install
+      - name: Build Portable Binaries (Windows)
+        run: |
+          pnpm tauri build
+          mkdir "dist/user/mods/tarkov-stash-${{ github.sha }}"
+          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e
+          Remove-Item -Path .\dist\user\mods\tarkov-stash-${{ github.sha }}\types -Force -Recurse
+          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
+          Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarkov-stash
+          path: ./tarkov-stash-${{ github.sha }}.zip

@@ -1,9 +1,6 @@
-use crate::ui_profile::ui_profile_serializer::Item;
-use crate::utils::hash_utils::generate;
-use crate::utils::item_utils::get_upd_props_from_item;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Error, Value};
 use std::collections::HashMap;
+
+pub use crate::prelude::*;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewItem {
@@ -12,6 +9,16 @@ pub struct NewItem {
     pub location_x: u16,
     #[serde(rename = "locationY")]
     pub location_y: u16,
+}
+
+struct LockedSlot {
+    _tpl: String,
+    slot_id: String,
+}
+
+struct Filter {
+    plate: String,
+    locked: bool,
 }
 
 pub fn update_item_amount(
@@ -176,11 +183,11 @@ pub fn add_new_item(
         // Clone the items array to make it mutable
         let mut cloned_items = items.clone();
 
-        let item_id = generate();
+        let item_id = hash_utils::generate();
         // TODO check if id already exists
 
         let bsg_item = bsg_items.get(template_id).expect("No item!");
-        let upd = get_upd_props_from_item(bsg_item);
+        let upd = item_utils::get_upd_props_from_item(bsg_item);
         let new_item_json = json!(
             {
                 "_id": item_id,
@@ -197,6 +204,23 @@ pub fn add_new_item(
             }
         );
         cloned_items.push(new_item_json);
+        if let Some(locked_slots) = get_locked_slots(template_id, bsg_items) {
+            locked_slots.iter().for_each(|locked_slot| {
+                let tpl = locked_slot._tpl.to_string();
+                let slot_id = locked_slot.slot_id.to_string();
+                let upd = item_utils::get_upd_props_from_item(
+                    bsg_items.get(tpl.as_str()).expect("No slot item"),
+                );
+                cloned_items.push(json!({
+                            "_id": hash_utils::generate(),
+                            "_tpl": tpl,
+                            "parentId": item_id,
+                            "slotId": slot_id,
+                            "upd": upd,
+                }));
+            })
+        }
+
         if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
             *root_items = Value::Array(cloned_items);
         }
@@ -244,7 +268,7 @@ pub fn add_new_preset(
                 if let Value::Object(item_obj) = item {
                     {
                         let old_id = item_obj.get("_id").unwrap().as_str().unwrap().to_string();
-                        let new_id = old_id_map.entry(old_id).or_insert(generate());
+                        let new_id = old_id_map.entry(old_id).or_insert(hash_utils::generate());
                         item_obj.insert(
                             "_id".to_string(),
                             Value::String((*new_id.clone()).parse().unwrap()),
@@ -273,7 +297,9 @@ pub fn add_new_preset(
                             .to_string();
 
                         {
-                            let new_parent = old_id_map.entry(old_parent).or_insert(generate());
+                            let new_parent = old_id_map
+                                .entry(old_parent)
+                                .or_insert(hash_utils::generate());
                             item_obj.insert(
                                 "parentId".to_string(),
                                 Value::String((*new_parent.clone()).parse().unwrap()),
@@ -336,11 +362,47 @@ fn get_insured_items(root: &mut Value) -> Option<&mut Vec<Value>> {
         .and_then(|v| v.as_array_mut())
 }
 
+fn get_locked_slots(
+    template_id: &str,
+    bsg_items: &HashMap<String, Value>,
+) -> Option<Vec<LockedSlot>> {
+    bsg_items
+        .get(template_id)
+        .map(|value| {
+            value
+                .pointer("/_props/Slots")
+                .and_then(|s| s.as_array())
+                .map(|slots| {
+                    slots
+                        .iter()
+                        .filter_map(|slot| {
+                            slot["_props"]["filters"]
+                                .as_array()?
+                                .iter()
+                                // TODO test again armor with plates
+                                .filter(|filter| filter["Plate"].as_str().is_some())
+                                .map(|filter| Filter {
+                                    plate: filter["Plate"].as_str().unwrap().to_string(),
+                                    locked: filter["locked"].as_bool().unwrap(),
+                                })
+                                .filter(|filter| filter.locked)
+                                .map(|filter| LockedSlot {
+                                    slot_id: slot["_name"].as_str().unwrap().to_string(),
+                                    _tpl: filter.plate.clone(),
+                                })
+                                .next()
+                        })
+                        .collect::<Vec<LockedSlot>>()
+                })
+        })
+        .unwrap_or(None)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
-        add_new_preset, delete_item, update_durability, update_item_amount,
+        add_new_preset, delete_item, get_locked_slots, update_durability, update_item_amount,
         update_spawned_in_session,
     };
     use crate::ui_profile::ui_profile_serializer::Item;
@@ -1105,5 +1167,30 @@ mod tests {
             mod_handguard.parent_id.as_ref().unwrap(),
             mod_gas_block._id.as_str()
         );
+    }
+
+    #[test]
+    fn should_return_all_locked_slots_for_avs() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let slots = get_locked_slots("544a5caa4bdc2d1a388b4568", &bsg_items_root).unwrap();
+        assert_eq!(slots.len(), 3);
+        let soft_armor_front = slots
+            .iter()
+            .find(|s| s.slot_id == "Soft_armor_front")
+            .unwrap();
+        assert_eq!(soft_armor_front._tpl, "6570e83223c1f638ef0b0ede");
+        let soft_armor_back = slots
+            .iter()
+            .find(|s| s.slot_id == "Soft_armor_back")
+            .unwrap();
+        assert_eq!(soft_armor_back._tpl, "6570e87c23c1f638ef0b0ee2");
+        let groin = slots.iter().find(|s| s.slot_id == "Groin").unwrap();
+        assert_eq!(groin._tpl, "6570e90b3a5689d85f08db97");
     }
 }

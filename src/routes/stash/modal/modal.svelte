@@ -45,7 +45,7 @@
   }
 
   dialog::backdrop {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
   }
 
   dialog > div {
@@ -63,7 +63,7 @@
 
   @keyframes zoom {
     from {
-      transform: scale(0.95);
+      transform: scale(0.8);
     }
     to {
       transform: scale(1);

@@ -2,6 +2,8 @@ name: 'publish'
 on:
   release:
     types: [created]
+env:
+  APTABASE_KEY: ${{ secrets.APTABASE_KEY }}
 
 jobs:
   publish-tauri:
@@ -32,6 +34,10 @@ jobs:
       - name: Build Portable Binaries (Windows)
         run: |
           pnpm tauri build
-          mv ./src-tauri/target/release/tarkov-stash.exe ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe
+          mkdir "dist/user/mods/tarkov-stash-${{ github.event.release.tag_name }}"
+          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.event.release.tag_name }} /e
+          Remove-Item -Path .\dist\user\mods\tarkov-stash-${{ github.event.release.tag_name }}\types -Force -Recurse
+          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.event.release.tag_name }}/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe
+          Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.event.release.tag_name }}.zip
       - name: Upload Portable Binaries (Windows)
-        run: bash -c 'gh release upload ${{ github.event.release.tag_name }} ./src-tauri/target/release/tarkov-stash-${{ github.event.release.tag_name }}_x64-portable.exe --clobber'
+        run: bash -c 'gh release upload ${{ github.event.release.tag_name }} ./tarkov-stash-${{ github.event.release.tag_name }}.zip --clobber'

@@ -138,13 +138,17 @@
   function isAnyItemInCategory(cat: string) {
     return parsedItems.some((item) => item.category === cat);
   }
+
+  function fallbackImage(ev: any) {
+    ev.target.src = `https://assets.tarkov.dev/${$addNewPreset.item?.encyclopedia}-base-image.png`;
+  }
 </script>
 
 <Modal bind:showModal onConfirm={handleConfirm} fullHeight={true}>
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add preset weapon into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add presets into stash <strong>(BETA!)</strong></h2>
 
   <div class="modal-content">
     <!-- svelte-ignore a11y-autofocus -->
@@ -177,6 +181,7 @@
           <img
             alt="item"
             src={`https://assets.tarkov.dev/${$addNewPreset.item.id}-base-image.png`}
+            on:error={fallbackImage}
           />
           <div class="details">
             {getDescription($addNewPreset.item.encyclopedia, locale)}

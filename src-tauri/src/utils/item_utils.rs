@@ -1,13 +1,10 @@
-use crate::spt::spt_bsg_items_serializer::load_item;
-use crate::spt::spt_profile_serializer::{
-    FireMode, Foldable, FoodDrink, InventoryItem, MedKit, Repairable, Togglable, UPD,
-};
-use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::prelude::*;
+
 pub fn calculate_item_size(
-    item: &InventoryItem,
-    items: &[InventoryItem],
+    item: &spt_profile_serializer::InventoryItem,
+    items: &[spt_profile_serializer::InventoryItem],
     bsg_items_root: &HashMap<String, Value>,
     is_container: bool,
 ) -> (u16, u16) {
@@ -18,7 +15,8 @@ pub fn calculate_item_size(
     };
     // copied from InventoryHelper.getSizeByInventoryItemHash
     let parent_item = bsg_items_root.get(item._tpl.as_str()).unwrap();
-    let parsed_parent_item = load_item(parent_item.to_string().as_str()).unwrap();
+    let parsed_parent_item =
+        spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).unwrap();
 
     let mut out_x = parsed_parent_item._props.width;
     let out_y = parsed_parent_item._props.height;
@@ -46,7 +44,8 @@ pub fn calculate_item_size(
 
     all_children.iter().for_each(|(_id, tpl)| {
         let bsg_item = bsg_items_root.get(tpl).unwrap();
-        let parsed_bsg_item = load_item(bsg_item.to_string().as_str()).unwrap();
+        let parsed_bsg_item =
+            spt_bsg_items_serializer::load_item(bsg_item.to_string().as_str()).unwrap();
 
         if parsed_bsg_item._props.extra_size_force_add {
             forced_up += parsed_bsg_item._props.extra_size_up;
@@ -84,7 +83,7 @@ pub fn calculate_item_size(
 
 fn find_all_ids_and_tpl_from_parent(
     parent_id: &str,
-    items: &[InventoryItem],
+    items: &[spt_profile_serializer::InventoryItem],
     slot_id: &str,
 ) -> Vec<(String, String)> {
     let mut result: Vec<(String, String)> = Vec::new();
@@ -103,39 +102,39 @@ fn find_all_ids_and_tpl_from_parent(
     result
 }
 
-pub fn get_upd_props_from_item(item: &Value) -> UPD {
+pub fn get_upd_props_from_item(item: &Value) -> spt_profile_serializer::UPD {
     let props = item.get("_props").expect("no _props for item");
 
-    let mut repairable: Option<Repairable> = None;
-    let mut togglable: Option<Togglable> = None;
-    let mut foldable: Option<Foldable> = None;
-    let mut fire_mode: Option<FireMode> = None;
-    let mut med_kit: Option<MedKit> = None;
-    let mut food_drink: Option<FoodDrink> = None;
+    let mut repairable: Option<spt_profile_serializer::Repairable> = None;
+    let mut togglable: Option<spt_profile_serializer::Togglable> = None;
+    let mut foldable: Option<spt_profile_serializer::Foldable> = None;
+    let mut fire_mode: Option<spt_profile_serializer::FireMode> = None;
+    let mut med_kit: Option<spt_profile_serializer::MedKit> = None;
+    let mut food_drink: Option<spt_profile_serializer::FoodDrink> = None;
 
     if let Some(max_durability) = props.get("MaxDurability") {
-        repairable = Some(Repairable {
-            max_durability: max_durability.as_u64().unwrap() as u16,
-            durability: max_durability.as_u64().unwrap() as u16,
+        repairable = Some(spt_profile_serializer::Repairable {
+            max_durability: Some(max_durability.as_u64().unwrap() as u16),
+            durability: Some(max_durability.as_u64().unwrap() as u16),
         });
     }
 
     if let Some(has_hinge) = props.get("HasHinge") {
         if has_hinge.as_bool().unwrap() {
-            togglable = Some(Togglable { on: true })
+            togglable = Some(spt_profile_serializer::Togglable { on: true })
         }
     }
 
     if let Some(is_foldable) = props.get("Foldable") {
         if is_foldable.as_bool().unwrap() {
-            foldable = Some(Foldable { folded: false })
+            foldable = Some(spt_profile_serializer::Foldable { folded: false })
         }
     }
 
     if let Some(fire_mode_array) = props.get("weapFireType") {
         if !fire_mode_array.as_array().unwrap().is_empty() {
             // this is fullauto in SPT
-            fire_mode = Some(FireMode {
+            fire_mode = Some(spt_profile_serializer::FireMode {
                 fire_mode: "single".to_string(),
             })
         }
@@ -144,17 +143,17 @@ pub fn get_upd_props_from_item(item: &Value) -> UPD {
     if let Some(max_hp) = props.get("MaxHpResource") {
         let max_hp_64 = max_hp.as_u64().unwrap();
         if max_hp_64 > 0 {
-            med_kit = Some(MedKit {
+            med_kit = Some(spt_profile_serializer::MedKit {
                 hp_resource: max_hp_64 as u16,
             });
 
             if let Some(_food_use_time) = props.get("foodUseTime") {
-                food_drink = Some(FoodDrink { hp_percent: 100 })
+                food_drink = Some(spt_profile_serializer::FoodDrink { hp_percent: 100 })
             }
         }
     }
 
-    UPD {
+    spt_profile_serializer::UPD {
         stack_objects_count: Some(1),
         spawned_in_session: Some(false),
         food_drink,
@@ -168,10 +167,52 @@ pub fn get_upd_props_from_item(item: &Value) -> UPD {
     }
 }
 
+pub fn is_headwear_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Headwear").is_some()
+}
+pub fn is_vest_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Vest").is_some()
+}
+
+pub fn is_armor_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Armor").is_some()
+}
+
+pub fn is_ammo_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Ammo").is_some()
+}
+
+pub fn is_weapon_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Weapon").is_some()
+}
+
+pub fn is_magazine_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "Magazine").is_some()
+}
+
+fn find_parent_by_name(
+    bsg_items_root: &HashMap<String, Value>,
+    current_id: &str,
+    target_name: &str,
+) -> Option<Value> {
+    if let Some(node) = bsg_items_root.get(current_id) {
+        let name = node.get("_name").unwrap().as_str().unwrap();
+        if name == target_name {
+            Some(node.clone())
+        } else if let Some(parent_id) = node.get("_parent") {
+            find_parent_by_name(bsg_items_root, parent_id.as_str().unwrap(), target_name)
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::{load_profile, Foldable, InventoryItem, UPD};
-    use crate::utils::item_utils::{calculate_item_size, get_upd_props_from_item};
+    use crate::utils::item_utils::{calculate_item_size, get_upd_props_from_item, is_armor_item};
     use serde_json::Value;
     use std::collections::HashMap;
 
@@ -383,12 +424,27 @@ mod tests {
         let upd = get_upd_props_from_item(&item);
         assert_eq!(upd.stack_objects_count, Some(1));
         assert_eq!(upd.spawned_in_session, Some(false));
-        assert_eq!(upd.repairable.as_ref().unwrap().durability, 100);
-        assert_eq!(upd.repairable.as_ref().unwrap().max_durability, 100);
+        assert_eq!(upd.repairable.as_ref().unwrap().durability.unwrap(), 100);
+        assert_eq!(
+            upd.repairable.as_ref().unwrap().max_durability.unwrap(),
+            100
+        );
         assert!(!upd.foldable.as_ref().unwrap().folded);
         assert!(upd.togglable.as_ref().unwrap().on);
         assert_eq!(upd.fire_mode.unwrap().fire_mode, "single".to_string());
         assert_eq!(upd.med_kit.unwrap().hp_resource, 50);
         assert_eq!(upd.food_drink.unwrap().hp_percent, 100);
+    }
+
+    #[test]
+    fn should_find_paca_as_armor() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(is_armor_item("5648a7494bdc2d9d488b4583", &bsg_items_root));
     }
 }

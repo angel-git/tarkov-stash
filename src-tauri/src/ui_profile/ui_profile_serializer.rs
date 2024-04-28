@@ -1,13 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-
-use crate::spt;
-use crate::spt::spt_bsg_items_serializer::load_item;
-use crate::spt::spt_profile_serializer::{InventoryItem, Location, TarkovProfile};
-use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
-use crate::utils::item_utils::calculate_item_size;
+pub use crate::prelude::*;
+use crate::spt::spt_profile_serializer::TarkovProfile;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -67,7 +61,7 @@ pub struct Item {
 pub struct PresetItem {
     pub id: String,
     pub encyclopedia: Option<String>,
-    pub items: Vec<InventoryItem>,
+    pub items: Vec<spt_profile_serializer::InventoryItem>,
     pub width: u16,
     pub height: u16,
 }
@@ -76,10 +70,9 @@ pub struct PresetItem {
 pub struct SlotItem {
     pub id: String,
     pub tpl: String,
-    #[serde(rename = "parentId")]
-    pub parent_id: String,
     #[serde(rename = "slotId")]
     pub slot_id: String,
+    pub upd: Option<spt_profile_serializer::UPD>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -140,25 +133,10 @@ pub fn convert_profile_to_ui(
     globals: &HashMap<String, Value>,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
-    let stash_bonuses = &tarkov_profile
-        .characters
-        .pmc
-        .bonuses
-        .iter()
-        .filter(|b| b.t.eq("StashSize"))
-        .count();
-    let stash_size_y = if stash_bonuses <= &1 {
-        28
-    } else if stash_bonuses == &2 {
-        38
-    } else if stash_bonuses == &3 {
-        48
-    } else {
-        68
-    };
+    let stash_size_y = calculate_stash_size_y(&tarkov_profile);
 
     let items: Vec<Item> = parse_items(
-        &tarkov_profile.characters.pmc.inventory.items,
+        tarkov_profile.characters.pmc.inventory.items,
         bsg_items_root,
         stash.as_str(),
         "hideout",
@@ -243,12 +221,12 @@ pub fn convert_profile_to_ui(
         bsg_items,
         spt_version: None,
         locale: locale_root.clone(),
-        preset_items: find_all_item_presets(globals, bsg_items_root),
+        preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
     })
 }
 
 fn parse_items(
-    profile_items: &Vec<InventoryItem>,
+    profile_items: Vec<spt_profile_serializer::InventoryItem>,
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
@@ -273,11 +251,12 @@ fn parse_items(
                 item._id
             ));
         }
-        let location_in_stash = if let Location::LocationInStash(xy) = location.unwrap() {
-            xy
-        } else {
-            panic!("oh no, wrong item: {}", item._id);
-        };
+        let location_in_stash =
+            if let spt_profile_serializer::Location::LocationInStash(xy) = location.unwrap() {
+                xy
+            } else {
+                panic!("oh no, wrong item: {}", item._id);
+            };
 
         let bsg_item_option = get_bsg_item(item, bsg_items_root);
         if bsg_item_option.is_none() {
@@ -299,7 +278,7 @@ fn parse_items(
                 let grid_name = &grid._name;
 
                 let items_inside_container = parse_items(
-                    profile_items,
+                    profile_items.clone(),
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
@@ -317,28 +296,11 @@ fn parse_items(
             }
         }
 
-        let has_slots =
-            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
-
-        let mut slot_items: Option<HashSet<SlotItem>> = None;
-        if has_slots {
-            slot_items = Some(HashSet::new());
-            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
-                let all_slots_from_item = find_all_slots_from_parent(
-                    item._id.as_str(),
-                    profile_items,
-                    bsg_t._name.as_str(),
-                );
-
-                slot_items.as_mut().unwrap().extend(all_slots_from_item);
-            })
-        }
-
         let mut amount = 1;
         let mut spawned_in_session = false;
         let mut resource = None;
-
-        let max_resource = None
+        // TODO calculate max resource from slots
+        let mut max_resource = None
             .or(bsg_item._props.max_resource)
             .or(bsg_item._props.max_hp_resource)
             .or(bsg_item._props.maximum_number_of_usages)
@@ -362,7 +324,7 @@ fn parse_items(
                     resource = Some(udp.resource.as_ref().unwrap().value);
                 }
                 if udp.repairable.is_some() {
-                    resource = Some(udp.repairable.as_ref().unwrap().durability);
+                    resource = udp.repairable.as_ref().unwrap().durability;
                     // we are showing the real max durability, not the current repaired one, uncomment the following code to show that
                     // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
                 }
@@ -375,12 +337,51 @@ fn parse_items(
             }
         }
 
+        let has_slots =
+            bsg_item._props.slots.is_some() && !bsg_item._props.slots.as_ref().unwrap().is_empty();
+
+        let mut slot_items: Option<HashSet<SlotItem>> = None;
+        if has_slots {
+            slot_items = Some(HashSet::new());
+            bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
+                let all_slots_from_item = find_all_slots_from_parent(
+                    item._id.as_str(),
+                    &profile_items,
+                    bsg_t._name.as_str(),
+                );
+
+                slot_items.as_mut().unwrap().extend(all_slots_from_item);
+            });
+
+            if let Some(ref slot_items_set) = slot_items {
+                let mut slot_resource = 0;
+                let mut slot_max_resource = 0;
+
+                slot_items_set.iter().for_each(|slot_item| {
+                    if let Some(slot_upd) = slot_item.upd.as_ref() {
+                        if let Some(repairable) = slot_upd.repairable.as_ref() {
+                            if let Some(durability) = repairable.durability {
+                                slot_resource += durability;
+                            }
+                            if let Some(max_durability) = repairable.max_durability {
+                                slot_max_resource += max_durability;
+                            }
+                        }
+                    }
+                });
+
+                resource = Some(slot_resource);
+                max_resource = Some(slot_max_resource);
+            }
+        }
+
         let (size_x, size_y) =
-            calculate_item_size(item, profile_items, bsg_items_root, is_container);
+            item_utils::calculate_item_size(item, &profile_items, bsg_items_root, is_container);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
-        let preset_image_id = find_id_from_encyclopedia(item._tpl.as_str(), globals);
+        let preset_image_id =
+            global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals, bsg_items_root);
 
         let i = Item {
             id: item._id.to_string(),
@@ -410,7 +411,7 @@ fn parse_items(
 
 pub fn find_all_slots_from_parent(
     parent_id: &str,
-    items: &[InventoryItem],
+    items: &[spt_profile_serializer::InventoryItem],
     slot_id: &str,
 ) -> HashSet<SlotItem> {
     let mut result: HashSet<SlotItem> = HashSet::new();
@@ -421,12 +422,12 @@ pub fn find_all_slots_from_parent(
                 let id = i._id.to_string();
                 let tpl = i._tpl.to_string();
                 let slot_id = i.slot_id.as_ref().unwrap().to_string();
-                let parent_id = i.parent_id.as_ref().unwrap().to_string();
+                let upd = i.upd.as_ref().cloned();
                 result.insert(SlotItem {
                     id,
                     tpl,
                     slot_id,
-                    parent_id,
+                    upd,
                 });
             }
 
@@ -439,17 +440,51 @@ pub fn find_all_slots_from_parent(
 }
 
 fn get_bsg_item(
-    item: &InventoryItem,
+    item: &spt_profile_serializer::InventoryItem,
     bsg_items_root: &HashMap<String, Value>,
-) -> Option<spt::spt_bsg_items_serializer::BsgItem> {
+) -> Option<spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
-    load_item(parent_item.to_string().as_str()).ok()
+    spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
+}
+
+fn calculate_stash_size_y(tarkov_profile: &TarkovProfile) -> u16 {
+    let stash_bonuses = &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .filter(|b| b.t.eq("StashSize"))
+        .count();
+    let mut stash_size_y = if stash_bonuses <= &1 {
+        28
+    } else if stash_bonuses == &2 {
+        38
+    } else if stash_bonuses == &3 {
+        48
+    } else {
+        68
+    };
+    let extra_rows = match &tarkov_profile
+        .characters
+        .pmc
+        .bonuses
+        .iter()
+        .find(|b| b.t.eq("StashRows"))
+        .map(|b| b.value.as_ref().unwrap().as_u64().unwrap() as u16)
+    {
+        Some(value) => *value,
+        _ => 0,
+    };
+
+    stash_size_y += extra_rows;
+    stash_size_y
 }
 
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
 
+    use crate::prelude::convert_profile_to_ui;
     use serde_json::Value;
 
     use crate::spt::spt_profile_serializer::{load_profile, InventoryItem};
@@ -463,7 +498,34 @@ mod tests {
             ))
             .as_ref(),
         );
+
         assert!(tarkov_profile.is_ok())
+    }
+
+    #[test]
+    fn should_calculate_item_stash_bonuses() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/380-bonus-stash.json"
+            ))
+            .as_ref(),
+        );
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(tarkov_profile.is_ok());
+        let profile_ui = convert_profile_to_ui(
+            tarkov_profile.unwrap(),
+            &bsg_items_root,
+            &HashMap::new(),
+            &HashMap::new(),
+        );
+        assert!(profile_ui.is_ok());
+        assert_eq!(profile_ui.unwrap().size_y, 70);
     }
 
     #[test]
@@ -508,7 +570,7 @@ mod tests {
         let stash = &tarkov_profile.characters.pmc.inventory.stash;
 
         let items = parse_items(
-            &tarkov_profile.characters.pmc.inventory.items,
+            tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
             stash.as_str(),
             "hideout",
@@ -549,7 +611,7 @@ mod tests {
         let stash = &tarkov_profile.characters.pmc.inventory.stash;
 
         let items = parse_items(
-            &tarkov_profile.characters.pmc.inventory.items,
+            tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
             stash.as_str(),
             "hideout",
