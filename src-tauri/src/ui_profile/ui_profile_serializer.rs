@@ -133,7 +133,7 @@ pub fn convert_profile_to_ui(
     globals: &HashMap<String, Value>,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
-    let stash_size_y = calculate_stash_size_y(&tarkov_profile);
+    let (stash_size_x, stash_size_y) = calculate_stash_size(&tarkov_profile, bsg_items_root);
 
     let items: Vec<Item> = parse_items(
         tarkov_profile.characters.pmc.inventory.items,
@@ -215,7 +215,7 @@ pub fn convert_profile_to_ui(
 
     Ok(UIProfile {
         name: tarkov_profile.characters.pmc.info.nickname,
-        size_x: 10,
+        size_x: stash_size_x,
         size_y: stash_size_y,
         items,
         bsg_items,
@@ -447,23 +447,43 @@ fn get_bsg_item(
     spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
 }
 
-fn calculate_stash_size_y(tarkov_profile: &TarkovProfile) -> u16 {
-    let stash_bonuses = &tarkov_profile
+fn calculate_stash_size(
+    tarkov_profile: &TarkovProfile,
+    bsg_items_root: &HashMap<String, Value>,
+) -> (u16, u16) {
+    let grids = tarkov_profile
         .characters
         .pmc
         .bonuses
         .iter()
         .filter(|b| b.t.eq("StashSize"))
-        .count();
-    let mut stash_size_y = if stash_bonuses <= &1 {
-        28
-    } else if stash_bonuses == &2 {
-        38
-    } else if stash_bonuses == &3 {
-        48
-    } else {
-        68
-    };
+        .filter_map(|b| bsg_items_root.get(b.template_id.as_ref().unwrap().as_str()))
+        .filter_map(|bonus_items| bonus_items.pointer("/_props/Grids").unwrap().as_array());
+
+    let stash_size_y: u16 = grids
+        .clone()
+        .flatten()
+        .filter_map(|stash_bonuses_grid| {
+            stash_bonuses_grid
+                .pointer("/_props/cellsV")
+                .unwrap()
+                .as_u64()
+        })
+        .max()
+        .unwrap() as u16;
+
+    let stash_size_x: u16 = grids
+        .clone()
+        .flatten()
+        .filter_map(|stash_bonuses_grid| {
+            stash_bonuses_grid
+                .pointer("/_props/cellsH")
+                .unwrap()
+                .as_u64()
+        })
+        .max()
+        .unwrap() as u16;
+
     let extra_rows = match &tarkov_profile
         .characters
         .pmc
@@ -476,8 +496,7 @@ fn calculate_stash_size_y(tarkov_profile: &TarkovProfile) -> u16 {
         _ => 0,
     };
 
-    stash_size_y += extra_rows;
-    stash_size_y
+    (stash_size_x, stash_size_y + extra_rows)
 }
 
 #[cfg(test)]
@@ -525,7 +544,8 @@ mod tests {
             &HashMap::new(),
         );
         assert!(profile_ui.is_ok());
-        assert_eq!(profile_ui.unwrap().size_y, 70);
+        assert_eq!(profile_ui.as_ref().unwrap().size_y, 70);
+        assert_eq!(profile_ui.as_ref().unwrap().size_x, 10);
     }
 
     #[test]

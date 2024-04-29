@@ -59,6 +59,8 @@ pub struct Bonuses {
     pub t: String,
     #[serde(rename = "value")]
     pub value: Option<Value>,
+    #[serde(rename = "templateId")]
+    pub template_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

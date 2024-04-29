@@ -52,7 +52,7 @@
   }
 
   function areItemsAreOutsideBounds(p: Profile) {
-    return p.items.some((i) => i.y >= p.sizeY);
+    return p.items.some((i) => i.y >= p.sizeY || i.x >= p.sizeX);
   }
 </script>
 
