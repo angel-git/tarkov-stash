@@ -56,25 +56,26 @@ fn smethod_0(
             // TODO no idea how to figure out what hash_sum function to call here, none work properly :)
 
             let mut num2 = 0;
-            if is_slack_slot(top_level_item._tpl.as_str(), bsg_items_root) {
-                println!("parent is_slack_slot");
-
-                num2 = hash_seed ^ get_hash_sum_slack_slot(child, items, bsg_items_root);
-            }
+            // if is_slack_slot(top_level_item._tpl.as_str(), bsg_items_root) {
+            //     println!("parent is_slack_slot");
+            //
+            //     num2 = hash_seed ^ get_hash_sum_slack_slot(child, items, bsg_items_root);
+            // }
             // if is_ammo_box(top_level_item._tpl.as_str(), bsg_items_root) {
             //     println!("parent is ammo box");
             //     num2 = hash_seed ^ get_hash_sum_ammo_box(child, items, bsg_items_root);
             // }
             // else {
             // println!("WARNING NO AMMO BOX");
-            // num2 = hash_seed ^ get_hash_sum(child, items, bsg_items_root);
+            num2 = hash_seed ^ get_hash_sum(child, items, bsg_items_root);
             // }
 
             // TODO GClass2579 is StackSlot
+            // this is true for magazines
             // if slot is StackSlot {
-            // let num3 = num + 1;
-            // num = num3;
-            // num2 ^= 2879 * num;
+            let num3 = num + 1;
+            num = num3;
+            num2 ^= 2879 * num;
             // }
             hashes.extend(smethod_0(child, items, bsg_items_root, num2));
         })
@@ -152,8 +153,9 @@ fn get_hash_sum(
     //     item.slot_id.as_ref().unwrap().as_str(),
     //     bsg_items_root,
     // );
-    let container_id = Some(parent_item._id);
+    // let container_id = Some(parent_item._id);
     // let container_id = Some(item._id.to_string());
+    let container_id = item.slot_id.as_ref();
     if container_id.is_none() {
         println!("WARNING container_id.is_none");
         return 1;
@@ -164,9 +166,14 @@ fn get_hash_sum(
     );
     let mut num =
         2777_i32.wrapping_mul(get_deterministic_hash_code(container_id.unwrap().as_str()));
+    // -1739552888
+    println!("num1 {}", num);
     num = num.wrapping_add(
         7901_i32.wrapping_mul(get_deterministic_hash_code(parent_item._tpl.as_str())),
+        // -1250640548
     );
+    println!("num2 {}", num);
+
     // int num = 2777 * Container.ID.GetHashCode();
     // string text = Container.ParentItem?.TemplateId;
     // if (text != null)
@@ -954,7 +961,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -1812714654)
+        assert_eq!(hash, -1812714602)
     }
 
     #[test]
@@ -989,6 +996,6 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -1812714602)
+        assert_eq!(hash, -1812714654)
     }
 }
