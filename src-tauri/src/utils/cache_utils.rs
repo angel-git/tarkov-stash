@@ -73,9 +73,12 @@ fn smethod_0(
             // TODO GClass2579 is StackSlot
             // this is true for magazines
             // if slot is StackSlot {
-            let num3 = num + 1;
-            num = num3;
-            num2 ^= 2879 * num;
+            if is_slack_slot(top_level_item._tpl.as_str(), bsg_items_root) {
+                let num3 = num + 1;
+                num = num3;
+                num2 ^= 2879 * num;
+            }
+
             // }
             hashes.extend(smethod_0(child, items, bsg_items_root, num2));
         })
@@ -200,15 +203,6 @@ fn is_slack_slot(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
 fn is_ammo_box(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     // TODO
     false
-    // let container = bsg_items_root.get(tpl).unwrap();
-    //
-    // container
-    //     .get("_props")
-    //     .unwrap()
-    //     .get("Cartridges")
-    //     .and_then(|i| i.as_array())
-    //     .map(|i| !i.is_empty())
-    //     .unwrap_or(false)
 }
 
 fn find_slot_or_cartridge_id_by_name(
@@ -997,5 +991,69 @@ mod tests {
             &bsg_items_root,
         );
         assert_eq!(hash, -1812714654)
+    }
+
+    #[test]
+    fn should_get_hash_from_APB_pistol_with_APS() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
+                .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let ammo = tarkov_profile
+            .characters
+            .pmc
+            .inventory
+            .items
+            .iter()
+            .find(|item| item._id == "9bfff772bf10230806c6f31a")
+            .unwrap();
+
+        let hash = get_item_hash(
+            ammo,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(hash, -985595754)
+    }
+
+    #[test]
+    fn should_get_hash_from_APB_pistol_full() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
+                .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let ammo = tarkov_profile
+            .characters
+            .pmc
+            .inventory
+            .items
+            .iter()
+            .find(|item| item._id == "034a21c7945c435e47467760")
+            .unwrap();
+
+        let hash = get_item_hash(
+            ammo,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(hash, -655496610)
     }
 }

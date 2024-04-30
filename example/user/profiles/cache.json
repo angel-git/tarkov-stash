@@ -1134,6 +1134,72 @@
 						"slotId": "Pockets"
 					},
 					{
+						"_id": "9bfff772bf10230806c6f31a",
+						"_tpl": "5abccb7dd8ce87001773e277",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 0,
+							"y": 0
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout"
+					},
+					{
+						"_id": "57084ad33078faf42b97979b",
+						"_tpl": "5a17fc70fcdbcb0176308b3d",
+						"parentId": "9bfff772bf10230806c6f31a",
+						"slotId": "mod_pistol_grip"
+					},
+					{
+						"_id": "034a21c7945c435e47467760",
+						"_tpl": "5abccb7dd8ce87001773e277",
+						"location": {
+							"x": 2,
+							"y": 0,
+							"r": "Horizontal",
+							"isSearched": true
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout"
+					},
+					{
+						"_id": "d08e891f408142421f02f3ba",
+						"_tpl": "5a17fb03fcdbcbcae668728f",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_magazine"
+					},
+					{
+						"_id": "23450e8f07e6abd608cab38c",
+						"_tpl": "5a17fb9dfcdbcbcae6687291",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_stock"
+					},
+					{
+						"_id": "970c0db2b1ac118a872df4d6",
+						"_tpl": "5a17fc70fcdbcb0176308b3d",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_pistol_grip"
+					},
+					{
+						"_id": "63fd2b5ab14e8f2f7d3fcdef",
+						"_tpl": "5aba62f8d8ce87001943946b",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_sight_front"
+					},
+					{
+						"_id": "a6c7c3f8d5c4c796f55b44e9",
+						"_tpl": "5aba639ed8ce8700182ece67",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_sight_rear"
+					},
+					{
+						"_id": "feb28a0c2ae9e85b352056e6",
+						"_tpl": "5abcc328d8ce8700194394f3",
+						"parentId": "034a21c7945c435e47467760",
+						"slotId": "mod_muzzle"
+					},
+					{
 						"_id": "578bf457daf021257cfe03a1",
 						"_tpl": "5af0454c86f7746bf20992e8",
 						"location": {
