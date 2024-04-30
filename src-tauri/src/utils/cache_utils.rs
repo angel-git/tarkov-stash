@@ -226,19 +226,6 @@ fn is_foldable_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool 
     }
 }
 
-fn get_togglable_item(item: &InventoryItem, items: &[InventoryItem]) -> Option<InventoryItem> {
-    let attachments = get_children(item, items);
-    attachments
-        .iter()
-        .find(|a| {
-            a.upd
-                .as_ref()
-                .map(|a| a.togglable.is_some())
-                .unwrap_or(false)
-        })
-        .cloned()
-}
-
 fn get_parent_item(item: &InventoryItem, items: &[InventoryItem]) -> InventoryItem {
     items
         .iter()
@@ -277,7 +264,7 @@ fn find_parent_by_name(
         if name == target_name {
             Some(node.clone())
         } else if let Some(parent_id) = node.get("_parent") {
-            find_parent_by_name(bsg_items_root, &parent_id.as_str().unwrap(), target_name)
+            find_parent_by_name(bsg_items_root, parent_id.as_str().unwrap(), target_name)
         } else {
             None
         }
