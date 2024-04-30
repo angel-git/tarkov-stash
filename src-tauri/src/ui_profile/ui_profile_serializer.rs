@@ -409,7 +409,7 @@ fn parse_items(
     Ok(items)
 }
 
-pub fn find_all_slots_from_parent(
+fn find_all_slots_from_parent(
     parent_id: &str,
     items: &[spt_profile_serializer::InventoryItem],
     slot_id: &str,
