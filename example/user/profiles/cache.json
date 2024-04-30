@@ -1134,6 +1134,147 @@
 						"slotId": "Pockets"
 					},
 					{
+						"_id": "066450d9409fe3d72804d77b",
+						"_tpl": "5c0558060db834001b735271",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 6,
+							"y": 0
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout",
+						"upd": {
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1,
+							"Togglable": {
+								"On": true
+							}
+						}
+					},
+					{
+						"_id": "e9ce822f5f533067a2de9dce",
+						"_tpl": "5e00c1ad86f774747333222c",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 0,
+							"y": 3
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout"
+					},
+					{
+						"_id": "074710bc82b1504ee84b13ea",
+						"_tpl": "6551fec55d0cf82e51014288",
+						"parentId": "e9ce822f5f533067a2de9dce",
+						"slotId": "helmet_top"
+					},
+					{
+						"_id": "47ecc277d917288030640a32",
+						"_tpl": "655200ba0ef76cf7be09d528",
+						"parentId": "e9ce822f5f533067a2de9dce",
+						"slotId": "helmet_back"
+					},
+					{
+						"_id": "a85b234fc87a39e8579c4ec7",
+						"_tpl": "5c0558060db834001b735271",
+						"parentId": "e9ce822f5f533067a2de9dce",
+						"slotId": "mod_nvg",
+						"upd": {
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1,
+							"Togglable": {
+								"On": true
+							}
+						}
+					},
+					{
+						"_id": "1abb8072c666c0b5ec8765a9",
+						"_tpl": "5e00c1ad86f774747333222c",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 2,
+							"y": 3
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout"
+					},
+					{
+						"_id": "19397379456c14aff029d5e8",
+						"_tpl": "6551fec55d0cf82e51014288",
+						"parentId": "1abb8072c666c0b5ec8765a9",
+						"slotId": "helmet_top"
+					},
+					{
+						"_id": "ef6ae9b44089f15348f0ecd0",
+						"_tpl": "655200ba0ef76cf7be09d528",
+						"parentId": "1abb8072c666c0b5ec8765a9",
+						"slotId": "helmet_back"
+					},
+					{
+						"_id": "a35acada12476484f091d1d1",
+						"_tpl": "5c0558060db834001b735271",
+						"parentId": "1abb8072c666c0b5ec8765a9",
+						"slotId": "mod_nvg",
+						"upd": {
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1,
+							"Togglable": {
+								"On": false
+							}
+						}
+					},
+					{
+						"_id": "3c180f98cc8a8dafd53b5c81",
+						"_tpl": "5e00c1ad86f774747333222c",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 4,
+							"y": 3
+						},
+						"parentId": "5fe49a0e2694b0755a504876",
+						"slotId": "hideout",
+						"upd": {
+							"Repairable": {
+								"Durability": 0,
+								"MaxDurability": 0
+							},
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1
+						}
+					},
+					{
+						"_id": "dbc766f8d87828874edf29c8",
+						"_tpl": "6551fec55d0cf82e51014288",
+						"parentId": "3c180f98cc8a8dafd53b5c81",
+						"slotId": "helmet_top",
+						"upd": {
+							"Repairable": {
+								"Durability": 27,
+								"MaxDurability": 27
+							},
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1
+						}
+					},
+					{
+						"_id": "a0c62b6dd715b9449036f2f2",
+						"_tpl": "655200ba0ef76cf7be09d528",
+						"parentId": "3c180f98cc8a8dafd53b5c81",
+						"slotId": "helmet_back",
+						"upd": {
+							"Repairable": {
+								"Durability": 27,
+								"MaxDurability": 27
+							},
+							"SpawnedInSession": false,
+							"StackObjectsCount": 1
+						}
+					},
+					{
 						"_id": "86954af93a5c62d177e95ecf",
 						"_tpl": "5ac4cd105acfc40016339859",
 						"location": {
