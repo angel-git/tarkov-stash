@@ -45,7 +45,7 @@ fn smethod_0(
     let children_items = get_children(top_level_item, items);
 
     if !children_items.is_empty() {
-        hash_seed *= 6529;
+        hash_seed = hash_seed.wrapping_mul(6529);
         println!("has_cartridges_or_slots {:?}", children_items);
         let mut num = 0;
         children_items.iter().for_each(|child| {
@@ -300,6 +300,21 @@ fn smethod_1(
     // {
     //     num ^= 23 + (itemComponent2.Folded ? 1 : 0) << 1;
     // }
+    // if let Some(foldable_item) = get_foldable_item(item, items, bsg_items_root) {
+    //     let is_folded = foldable_item.upd.and_then(|a| a.foldable).map(|a| a.folded).unwrap_or(false);
+    //     hash ^= 23 + (if is_folded {1} else {0}) << 1;
+    // }
+
+    if is_foldable_item(&item._tpl, bsg_items_root) {
+        let is_folded: bool = item
+            .upd
+            .as_ref()
+            .and_then(|a| a.foldable.clone())
+            .map(|a| a.folded)
+            .unwrap_or(false);
+        hash ^= (23 + (if is_folded { 1 } else { 0 })) << 1;
+    }
+
     if is_magazine_item(&item._tpl, bsg_items_root) {
         println!("is magazine item, id: {}", &item._id);
         // TODO do we have to calculate here all bullets inside??? i don't think so...
@@ -561,6 +576,53 @@ fn is_weapon_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
 
 fn is_magazine_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     find_parent_by_name(bsg_items_root, tpl, "Magazine").is_some()
+}
+
+fn is_foldable_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    let node = bsg_items_root.get(tpl).unwrap();
+    if let Some(fold) = node
+        .get("_props")
+        .and_then(|p| p.get("Foldable").and_then(|fold| fold.as_bool()))
+    {
+        fold
+    } else {
+        false
+    }
+}
+
+// fn is_folded_item(item: &InventoryItem) -> bool {
+//     item.upd
+//     let node = bsg_items_root.get(tpl).unwrap();
+//     if let Some(fold) = node
+//         .get("_props")
+//         .and_then(|p| p.get("Foldable").and_then(|fold| fold.as_bool()))
+//     {
+//         fold
+//     } else {
+//         false
+//     }
+// }
+
+fn get_foldable_item(
+    item: &InventoryItem,
+    items: &[InventoryItem],
+    bsg_items_root: &HashMap<String, Value>,
+) -> Option<InventoryItem> {
+    let node = bsg_items_root.get(item._tpl.as_str()).unwrap();
+
+    if let Some(foldedSlot) = node.pointer("/_props/FoldedSlot") {
+        let attachments = get_all_sieblings_from_same_parent(item, items);
+        if let Some(foldable_item) = attachments.iter().find(|a| {
+            a.slot_id.as_ref().is_some()
+                && a.slot_id.as_ref().unwrap() == foldedSlot.as_str().unwrap()
+        }) {
+            Some(foldable_item.clone())
+        } else {
+            None
+        }
+    } else {
+        return None;
+    }
 }
 //
 // // TODO delete?
@@ -1055,5 +1117,69 @@ mod tests {
             &bsg_items_root,
         );
         assert_eq!(hash, -655496610)
+    }
+
+    #[test]
+    fn should_get_hash_from_AK74M_not_folded() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
+                .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let ammo = tarkov_profile
+            .characters
+            .pmc
+            .inventory
+            .items
+            .iter()
+            .find(|item| item._id == "f01ff72491f7ab474fc552e2")
+            .unwrap();
+
+        let hash = get_item_hash(
+            ammo,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(hash, 1318880480)
+    }
+
+    #[test]
+    fn should_get_hash_from_AK74M_folded() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
+                .as_ref(),
+        )
+        .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+
+        let ammo = tarkov_profile
+            .characters
+            .pmc
+            .inventory
+            .items
+            .iter()
+            .find(|item| item._id == "86954af93a5c62d177e95ecf")
+            .unwrap();
+
+        let hash = get_item_hash(
+            ammo,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(hash, 1318880510)
     }
 }
