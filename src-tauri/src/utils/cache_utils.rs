@@ -206,7 +206,11 @@ fn smethod_1(
             .iter()
             .filter(|i| i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == item._id.as_str())
             .fold(0, |acc, i| {
-                acc + i.upd.as_ref().unwrap().stack_objects_count.unwrap()
+                if i.upd.is_some() {
+                    acc + i.upd.as_ref().unwrap().stack_objects_count.unwrap()
+                } else {
+                    acc
+                }
             });
 
         let max_visible_ammo = get_max_visible_ammo(
