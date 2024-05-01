@@ -20,6 +20,8 @@ pub struct ServerProps {
 pub struct ServerInfo {
     pub version: String,
     pub path: String,
+    #[serde(rename = "modVersion")]
+    pub mod_version: String,
 }
 
 impl fmt::Display for ServerProps {
