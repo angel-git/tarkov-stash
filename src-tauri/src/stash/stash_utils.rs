@@ -1138,8 +1138,6 @@ mod tests {
             .expect("Items missing");
 
         let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
-        println!("items {:?}", items);
-        // main item tpl: 583990e32459771419544dd2, it should have location, upd, parentId and slot
         let main = items
             .iter()
             .find(|i| i._tpl == "583990e32459771419544dd2")

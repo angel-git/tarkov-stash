@@ -34,7 +34,11 @@
     const backgroundImageUrl = item.presetImageId
       ? `https://assets.tarkov.dev/${item.presetImageId}-base-image.png`
       : `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
-    return `${transform.rotate}; ${transform.translate} ; background-image: url(${backgroundImageUrl}); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
+    if (item.cacheImage) {
+      return `${transform.rotate}; ${transform.translate} ; background-image: url(${item.cacheImage}); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
+    } else {
+      return `${transform.rotate}; ${transform.translate} ; background-image: url(${backgroundImageUrl}); background-repeat: no-repeat; width: ${width}px; height: ${height}px;`;
+    }
   }
 </script>
 

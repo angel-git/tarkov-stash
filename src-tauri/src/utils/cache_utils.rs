@@ -1,10 +1,87 @@
 use std::collections::HashMap;
+use std::fs;
+use std::fs::File;
+use std::io::Read;
+use std::path::PathBuf;
 
-use serde_json::Value;
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
+use log::{info, warn};
+use serde_json::{Map, Value};
 
 use crate::spt::spt_profile_serializer::InventoryItem;
 
-pub fn get_item_hash(
+pub fn load_cache_icon_index_file() -> Option<Map<String, Value>> {
+    let cache_index_file = get_cache_index_path();
+    let exists = cache_index_file.exists();
+    if !exists {
+        warn!(
+            "Couldn't not load images cache file: {}",
+            cache_index_file.display()
+        );
+        return None;
+    }
+    if cache_index_file.exists() {
+        let index_json = fs::read_to_string(cache_index_file).unwrap();
+        let index_json_value: Value = serde_json::from_str(index_json.as_str()).unwrap();
+        Some(index_json_value.as_object().unwrap().clone())
+    } else {
+        None
+    }
+}
+
+pub fn load_image_from_cache(
+    item: &InventoryItem,
+    items: &[InventoryItem],
+    bsg_items_root: &HashMap<String, Value>,
+    index_cache: &Map<String, Value>,
+) -> Option<String> {
+    let hash = get_item_hash(item, items, bsg_items_root);
+    match index_cache.get(hash.to_string().as_str()) {
+        Some(index) => load_image(index.as_u64().unwrap().to_string().as_str()),
+        None => {
+            warn!(
+                "Couldn't find hash {} for item {} in cache index.json",
+                hash, item._id
+            );
+            None
+        }
+    }
+}
+
+fn get_cache_index_path() -> PathBuf {
+    get_cache_path().join("index.json")
+}
+
+fn get_cache_path() -> PathBuf {
+    let temp_dir = std::env::temp_dir();
+    temp_dir
+        .join("Battlestate Games")
+        .join("EscapeFromTarkov")
+        .join("Icon Cache")
+        .join("live")
+}
+
+fn load_image(index_name: &str) -> Option<String> {
+    let image_path = get_cache_path().join(index_name.to_owned() + ".png");
+    let mut file_content = Vec::new();
+    match File::open(image_path)
+        .unwrap()
+        .read_to_end(&mut file_content)
+    {
+        Ok(_) => {
+            let base64_encoded = BASE64_STANDARD.encode(file_content);
+            let image_url = format!("data:image/png;base64,{}", base64_encoded);
+            Some(image_url)
+        }
+        Err(e) => {
+            warn!("Couldn't load image {}: {}", index_name, e);
+            None
+        }
+    }
+}
+
+fn get_item_hash(
     item: &InventoryItem,
     items: &[InventoryItem],
     bsg_items_root: &HashMap<String, Value>,
@@ -38,7 +115,6 @@ fn smethod_0(
     hash_seed = hash_seed.wrapping_mul(6529);
     let children_items = get_children(top_level_item, items);
     if !children_items.is_empty() {
-        println!("has_cartridges_or_slots {:?}", children_items);
         children_items.iter().for_each(|child| {
             let mut num = 0;
             let mut num2 = hash_seed ^ get_hash_sum(child, items);
@@ -52,7 +128,6 @@ fn smethod_0(
     }
 
     hashes.sort();
-    println!("smehtod_0 {} {:?}", top_level_item._tpl, hashes);
     hashes
 }
 
@@ -64,9 +139,6 @@ fn get_hash_sum(item: &InventoryItem, items: &[InventoryItem]) -> i32 {
     num = num.wrapping_add(
         7901_i32.wrapping_mul(get_deterministic_hash_code(parent_item._tpl.as_str())),
     );
-
-    println!("get_hash_sum {} {}", container_id.unwrap(), num);
-
     num
 }
 
@@ -111,22 +183,16 @@ fn smethod_1(
             .and_then(|a| a.foldable.clone())
             .map(|a| a.folded)
             .unwrap_or(false);
-        println!("FOLDABLE ITEM!!!! {}", is_folded);
-
         hash ^= (23 + (if is_folded { 1 } else { 0 })) << 1;
     }
 
     if is_magazine_item(&item._tpl, bsg_items_root) {
-        println!("is magazine item, id: {}", &item._id);
-        // TODO do we have to calculate here all bullets inside??? i don't think so...
         let all_ammo_inside_magazine = items
             .iter()
             .filter(|i| i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == item._id.as_str())
             .fold(0, |acc, i| {
                 acc + i.upd.as_ref().unwrap().stack_objects_count.unwrap()
             });
-
-        println!("all ammo in magazine {}", all_ammo_inside_magazine);
 
         let max_visible_ammo = get_max_visible_ammo(
             all_ammo_inside_magazine as u16,
@@ -140,12 +206,8 @@ fn smethod_1(
                 .as_str()
                 .unwrap(),
         );
-
-        println!("max_visible_ammo {}", max_visible_ammo);
-
         hash ^= (23 + max_visible_ammo as i32) << 2;
     }
-    println!("smethod_1 {} {}", item._tpl, hash);
     hash
 }
 
