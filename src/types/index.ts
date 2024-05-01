@@ -34,6 +34,7 @@ export interface Item {
   gridItems: Array<GridItem> | null;
   slotItems?: Array<SlotItem>;
   presetImageId?: string;
+  cacheImage?: string;
 }
 
 export interface SlotItem {

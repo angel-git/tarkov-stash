@@ -1,7 +1,9 @@
+use serde_json::Map;
 use std::collections::{HashMap, HashSet};
 
 pub use crate::prelude::*;
 use crate::spt::spt_profile_serializer::TarkovProfile;
+use crate::utils::cache_utils::{load_cache_icon_index_file, load_image_from_cache};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -55,6 +57,8 @@ pub struct Item {
     pub slot_items: Option<HashSet<SlotItem>>,
     #[serde(rename = "presetImageId")]
     pub preset_image_id: Option<String>,
+    #[serde(rename = "cacheImage")]
+    pub cache_image: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -135,12 +139,15 @@ pub fn convert_profile_to_ui(
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let (stash_size_x, stash_size_y) = calculate_stash_size(&tarkov_profile, bsg_items_root);
 
+    let cache_icon_index_file = load_cache_icon_index_file();
+
     let items: Vec<Item> = parse_items(
         tarkov_profile.characters.pmc.inventory.items,
         bsg_items_root,
         stash.as_str(),
         "hideout",
         globals,
+        &cache_icon_index_file,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -231,6 +238,7 @@ fn parse_items(
     parent_slot: &str,
     parent_item_slot: &str,
     globals: &HashMap<String, Value>,
+    index_cache: &Option<Map<String, Value>>,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -283,6 +291,7 @@ fn parse_items(
                     item._id.as_str(),
                     grid_name,
                     globals,
+                    index_cache,
                 )?;
 
                 let grid_item = GridItem {
@@ -403,9 +412,20 @@ fn parse_items(
             grid_items,
             slot_items,
             preset_image_id,
+            cache_image: if index_cache.is_some() {
+                load_image_from_cache(
+                    item,
+                    &profile_items,
+                    bsg_items_root,
+                    index_cache.as_ref().unwrap(),
+                )
+            } else {
+                None
+            },
         };
         items.push(i)
     }
+
     Ok(items)
 }
 
@@ -595,6 +615,7 @@ mod tests {
             stash.as_str(),
             "hideout",
             &HashMap::new(),
+            &None,
         )
         .ok()
         .unwrap();
@@ -636,6 +657,7 @@ mod tests {
             stash.as_str(),
             "hideout",
             &HashMap::new(),
+            &None,
         )
         .ok()
         .unwrap();

@@ -175,11 +175,15 @@
   <div>
     <div class="img-details">
       <div class="img">
-        <img
-          alt="item"
-          src={`https://assets.tarkov.dev/${item.presetImageId}-base-image.png`}
-          on:error={fallbackImage}
-        />
+        {#if item.cacheImage}
+          <img alt="item" src={item.cacheImage} />
+        {:else}
+          <img
+            alt="item"
+            src={`https://assets.tarkov.dev/${item.presetImageId}-base-image.png`}
+            on:error={fallbackImage}
+          />
+        {/if}
       </div>
       <div class="details">
         {getDescription(item.tpl, locale)}
