@@ -291,7 +291,7 @@ fn parse_items(
                     item._id.as_str(),
                     grid_name,
                     globals,
-                    &index_cache,
+                    index_cache,
                 )?;
 
                 let grid_item = GridItem {

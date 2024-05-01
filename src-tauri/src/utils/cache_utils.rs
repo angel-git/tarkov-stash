@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use log::{info, warn};
+use log::warn;
 use serde_json::{Map, Value};
 
 use crate::spt::spt_profile_serializer::InventoryItem;
