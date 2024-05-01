@@ -476,6 +476,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let updated = update_item_amount(json, &item, &HashMap::new()).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
@@ -573,6 +574,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let item_3eb9393a58f797c0c5f0e38e = Item {
             id: "3eb9393a58f797c0c5f0e38e".to_string(),
@@ -594,6 +596,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         // update both items
         let update_41d413738e53a1eaa78d3112 =
@@ -682,6 +685,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -762,6 +766,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -842,6 +847,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -923,6 +929,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -1009,6 +1016,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
 
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
@@ -1097,6 +1105,7 @@ mod tests {
             slot_items: None,
             parent_id: None,
             preset_image_id: None,
+            cache_image: None,
         };
 
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
