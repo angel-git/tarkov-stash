@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use log::warn;
+use log::{info, warn};
 use serde_json::{Map, Value};
 
 use crate::spt::spt_profile_serializer::InventoryItem;
@@ -16,17 +16,32 @@ pub fn load_cache_icon_index_file() -> Option<Map<String, Value>> {
     let exists = cache_index_file.exists();
     if !exists {
         warn!(
-            "Couldn't not load images cache file: {}",
+            "Couldn't find images cache file: {}",
             cache_index_file.display()
         );
-        return None;
-    }
-    if cache_index_file.exists() {
-        let index_json = fs::read_to_string(cache_index_file).unwrap();
-        let index_json_value: Value = serde_json::from_str(index_json.as_str()).unwrap();
-        Some(index_json_value.as_object().unwrap().clone())
-    } else {
         None
+    } else {
+        let index_json_result = fs::read_to_string(cache_index_file);
+        match index_json_result {
+            Ok(index_json) => {
+                let index_json_value_result: serde_json::Result<Value> =
+                    serde_json::from_str(index_json.as_str());
+                match index_json_value_result {
+                    Ok(index_json_value) => {
+                        info!("Loaded images cache file");
+                        Some(index_json_value.as_object().unwrap().clone())
+                    }
+                    Err(e) => {
+                        warn!("Couldn't parse cache file to Value: {}", e);
+                        None
+                    }
+                }
+            }
+            Err(e) => {
+                warn!("Error while reading cache file: {}", e);
+                None
+            }
+        }
     }
 }
 
@@ -856,7 +871,4 @@ mod tests {
         );
         assert_eq!(hash, 1165599878)
     }
-
-    // TODO helmet with serveral flashligts on/off
-    // TODO weapons with attachmetns inside attachments
 }
