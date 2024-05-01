@@ -12,6 +12,7 @@
   let sessions: Array<Session>;
   let selectedSession: Session | undefined;
   $: selectedSession = undefined;
+  $: connected = false;
   $: isLoading = $loading;
   $: sessions = [];
 
@@ -29,6 +30,7 @@
       server: { host: hostValue, port: portValue },
     })
       .then((r: Array<Session>) => {
+        connected = true;
         sessions = r;
       })
       .catch((errorMessage) => goto(`/error?message=${errorMessage}`));
@@ -72,16 +74,24 @@
     <input name="port" type="number" bind:value={portValue} />
     <button class="primary" type="submit" on:click={connectToServer}>connect</button>
   </form>
-  {#if sessions.length > 0}
+  {#if connected}
     <h5>Select profile to load:</h5>
-    <div class="sessions">
-      {#each sessions as session}
-        <div class="session">
-          <div>{session.username} ({session.id})</div>
-          <button class="primary" on:click={() => loadProfile(session)}>load</button>
-        </div>
-      {/each}
+
+    <div>
+      If you don't see your profile here after connecting, make sure you started Tarkov with that
+      profile and create the character. If you think your profile should be there, check this mod
+      logs on the help menu
     </div>
+    {#if sessions.length > 0}
+      <div class="sessions">
+        {#each sessions as session}
+          <div class="session">
+            <div>{session.username} ({session.id})</div>
+            <button class="primary" on:click={() => loadProfile(session)}>load</button>
+          </div>
+        {/each}
+      </div>
+    {/if}
   {/if}
 </div>
 

@@ -1,5 +1,6 @@
 use crate::prelude::{ClientBuilder, Deserialize, HttpRequestBuilder, Serialize};
 use crate::spt::spt_profile_serializer::TarkovProfile;
+use log::error;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
@@ -169,12 +170,20 @@ fn parse_sessions(json_value: Value) -> Vec<Session> {
     let objects = json_value.as_object().expect("Whops, can't read profiles!");
     let mut sessions = Vec::new();
     for (_, value) in objects {
-        let profile: TarkovProfile = serde_json::from_value(value.clone()).unwrap();
-        let session = Session {
-            id: profile.info.id,
-            username: profile.info.username,
-        };
-        sessions.push(session);
+        let profile_result: serde_json::Result<TarkovProfile> =
+            serde_json::from_value(value.clone());
+        match profile_result {
+            Ok(profile) => {
+                let session = Session {
+                    id: profile.info.id,
+                    username: profile.info.username,
+                };
+                sessions.push(session);
+            }
+            Err(e) => {
+                error!("Couldn't not load your profile/s, be sure that you have 'menu played' it/them before: {}", e);
+            }
+        }
     }
     sessions
 }
