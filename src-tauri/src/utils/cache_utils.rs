@@ -404,8 +404,6 @@ mod tests {
 
     #[test]
     fn should_get_max_visible_ammo_for_5a17fb03fcdbcbcae668728f() {
-        // https://assets.tarkov.dev/5a17fb03fcdbcbcae668728f-base-image.png
-
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/Aki_Data/Server/database/templates/items.json"
@@ -475,8 +473,6 @@ mod tests {
 
     #[test]
     fn should_get_hash_from_ammo() {
-        // https://assets.tarkov.dev/54527a984bdc2d4e668b4567-base-image.png
-
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
                 .as_ref(),
@@ -490,7 +486,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -500,22 +496,15 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        // index.json
-        // 3
-        // -323410316
-
         assert_eq!(hash, -323410316)
     }
 
     #[test]
     fn should_get_hash_from_magazine_empty() {
-        // 82
-        // -1339329798
-
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
                 .as_ref(),
@@ -529,7 +518,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -539,7 +528,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -548,9 +537,6 @@ mod tests {
 
     #[test]
     fn should_get_hash_from_magazine_with_1_bullet() {
-        // 82
-        // -1339329798
-
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
                 .as_ref(),
@@ -564,7 +550,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -574,7 +560,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -583,9 +569,6 @@ mod tests {
 
     #[test]
     fn should_get_hash_from_magazine_with_15_bullet() {
-        // 82
-        // -1339329798
-
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
                 .as_ref(),
@@ -599,7 +582,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -609,7 +592,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -631,7 +614,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -641,7 +624,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -663,7 +646,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -673,7 +656,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -695,7 +678,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -705,7 +688,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -727,7 +710,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -737,7 +720,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -759,7 +742,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -769,7 +752,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -791,7 +774,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -801,7 +784,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -823,7 +806,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -833,7 +816,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
@@ -855,7 +838,7 @@ mod tests {
         )
         .unwrap();
 
-        let ammo = tarkov_profile
+        let item = tarkov_profile
             .characters
             .pmc
             .inventory
@@ -865,7 +848,7 @@ mod tests {
             .unwrap();
 
         let hash = get_item_hash(
-            ammo,
+            item,
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
