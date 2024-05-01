@@ -64,9 +64,9 @@ pub struct Grids {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct GridsProps {
     #[serde(rename = "cellsH")]
-    pub cells_h: u16,
+    pub cells_h: i16,
     #[serde(rename = "cellsV")]
-    pub cells_v: u16,
+    pub cells_v: i16,
 }
 
 pub fn load_item(item_json: &str) -> Result<BsgItem, Error> {
