@@ -37,6 +37,14 @@ pub async fn connect_to_server(
         let server_info_result = load_server_info(&server).await;
         if server_info_result.is_ok() {
             let server_info = server_info_result.unwrap();
+            let tauri_app_version = app.package_info().version.to_string();
+            let spt_mod_version = server_info.mod_version;
+            if tauri_app_version != spt_mod_version {
+                return Err(format!(
+                    "The version of the server mod [{}] does not match with mine [{}]. Make sure you are running the proper .exe file",
+                    spt_mod_version, tauri_app_version
+                ));
+            }
             {
                 let state: State<TarkovStashState> = app.state();
                 let mut internal_state = state.state.lock().unwrap();
