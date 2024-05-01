@@ -13,14 +13,15 @@ if [ -z "$response" ]; then
 fi
 
 # Parse JSON response and format as markdown
-markdown=$(echo "$response" | jq -r '.[] | "# Release: \(.tag_name) @ \(.created_at)\\n\(.body)\\n\\n"')
+markdown=$(echo "$response" | jq -r '.[] | "## Release: \(.tag_name) @ \(.created_at)\\n```\\n\(.body)\\n```\\n\\n"')
+
 
 rm $HOME/../tarkov-stash-docs/content/changelog.md
 
 CHANGELOG_FILE=$HOME/../tarkov-stash-docs/content/changelog.md
 echo "+++" >> $CHANGELOG_FILE
-echo 'title = "Changelog"' >> $CHANGELOG_FILE
+echo 'title = ""' >> $CHANGELOG_FILE
 echo "+++" >> $CHANGELOG_FILE
 echo ""  >> $CHANGELOG_FILE
 
-echo -e $markdown >> $CHANGELOG_FILE
+echo -e "$markdown" >> $CHANGELOG_FILE
