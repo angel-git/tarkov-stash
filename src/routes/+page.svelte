@@ -70,7 +70,7 @@
   <form>
     <input name="host" type="text" bind:value={hostValue} />
     <input name="port" type="number" bind:value={portValue} />
-    <button type="submit" on:click={connectToServer}>connect</button>
+    <button class="primary" type="submit" on:click={connectToServer}>connect</button>
   </form>
   {#if sessions.length > 0}
     <h5>Select profile to load:</h5>
@@ -78,7 +78,7 @@
       {#each sessions as session}
         <div class="session">
           <div>{session.username} ({session.id})</div>
-          <button on:click={() => loadProfile(session)}>load</button>
+          <button class="primary" on:click={() => loadProfile(session)}>load</button>
         </div>
       {/each}
     </div>
