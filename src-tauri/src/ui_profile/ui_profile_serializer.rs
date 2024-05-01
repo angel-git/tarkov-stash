@@ -84,9 +84,9 @@ pub struct GridItem {
     #[serde(rename = "name")]
     pub _name: String,
     #[serde(rename = "cellsH")]
-    pub cells_h: u16,
+    pub cells_h: i16,
     #[serde(rename = "cellsV")]
-    pub cells_v: u16,
+    pub cells_v: i16,
     pub items: Vec<Item>,
 }
 
