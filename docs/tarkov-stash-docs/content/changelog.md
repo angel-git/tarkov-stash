@@ -2,6 +2,16 @@
 title = ""
 +++
 
+## Release: v0.10.1 @ 2024-05-02T11:30:28Z
+```
+## What's Changed
+* #137 Fix wrong search for installed plugin by @angel-git in https://github.com/angel-git/tarkov-stash/pull/138
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.10.0...v0.10.1
+```
+
+
 ## Release: v0.10.0 @ 2024-05-02T10:34:50Z
 ```
 ## What's Changed
@@ -325,12 +335,6 @@ title = ""
 
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.0...v0.1.1
-```
-
-
-## Release: v0.1.0 @ 2023-08-15T13:43:14Z
-```
-
 ```
 
 
