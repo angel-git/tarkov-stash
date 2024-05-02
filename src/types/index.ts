@@ -77,6 +77,7 @@ export interface BsgItem {
   centerOfImpact: number;
   ammoAccr: number;
   accuracy: number;
+  stackMaxSize: number;
 }
 
 export interface Slot {

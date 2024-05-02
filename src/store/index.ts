@@ -3,6 +3,7 @@ import type { Profile, BsgItem, PresetItem } from '../types';
 
 interface AddNewItem {
   input: string;
+  amount: number;
   item?: BsgItem;
 }
 
@@ -13,5 +14,5 @@ interface AddNewPreset {
 
 export const profile = writable<Profile | undefined>();
 export const loading = writable<boolean>(false);
-export const addNewItem = writable<AddNewItem>({ input: '' });
+export const addNewItem = writable<AddNewItem>({ input: '', amount: 1 });
 export const addNewPreset = writable<AddNewPreset>({ input: '' });
