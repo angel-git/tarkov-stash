@@ -2,6 +2,19 @@
 title = ""
 +++
 
+## Release: v0.10.0 @ 2024-05-02T10:34:50Z
+```
+## What's Changed
+* #131 Show message in case profiles are missing by @angel-git in https://github.com/angel-git/tarkov-stash/pull/132
+* #129 first changelog draft by @angel-git in https://github.com/angel-git/tarkov-stash/pull/130
+* #133 Show error if UI and Server don't have the same version number by @angel-git in https://github.com/angel-git/tarkov-stash/pull/134
+* #135 Allow to set amount when adding items by @angel-git in https://github.com/angel-git/tarkov-stash/pull/136
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.9.0...v0.10.0
+```
+
+
 ## Release: v0.9.0 @ 2024-05-01T12:35:10Z
 ```
 ## What's Changed
