@@ -254,10 +254,11 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
         return Err(SPT_RUNNING_ERROR.to_string());
     }
     info!(
-        "Adding item {} on [{},{}]",
+        "Adding {} item {} on [{},{}]",
+        item.amount,
         item.id.as_str(),
         item.location_x,
-        item.location_y
+        item.location_y,
     );
     track_event(&app, "add_item", Some(json!({"item_id": item.id.as_str()})));
 
@@ -275,6 +276,7 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
             item.id.as_str(),
             item.location_x,
             item.location_y,
+            item.amount,
             bsg_items,
         )
     };

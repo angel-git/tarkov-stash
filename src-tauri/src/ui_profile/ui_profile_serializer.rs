@@ -128,6 +128,8 @@ pub struct BsgItem {
     pub ammo_accr: Value,
     #[serde(rename = "accuracy")]
     pub accuracy: Value,
+    #[serde(rename = "stackMaxSize")]
+    pub stack_max_size: Value,
 }
 
 pub fn convert_profile_to_ui(
@@ -214,6 +216,10 @@ pub fn convert_profile_to_ui(
                     .unwrap_or(Value::from(0)),
                 accuracy: props
                     .and_then(|p| p.get("Accuracy"))
+                    .cloned()
+                    .unwrap_or(Value::from(0)),
+                stack_max_size: props
+                    .and_then(|p| p.get("StackMaxSize"))
                     .cloned()
                     .unwrap_or(Value::from(0)),
             },
