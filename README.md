@@ -120,4 +120,3 @@ pnpm tauri dev
 - Create a new release with proper tag
 - Github action will take over and upload the zip
 - run the `changelog` script and commit the changes
-- run the docs job (TODO: automate this)
