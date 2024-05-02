@@ -30,8 +30,9 @@ class TarkovStash implements IPreAkiLoadMod {
             logger.log(`[tarkov-stash] Loading server info`, LogTextColor.GREEN);
             const version = watermark.getVersionTag();
             const serverPath = path.resolve();
-            const tarkovStashMod = preAkiModLoader.getImportedModDetails()['tarkov-stash'];
-            const modVersion = tarkovStashMod.version;
+            const modsInstalled = Object.values(preAkiModLoader.getImportedModDetails());
+            const tarkovStashMod = modsInstalled.find((m) => m.name === 'tarkov-stash');
+            const modVersion = tarkovStashMod?.version;
             return JSON.stringify({ version, path: serverPath, modVersion });
           },
         },
