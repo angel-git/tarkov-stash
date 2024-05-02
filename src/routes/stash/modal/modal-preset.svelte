@@ -201,7 +201,7 @@
   .modal-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
     height: 90%;
   }
 
@@ -217,6 +217,7 @@
   }
 
   .main {
+    margin: 16px 0;
     display: flex;
     overflow-y: auto;
   }

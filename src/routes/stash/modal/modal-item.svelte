@@ -9,6 +9,7 @@
   import { goto } from '$app/navigation';
   import Modal from './modal.svelte';
   import type { BsgItem, Item, NewItem } from '../../../types';
+  import AmountInput from './amount-input.svelte';
   import { calculateBackgroundColor, getDescription, getName } from '../../../helper';
   import { invokeWithLoader } from '../../../helper';
   import { addNewItem } from '../../../store';
@@ -106,6 +107,7 @@
         id: $addNewItem.item.id,
         locationX: location?.x,
         locationY: location?.y,
+        amount: $addNewItem.amount,
       },
     })
       .catch((e) => goto(`/error?message=${e}`))
@@ -116,9 +118,13 @@
 
   function selectItem(item: BsgItem | undefined) {
     if (item?.id === $addNewItem.item?.id) {
-      addNewItem.set({ item: undefined, input: $addNewItem.input });
+      addNewItem.set({
+        item: undefined,
+        input: $addNewItem.input,
+        amount: item?.stackMaxSize ?? 1,
+      });
     } else {
-      addNewItem.set({ item, input: $addNewItem.input });
+      addNewItem.set({ item, input: $addNewItem.input, amount: item?.stackMaxSize ?? 1 });
     }
   }
 
@@ -142,8 +148,11 @@
   <h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
 
   <div class="modal-content">
-    <!-- svelte-ignore a11y-autofocus -->
-    <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
+    <div class="modal-inputs">
+      <!-- svelte-ignore a11y-autofocus -->
+      <input autofocus placeholder="Filter..." bind:value={$addNewItem.input} />
+      <AmountInput bind:amount={$addNewItem.amount} max={$addNewItem.item?.stackMaxSize ?? 1} />
+    </div>
     <div class="main">
       <div class="left">
         {#each categories as cat}
@@ -194,7 +203,14 @@
     height: 90%;
   }
 
+  .modal-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+
   input {
+    flex: 1;
     padding: 8px;
     background-color: var(--color-background);
     color: var(--color-text);
@@ -206,6 +222,7 @@
   }
 
   .main {
+    margin: 16px 0;
     display: flex;
     overflow-y: auto;
   }

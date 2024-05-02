@@ -9,6 +9,7 @@ pub struct NewItem {
     pub location_x: u16,
     #[serde(rename = "locationY")]
     pub location_y: u16,
+    pub amount: u32,
 }
 
 struct LockedSlot {
@@ -168,6 +169,7 @@ pub fn add_new_item(
     template_id: &str,
     location_x: u16,
     location_y: u16,
+    amount: u32,
     bsg_items: &HashMap<String, Value>,
 ) -> Result<String, Error> {
     let mut root: Value = serde_json::from_str(profile_content).unwrap();
@@ -187,7 +189,8 @@ pub fn add_new_item(
         // TODO check if id already exists
 
         let bsg_item = bsg_items.get(template_id).expect("No item!");
-        let upd = item_utils::get_upd_props_from_item(bsg_item);
+        let mut upd = item_utils::get_upd_props_from_item(bsg_item);
+        upd.stack_objects_count = Some(amount);
         let new_item_json = json!(
             {
                 "_id": item_id,
