@@ -4,6 +4,7 @@ import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
 import { SaveServer } from '@spt-aki/servers/SaveServer';
 import { LogTextColor } from '@spt-aki/models/spt/logging/LogTextColor';
 import { Watermark } from '@spt-aki/utils/Watermark';
+import { PreAkiModLoader } from '@spt-aki//loaders/PreAkiModLoader';
 import type { IPreAkiLoadMod } from '@spt-aki/models/external/IPreAkiLoadMod';
 import type { ILogger } from '@spt-aki/models/spt/utils/ILogger';
 import type { StaticRouterModService } from '@spt-aki/services/mod/staticRouter/StaticRouterModService';
@@ -14,6 +15,7 @@ class TarkovStash implements IPreAkiLoadMod {
     const databaseServer = container.resolve<DatabaseServer>('DatabaseServer');
     const saveServer = container.resolve<SaveServer>('SaveServer');
     const watermark = container.resolve<Watermark>('Watermark');
+    const preAkiModLoader = container.resolve<PreAkiModLoader>('PreAkiModLoader');
 
     const staticRouterModService =
       container.resolve<StaticRouterModService>('StaticRouterModService');
@@ -28,7 +30,9 @@ class TarkovStash implements IPreAkiLoadMod {
             logger.log(`[tarkov-stash] Loading server info`, LogTextColor.GREEN);
             const version = watermark.getVersionTag();
             const serverPath = path.resolve();
-            return JSON.stringify({ version, path: serverPath });
+            const tarkovStashMod = preAkiModLoader.getImportedModDetails()['tarkov-stash'];
+            const modVersion = tarkovStashMod.version;
+            return JSON.stringify({ version, path: serverPath, modVersion });
           },
         },
         {
