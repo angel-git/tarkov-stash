@@ -13,7 +13,7 @@
   "scripts": {
     "setup": "npm i",
     "build": "node ./build.mjs",
-    "buildinfo": "node ./build.mghbjs --verbose"
+    "buildinfo": "node ./build.mjs --verbose"
   },
   "devDependencies": {
     "@types/node": "20.11",
