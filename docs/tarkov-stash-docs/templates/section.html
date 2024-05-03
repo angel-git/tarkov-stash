@@ -10,8 +10,9 @@
         {%- set show_pages = section.pages -%}
       {% endif -%}
 
-      <div>If you want to contribute to the stats, remember to enable <a href="https://github.com/angel-git/tarkov-stash/?tab=readme-ov-file#telemetry" target="_blank">telemetry</a> option in the mod</div>
-      <div>Custom items from mods are <strong>ignored</strong></div>
+      <h1>Monthly stats</h1>
+      <div>If you want to contribute to the stats, remember to enable <a href="https://github.com/angel-git/tarkov-stash/?tab=readme-ov-file#telemetry" target="_blank">telemetry</a> option in the mod.</div>
+      <div>Custom items from mods are <strong>ignored</strong>.</div>
 
       {{ post_macros::list_posts(pages=show_pages) }}
     </main>

@@ -49,3 +49,17 @@ pre {
     content: "# ";
   }
 }
+
+.video {
+  margin: 16px;
+
+  video {
+    margin: 0 auto;
+    display: block;
+  }
+
+  em {
+    display: block;
+    text-align: center;
+  }
+}
