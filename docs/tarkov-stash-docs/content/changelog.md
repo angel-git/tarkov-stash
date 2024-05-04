@@ -2,6 +2,16 @@
 title = ""
 +++
 
+## Release: v0.10.2 @ 2024-05-04T07:52:58Z
+```
+## What's Changed
+* #139 Fix issue when StackObjectsCount is missing by @angel-git in https://github.com/angel-git/tarkov-stash/pull/140
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.10.1...v0.10.2
+```
+
+
 ## Release: v0.10.1 @ 2024-05-02T11:30:28Z
 ```
 ## What's Changed
@@ -323,18 +333,6 @@ title = ""
 
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.1...v0.1.2
-```
-
-
-## Release: v0.1.1 @ 2023-08-16T09:55:40Z
-```
-## What's Changed
-* #2 Check server is not running by @angel-git in https://github.com/angel-git/tarkov-stash/pull/7
-* #3 Create backup when loading profile by @angel-git in https://github.com/angel-git/tarkov-stash/pull/8
-* #6 by @angel-git in https://github.com/angel-git/tarkov-stash/pull/9
-
-
-**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.0...v0.1.1
 ```
 
 
