@@ -112,7 +112,9 @@ pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<U
     match ui_profile_result {
         Ok(mut ui_profile) => {
             let internal_state = state.state.lock().unwrap();
-            ui_profile.spt_version = internal_state.server_spt_version.clone();
+            ui_profile
+                .spt_version
+                .clone_from(&internal_state.server_spt_version);
             let server_file_path = internal_state.server_file_path.as_ref().unwrap();
             let session_id = internal_state.session_id.as_ref().unwrap();
             let profile_file = get_profile_filename(server_file_path, session_id);
@@ -177,7 +179,9 @@ pub async fn refresh_profile_from_spt(
     match ui_profile_result {
         Ok(mut ui_profile) => {
             let internal_state = state.state.lock().unwrap();
-            ui_profile.spt_version = internal_state.server_spt_version.clone();
+            ui_profile
+                .spt_version
+                .clone_from(&internal_state.server_spt_version);
             Ok(ui_profile)
         }
         Err(e) => Err(e),
