@@ -207,7 +207,7 @@ fn smethod_1(
             .filter(|i| i.parent_id.is_some() && i.parent_id.as_ref().unwrap() == item._id.as_str())
             .fold(0, |acc, i| {
                 if i.upd.is_some() {
-                    acc + i.upd.as_ref().unwrap().stack_objects_count.unwrap()
+                    acc + i.upd.as_ref().unwrap().stack_objects_count.unwrap_or(1)
                 } else {
                     acc
                 }
