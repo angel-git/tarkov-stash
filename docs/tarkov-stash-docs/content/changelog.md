@@ -2,6 +2,17 @@
 title = ""
 +++
 
+## Release: v0.11.0 @ 2024-05-05T20:11:24Z
+```
+## What's Changed
+* #142 Replace `debug` with `responsecompressed` by @angel-git in https://github.com/angel-git/tarkov-stash/pull/143
+* #144 Print panic errors on log by @angel-git in https://github.com/angel-git/tarkov-stash/pull/145
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.10.2...v0.11.0
+```
+
+
 ## Release: v0.10.2 @ 2024-05-04T07:52:58Z
 ```
 ## What's Changed
@@ -322,17 +333,6 @@ title = ""
 
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.2...v0.1.3
-```
-
-
-## Release: v0.1.2 @ 2023-08-17T06:50:25Z
-```
-## What's Changed
-* #4 Allow to change items to FiR by @angel-git in https://github.com/angel-git/tarkov-stash/pull/10
-* #11 Update icon by @angel-git in https://github.com/angel-git/tarkov-stash/pull/12
-
-
-**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.1...v0.1.2
 ```
 
 
