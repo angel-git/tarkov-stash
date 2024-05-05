@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use log::LevelFilter;
+use log::{error, LevelFilter};
 use tauri::{Manager, State, Wry};
 use tauri_plugin_log::LogTarget;
 use tauri_plugin_store::Store;
@@ -48,6 +48,9 @@ pub struct MutexState {
 }
 
 fn main() {
+    std::panic::set_hook(Box::new(|info| {
+        error!("Panic: {:?}", info);
+    }));
     let apta_key = load_apta_key();
     tauri::Builder::default()
         .plugin(tauri_plugin_aptabase::Builder::new(apta_key.as_str()).build())
