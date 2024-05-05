@@ -54,7 +54,7 @@ pub async fn load_server_info(server_props: &ServerProps) -> Result<ServerInfo, 
         format!("http://{}/tarkov-stash/server", server_props),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     if let Ok(response) = serde_json::from_value(client.send(request).await?.read().await?.data) {
         Ok(response)
     } else {
@@ -74,7 +74,7 @@ pub async fn load_sessions_from_server(
         format!("http://{}/tarkov-stash/profiles", server_props),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     Ok(parse_sessions(
         client.send(request).await?.read().await?.data,
     ))
@@ -88,7 +88,7 @@ pub async fn load_bsg_items_from_server(
     let request =
         HttpRequestBuilder::new("GET", format!("http://{}/tarkov-stash/items", server_props))
             .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     Ok(parse_as_map(client.send(request).await?.read().await?.data))
 }
 
@@ -102,7 +102,7 @@ pub async fn load_globals_from_server(
         format!("http://{}/tarkov-stash/globals-presets", server_props),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     let globals_value = serde_json::to_value(client.send(request).await?.read().await?.data)
         .expect("Can't parse globals from server");
     let mut globals: HashMap<String, Value> = HashMap::new();
@@ -122,7 +122,7 @@ pub async fn load_profile_from_server(
         format!("http://{}/tarkov-stash/profile", server_props),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     let request = request
         .header("Cookie", format!("PHPSESSID={}", session.id))
         .unwrap();
@@ -143,7 +143,7 @@ pub async fn load_locale_from_server(
         format!("http://{}/client/locale/{}", server_props, locale),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     Ok(parse_locale(client.send(request).await?.read().await?.data))
 }
 
@@ -158,7 +158,7 @@ pub async fn refresh_profile_on_server(
         format!("http://{}/tarkov-stash/reload-profile", server_props),
     )
     .unwrap();
-    let request = request.header("debug", "1").unwrap();
+    let request = request.header("responsecompressed", "0").unwrap();
     let request = request
         .header("Cookie", format!("PHPSESSID={}", session_id))
         .unwrap();
