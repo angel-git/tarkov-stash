@@ -1,6 +1,6 @@
+use log::error;
 use serde_json::Map;
 use std::collections::{HashMap, HashSet};
-use log::error;
 
 pub use crate::prelude::*;
 use crate::spt::spt_profile_serializer::TarkovProfile;
@@ -751,22 +751,21 @@ mod tests {
         assert_eq!(slot_items, 14);
     }
 
-
     #[test]
     fn should_get_items_from_character_body() {
         let tarkov_profile = load_profile(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/user/profiles/380-bonus-stash.json"
             ))
-                .as_ref(),
+            .as_ref(),
         );
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
                 "../../../example/Aki_Data/Server/database/templates/items.json"
             ))
-                .as_ref(),
+            .as_ref(),
         )
-            .unwrap();
+        .unwrap();
         assert!(tarkov_profile.is_ok());
         let profile_ui = convert_profile_to_ui(
             tarkov_profile.unwrap(),
@@ -775,6 +774,11 @@ mod tests {
             &HashMap::new(),
         );
         assert!(profile_ui.is_ok());
-        assert!(profile_ui.as_ref().unwrap().body_items.primary_weapon.is_some());
+        assert!(profile_ui
+            .as_ref()
+            .unwrap()
+            .body_items
+            .primary_weapon
+            .is_some());
     }
 }
