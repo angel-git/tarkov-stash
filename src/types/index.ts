@@ -7,11 +7,31 @@ export interface Profile {
   name: string;
   sizeX: number;
   sizeY: number;
+  // stash items
   items: Array<Item>;
+  // items on body
+  bodyItems: BodyItems;
   bsgItems: Record<string, BsgItem>;
   sptVersion: string;
   locale: Record<string, string>;
   presetItems: Array<PresetItem>;
+}
+
+export interface BodyItems {
+  earpierce?: Item;
+  headwear?: Item;
+  eyewear?: Item;
+  armorVest?: Item;
+  faceCover?: Item;
+  armBand?: Item;
+  holster?: Item;
+  sheath?: Item;
+  primaryWeapon?: Item;
+  secondaryWeapon?: Item;
+  backpack?: Item;
+  tacticalVest?: Item;
+  pockets?: Item;
+  securedContainer?: Item;
 }
 
 export interface Item {

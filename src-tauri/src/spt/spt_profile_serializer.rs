@@ -37,6 +37,7 @@ pub struct PMCInfo {
 pub struct Inventory {
     pub items: Vec<InventoryItem>,
     pub stash: String,
+    pub equipment: String,
 }
 
 #[derive(Serialize, Debug, Clone)]
