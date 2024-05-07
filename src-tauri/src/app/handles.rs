@@ -411,7 +411,7 @@ fn get_session_and_server(app: &tauri::AppHandle) -> (String, ServerProps) {
 async fn refresh_profile(app: &tauri::AppHandle) {
     let (session_id, server_props) = get_session_and_server(app);
     let _ = refresh_profile_on_server(&server_props, &session_id).await;
-    app.emit_all("profile_loaded", "")
+    app.emit_all("profile_loaded", session_id)
         .expect("Can't emit event to window!");
 }
 

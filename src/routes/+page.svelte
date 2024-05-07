@@ -16,8 +16,8 @@
   $: isLoading = $loading;
   $: sessions = [];
 
-  listen('profile_loaded', () => {
-    if (selectedSession) {
+  listen('profile_loaded', (event) => {
+    if (selectedSession && selectedSession.id === event.payload) {
       reloadProfile(selectedSession);
     }
   });
