@@ -97,7 +97,7 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
             }
             if internal_state.session_id.is_some() {
                 window
-                    .emit("profile_loaded", "")
+                    .emit("profile_loaded", &internal_state.session_id)
                     .expect("Can't emit event to window!");
             }
 
