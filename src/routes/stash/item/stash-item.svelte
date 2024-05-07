@@ -2,11 +2,15 @@
   import type { Item } from '../../../types';
   import { calculateBackgroundColor } from '../../../helper';
   import { getShortName } from '../../../helper';
+  import { contextMenu } from '../../../store';
 
   export let item: Item;
   export let locale: Record<string, string>;
-  export let handleOpenClick: (item: Item | undefined) => void;
-  export let handleOpenDetails: (item: Item | undefined) => void;
+  export let onOpenDetails: (item: Item | undefined) => void;
+
+  function handleRightClick(item: Item | undefined) {
+    contextMenu.set(item);
+  }
 
   function calculateSizeStyle(item: Item) {
     return `z-index: 2; position: relative; height: ${item.sizeY * 64}px; width: ${
@@ -48,9 +52,9 @@
   role="button"
   class="item-clickable"
   style={calculateSizeStyle(item)}
-  on:click={() => handleOpenClick(undefined)}
-  on:contextmenu|preventDefault={() => handleOpenClick(item)}
-  on:dblclick={() => handleOpenDetails(item)}
+  on:click={() => handleRightClick(undefined)}
+  on:contextmenu|preventDefault={() => handleRightClick(item)}
+  on:dblclick={() => onOpenDetails(item)}
 >
   <div class="item-image">
     <div style={calculateBackgroundStyle(item)} />
