@@ -2,6 +2,33 @@
 title = ""
 +++
 
+## Release: v0.11.1 @ 2024-05-07T08:58:53Z
+```
+## What's Changed
+* #147 Fix add_preset by @angel-git in https://github.com/angel-git/tarkov-stash/pull/148
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.0...v0.11.1
+```
+
+
+## Release: v0.10.4 @ 2024-05-07T16:53:00Z
+```
+## What's Changed
+* #149 When editing multiple profiles the ui loads the wrong one
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.1...v0.10.4
+```
+
+
+## Release: v0.10.3 @ 2024-05-07T09:07:54Z
+```
+Fix add_preset is broken since #135
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.1...v0.10.3
+```
+
+
 ## Release: v0.11.0 @ 2024-05-05T20:11:24Z
 ```
 ## What's Changed
@@ -297,7 +324,6 @@ title = ""
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.5...v0.1.6
 ```
 
-
 ## Release: v0.1.5 @ 2023-08-20T22:34:10Z
 ```
 ## What's Changed
@@ -333,6 +359,35 @@ title = ""
 
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.2...v0.1.3
+```
+
+
+## Release: v0.1.2 @ 2023-08-17T06:50:25Z
+```
+## What's Changed
+* #4 Allow to change items to FiR by @angel-git in https://github.com/angel-git/tarkov-stash/pull/10
+* #11 Update icon by @angel-git in https://github.com/angel-git/tarkov-stash/pull/12
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.1...v0.1.2
+```
+
+
+## Release: v0.1.1 @ 2023-08-16T09:55:40Z
+```
+## What's Changed
+* #2 Check server is not running by @angel-git in https://github.com/angel-git/tarkov-stash/pull/7
+* #3 Create backup when loading profile by @angel-git in https://github.com/angel-git/tarkov-stash/pull/8
+* #6 by @angel-git in https://github.com/angel-git/tarkov-stash/pull/9
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.0...v0.1.1
+```
+
+
+## Release: v0.1.0 @ 2023-08-15T13:43:14Z
+```
+
 ```
 
 
