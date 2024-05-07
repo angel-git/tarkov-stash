@@ -109,6 +109,7 @@
         id: $addNewPreset.item.id,
         locationX: location?.x,
         locationY: location?.y,
+        amount: 1,
       },
     })
       .catch((e) => goto(`/error?message=${e}`))
