@@ -65,7 +65,7 @@
     border: 1px solid var(--color-menu);
     width: 100%;
     padding: 8px;
-    min-width: 700px;
+    min-width: 720px;
   }
 
   ul {
@@ -80,6 +80,7 @@
     background-color: var(--color-background);
     color: var(--color-text);
     border: 1px solid var(--color-menu);
+    border-bottom: none;
     padding: 4px 16px;
     border-top-right-radius: 16px;
   }
