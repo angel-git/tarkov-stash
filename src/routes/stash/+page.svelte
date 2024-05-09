@@ -4,6 +4,7 @@
   import { profile } from '../../store';
   import StashTab from './tabs/stash-tab.svelte';
   import CharacterTab from './tabs/character-tab.svelte';
+  import BackbackTab from './tabs/backpack-tab.svelte';
 
   const supported_version = '3.8';
 
@@ -24,6 +25,11 @@
       label: 'Character',
       value: 2,
       component: CharacterTab,
+    },
+    {
+      label: 'Backpack and pockets',
+      value: 3,
+      component: BackbackTab,
     },
   ];
 </script>

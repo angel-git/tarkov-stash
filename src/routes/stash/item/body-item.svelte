@@ -3,7 +3,7 @@
   import { profile } from '../../../store';
   import { getShortName } from '../../../helper';
   export let title: string;
-  export let item: Item;
+  export let item: Item | undefined;
   export let onDblClick: (item: Item) => void;
 
   function calculateBackgroundStyle(item: Item) {
@@ -19,10 +19,12 @@
   }
 </script>
 
-<div tabindex="-1" role="button" class="body-item" on:dblclick={() => onDblClick(item)}>
-  <div class="title">
-    {title}
-  </div>
+<div tabindex="-1" role="button" class="body-item" on:dblclick={() => item && onDblClick(item)}>
+  {#if title}
+    <div class="title">
+      {title}
+    </div>
+  {/if}
   <div class="content">
     {#if item && $profile?.locale}
       <div class="item-image">
