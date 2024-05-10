@@ -26,8 +26,8 @@ pub async fn connect_to_server(
 ) -> Result<Vec<Session>, String> {
     if !is_server_running(&server) {
         Err(format!("Server is not running at {}", server))
-    // } else if is_tarkov_running() {
-    //     Err(SPT_RUNNING_ERROR.to_string())
+    } else if is_tarkov_running() {
+        Err(SPT_RUNNING_ERROR.to_string())
     } else {
         {
             let state: State<TarkovStashState> = app.state();

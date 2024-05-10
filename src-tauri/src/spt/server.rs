@@ -43,7 +43,8 @@ pub fn is_server_running(server_props: &ServerProps) -> bool {
 pub fn is_tarkov_running() -> bool {
     let mut sys = System::new_all();
     sys.refresh_all();
-    sys.processes_by_name(TARKOV_PROCESS).count() > 0
+    // sys.processes_by_name(TARKOV_PROCESS).count() > 0
+    false
 }
 
 pub async fn load_server_info(server_props: &ServerProps) -> Result<ServerInfo, tauri::Error> {
