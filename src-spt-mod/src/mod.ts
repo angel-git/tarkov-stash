@@ -35,9 +35,6 @@ class TarkovStash implements IPreAkiLoadMod {
             const modsInstalled = Object.values(preAkiModLoader.getImportedModDetails());
             const tarkovStashMod = modsInstalled.find((m) => m.name === 'tarkov-stash');
             const modVersion = tarkovStashMod?.version;
-
-            webSocketServer.sendMessage({ type: 'test-stash', eventId: '12312312123' });
-
             return JSON.stringify({ version, path: serverPath, modVersion });
           },
         },
@@ -62,6 +59,8 @@ class TarkovStash implements IPreAkiLoadMod {
               `[tarkov-stash] Refreshing profile [${sessionId}] from disk`,
               LogTextColor.GREEN,
             );
+            webSocketServer.sendMessage(sessionId, { type: 'test-stash', eventId: '12312312123' });
+
             saveServer.loadProfile(sessionId);
             return 'ok';
           },
