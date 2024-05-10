@@ -2,6 +2,7 @@ import path from 'node:path';
 import { DependencyContainer } from 'tsyringe';
 import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
 import { SaveServer } from '@spt-aki/servers/SaveServer';
+import { WebSocketServer } from '@spt-aki/servers/WebsocketServer';
 import { LogTextColor } from '@spt-aki/models/spt/logging/LogTextColor';
 import { Watermark } from '@spt-aki/utils/Watermark';
 import { PreAkiModLoader } from '@spt-aki//loaders/PreAkiModLoader';
@@ -16,6 +17,7 @@ class TarkovStash implements IPreAkiLoadMod {
     const saveServer = container.resolve<SaveServer>('SaveServer');
     const watermark = container.resolve<Watermark>('Watermark');
     const preAkiModLoader = container.resolve<PreAkiModLoader>('PreAkiModLoader');
+    const webSocketServer = container.resolve<WebSocketServer>('WebSocketServer');
 
     const staticRouterModService =
       container.resolve<StaticRouterModService>('StaticRouterModService');
@@ -33,6 +35,9 @@ class TarkovStash implements IPreAkiLoadMod {
             const modsInstalled = Object.values(preAkiModLoader.getImportedModDetails());
             const tarkovStashMod = modsInstalled.find((m) => m.name === 'tarkov-stash');
             const modVersion = tarkovStashMod?.version;
+
+            webSocketServer.sendMessage({ type: 'test-stash', eventId: '12312312123' });
+
             return JSON.stringify({ version, path: serverPath, modVersion });
           },
         },
