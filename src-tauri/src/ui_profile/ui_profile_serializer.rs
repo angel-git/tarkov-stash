@@ -344,10 +344,15 @@ fn parse_items(
                     // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
                 }
                 if udp.key.is_some() {
-                    resource = Some(
-                        bsg_item._props.maximum_number_of_usages.unwrap()
-                            - udp.key.as_ref().unwrap().number_of_usages,
-                    );
+                    let bsg_maximum_number_of_usages = bsg_item._props.maximum_number_of_usages.unwrap();
+                    if bsg_maximum_number_of_usages == 0 {
+                        resource = Some(1);
+                    } else {
+                        resource = Some(
+                            bsg_maximum_number_of_usages
+                                - udp.key.as_ref().unwrap().number_of_usages,
+                        );
+                    };
                 }
             }
         }
