@@ -344,7 +344,8 @@ fn parse_items(
                     // max_resource = Some(udp.repairable.as_ref().unwrap().max_durability);
                 }
                 if udp.key.is_some() {
-                    let bsg_maximum_number_of_usages = bsg_item._props.maximum_number_of_usages.unwrap();
+                    let bsg_maximum_number_of_usages =
+                        bsg_item._props.maximum_number_of_usages.unwrap();
                     if bsg_maximum_number_of_usages == 0 {
                         resource = Some(1);
                     } else {
