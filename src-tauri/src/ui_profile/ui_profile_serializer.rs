@@ -149,7 +149,7 @@ pub fn convert_profile_to_ui(
     };
 
     let items: Vec<Item> = parse_items(
-        tarkov_profile.characters.pmc.inventory.items,
+        &tarkov_profile.characters.pmc.inventory.items,
         bsg_items_root,
         stash.as_str(),
         "hideout",
@@ -244,7 +244,7 @@ pub fn convert_profile_to_ui(
 }
 
 fn parse_items(
-    profile_items: Vec<spt_profile_serializer::InventoryItem>,
+    profile_items: &Vec<spt_profile_serializer::InventoryItem>,
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
@@ -297,7 +297,7 @@ fn parse_items(
                 let grid_name = &grid._name;
 
                 let items_inside_container = parse_items(
-                    profile_items.clone(),
+                    profile_items,
                     bsg_items_root,
                     item._id.as_str(),
                     grid_name,
@@ -372,7 +372,7 @@ fn parse_items(
             bsg_item._props.slots.unwrap().iter().for_each(|bsg_t| {
                 let all_slots_from_item = find_all_slots_from_parent(
                     item._id.as_str(),
-                    &profile_items,
+                    profile_items,
                     bsg_t._name.as_str(),
                 );
 
@@ -402,7 +402,7 @@ fn parse_items(
         }
 
         let (size_x, size_y) =
-            item_utils::calculate_item_size(item, &profile_items, bsg_items_root, is_container);
+            item_utils::calculate_item_size(item, profile_items, bsg_items_root, is_container);
 
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
@@ -432,7 +432,7 @@ fn parse_items(
             cache_image: if index_cache.is_some() {
                 load_image_from_cache(
                     item,
-                    &profile_items,
+                    profile_items,
                     bsg_items_root,
                     index_cache.as_ref().unwrap(),
                 )
@@ -628,7 +628,7 @@ mod tests {
         let stash = &tarkov_profile.characters.pmc.inventory.stash;
 
         let items = parse_items(
-            tarkov_profile.characters.pmc.inventory.items,
+            &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
             stash.as_str(),
             "hideout",
@@ -670,7 +670,7 @@ mod tests {
         let stash = &tarkov_profile.characters.pmc.inventory.stash;
 
         let items = parse_items(
-            tarkov_profile.characters.pmc.inventory.items,
+            &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
             stash.as_str(),
             "hideout",
