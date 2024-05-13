@@ -48,9 +48,6 @@ pub struct MutexState {
 }
 
 fn main() {
-    std::panic::set_hook(Box::new(|info| {
-        error!("Panic: {:?}", info);
-    }));
     let apta_key = load_apta_key();
     tauri::Builder::default()
         .plugin(tauri_plugin_aptabase::Builder::new(apta_key.as_str()).build())
@@ -90,6 +87,12 @@ fn main() {
             update_selected_menu_image_cache(main_window.menu_handle(), image_cache_selected);
             update_selected_menu_locale(main_window.menu_handle(), locale_id);
             internal_state.store = Some(store);
+
+            std::panic::set_hook(Box::new(move |info| {
+                error!("Panic: {:?}", info);
+                main_window.emit("error", info.to_string()).unwrap()
+            }));
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
