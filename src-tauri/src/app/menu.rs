@@ -7,7 +7,7 @@ use tauri::window::MenuHandle;
 use tauri::{CustomMenuItem, Manager, Menu, State, Submenu, WindowMenuEvent};
 use tauri_plugin_aptabase::EventTracker;
 
-use crate::prelude::{insert_and_save, SETTING_TELEMETRY};
+use crate::prelude::{insert_and_save, SETTING_IMAGE_CACHE, SETTING_TELEMETRY};
 use crate::{TarkovStashState, SETTING_LOCALE};
 
 pub fn build_menu() -> Menu {
@@ -54,6 +54,10 @@ pub fn build_menu() -> Menu {
     let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
     let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
     let config = CustomMenuItem::new("open_config".to_string(), "Open config");
+    let image_cache = CustomMenuItem::new(
+        "image_cache".to_string(),
+        "Enable loading images from cache",
+    );
     let telemetry = CustomMenuItem::new("telemetry".to_string(), "Enable telemetry");
 
     let help_submenu = Submenu::new(
@@ -62,6 +66,7 @@ pub fn build_menu() -> Menu {
             .add_item(open_logs)
             .add_item(config)
             .add_item(source_code)
+            .add_item(image_cache)
             .add_item(telemetry),
     );
 
@@ -141,6 +146,24 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 window.app_handle().track_event("telemetry_disabled", None);
             }
         }
+        "image_cache" => {
+            let window = event.window();
+            let state: State<TarkovStashState> = window.state();
+            let mut internal_state = state.state.lock().unwrap();
+            let store = internal_state.store.as_mut().unwrap();
+            let image_cache_setting = !store.get(SETTING_IMAGE_CACHE).unwrap().as_bool().unwrap();
+            insert_and_save(
+                store,
+                SETTING_IMAGE_CACHE.to_string(),
+                json!(image_cache_setting),
+            );
+            if internal_state.session_id.is_some() {
+                window
+                    .emit("profile_loaded", &internal_state.session_id)
+                    .expect("Can't emit event to window!");
+            }
+            update_selected_menu_image_cache(window.menu_handle(), image_cache_setting);
+        }
         _ => {}
     }
 }
@@ -151,6 +174,15 @@ pub fn update_selected_menu_telemetry(menu_handle: MenuHandle, selected: bool) {
             .get_item("telemetry")
             .set_selected(selected)
             .expect("Can't find menu item for telemetry");
+    });
+}
+
+pub fn update_selected_menu_image_cache(menu_handle: MenuHandle, selected: bool) {
+    std::thread::spawn(move || {
+        menu_handle
+            .get_item("image_cache")
+            .set_selected(selected)
+            .expect("Can't find menu item for image_cache");
     });
 }
 
