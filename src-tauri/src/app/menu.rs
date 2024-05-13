@@ -157,6 +157,11 @@ pub fn handle_menu_event(event: WindowMenuEvent) {
                 SETTING_IMAGE_CACHE.to_string(),
                 json!(image_cache_setting),
             );
+            if internal_state.session_id.is_some() {
+                window
+                    .emit("profile_loaded", &internal_state.session_id)
+                    .expect("Can't emit event to window!");
+            }
             update_selected_menu_image_cache(window.menu_handle(), image_cache_setting);
         }
         _ => {}
