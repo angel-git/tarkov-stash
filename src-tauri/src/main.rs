@@ -85,7 +85,9 @@ fn main() {
                 store.get(SETTING_LOCALE).unwrap().as_str().unwrap()
             );
             let telemetry_selected = store.get(SETTING_TELEMETRY).unwrap().as_bool().unwrap();
+            let image_cache_selected = store.get(SETTING_IMAGE_CACHE).unwrap().as_bool().unwrap();
             update_selected_menu_telemetry(main_window.menu_handle(), telemetry_selected);
+            update_selected_menu_image_cache(main_window.menu_handle(), image_cache_selected);
             update_selected_menu_locale(main_window.menu_handle(), locale_id);
             internal_state.store = Some(store);
             Ok(())
