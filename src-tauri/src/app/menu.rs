@@ -54,7 +54,10 @@ pub fn build_menu() -> Menu {
     let open_logs = CustomMenuItem::new("open_logs".to_string(), "Open logs");
     let source_code = CustomMenuItem::new("view_source_code".to_string(), "View source code");
     let config = CustomMenuItem::new("open_config".to_string(), "Open config");
-    let image_cache = CustomMenuItem::new("image_cache".to_string(), "Enable loading images from cache");
+    let image_cache = CustomMenuItem::new(
+        "image_cache".to_string(),
+        "Enable loading images from cache",
+    );
     let telemetry = CustomMenuItem::new("telemetry".to_string(), "Enable telemetry");
 
     let help_submenu = Submenu::new(

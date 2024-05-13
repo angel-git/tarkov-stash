@@ -1,5 +1,9 @@
 use crate::prelude::server::Session;
-use crate::prelude::{add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile, SETTING_LOCALE, SETTING_IMAGE_CACHE};
+use crate::prelude::{
+    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event,
+    update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile,
+    SETTING_IMAGE_CACHE, SETTING_LOCALE,
+};
 use crate::spt::server::{
     is_server_running, is_tarkov_running, load_bsg_items_from_server, load_globals_from_server,
     load_locale_from_server, load_profile_from_server, load_server_info, load_sessions_from_server,
@@ -108,7 +112,8 @@ pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<U
         .await
         .unwrap();
 
-    let ui_profile_result = convert_profile_to_ui(profile, &bsg_items, &locale, &globals, load_image_cache);
+    let ui_profile_result =
+        convert_profile_to_ui(profile, &bsg_items, &locale, &globals, load_image_cache);
 
     {
         let mut internal_state = state.state.lock().unwrap();
