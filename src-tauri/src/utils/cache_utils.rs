@@ -80,17 +80,15 @@ fn get_cache_path() -> PathBuf {
 fn load_image(index_name: &str) -> Option<String> {
     let image_path = get_cache_path().join(index_name.to_owned() + ".png");
     let mut file_content = Vec::new();
-    match File::open(image_path)
-        .unwrap()
-        .read_to_end(&mut file_content)
-    {
-        Ok(_) => {
+    match File::open(image_path) {
+        Ok(mut file) => {
+            file.read_to_end(&mut file_content).ok()?;
             let base64_encoded = BASE64_STANDARD.encode(file_content);
             let image_url = format!("data:image/png;base64,{}", base64_encoded);
             Some(image_url)
         }
         Err(e) => {
-            warn!("Couldn't load image {}: {}", index_name, e);
+            warn!("Couldn't load image [{}.png]: {}", index_name, e);
             None
         }
     }
