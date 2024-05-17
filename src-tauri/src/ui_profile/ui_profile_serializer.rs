@@ -784,6 +784,7 @@ mod tests {
             &bsg_items_root,
             &HashMap::new(),
             &HashMap::new(),
+            false,
         );
         assert!(profile_ui.is_ok());
         assert!(profile_ui
