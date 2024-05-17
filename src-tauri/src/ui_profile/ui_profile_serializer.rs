@@ -167,12 +167,17 @@ pub fn convert_profile_to_ui(
     bsg_items_root: &HashMap<String, Value>,
     locale_root: &HashMap<String, Value>,
     globals: &HashMap<String, Value>,
+    load_image_cache: bool,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let equipment = &tarkov_profile.characters.pmc.inventory.equipment;
     let (stash_size_x, stash_size_y) = calculate_stash_size(&tarkov_profile, bsg_items_root);
 
-    let cache_icon_index_file = load_cache_icon_index_file();
+    let cache_icon_index_file = if load_image_cache {
+        load_cache_icon_index_file()
+    } else {
+        None
+    };
 
     let items: Vec<Item> = parse_items(
         &tarkov_profile.characters.pmc.inventory.items,
@@ -647,6 +652,7 @@ mod tests {
             &bsg_items_root,
             &HashMap::new(),
             &HashMap::new(),
+            false,
         );
         assert!(profile_ui.is_ok());
         assert_eq!(profile_ui.as_ref().unwrap().size_y, 70);
