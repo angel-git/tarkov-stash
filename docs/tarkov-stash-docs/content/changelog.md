@@ -2,6 +2,53 @@
 title = ""
 +++
 
+## Release: v0.11.3 @ 2024-05-17T09:18:41Z
+```
+## What's Changed
+* #159 show panic error on UI by @angel-git in https://github.com/angel-git/tarkov-stash/pull/160
+* #156 Add cache image on help menu by @angel-git in https://github.com/angel-git/tarkov-stash/pull/158
+* #161 Fix issue loading cache images if file is gone by @angel-git in https://github.com/angel-git/tarkov-stash/pull/162
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.2...v0.11.3
+```
+
+
+## Release: v0.10.6 @ 2024-05-17T08:56:16Z
+```
+## What's Changed
+
+* [Fix resource calculation for labs cards (](https://github.com/angel-git/tarkov-stash/commit/f6d222fc121a24d082acc7455237c1ccededf765)https://github.com/angel-git/tarkov-stash/pull/155[)](https://github.com/angel-git/tarkov-stash/commit/f6d222fc121a24d082acc7455237c1ccededf765)
+
+* [show panic error on UI (](https://github.com/angel-git/tarkov-stash/commit/a85b16699b0728ebbf1721815c723460c832d8e8)https://github.com/angel-git/tarkov-stash/pull/160[)](https://github.com/angel-git/tarkov-stash/commit/a85b16699b0728ebbf1721815c723460c832d8e8)
+
+* [Add cache image on help menu (](https://github.com/angel-git/tarkov-stash/commit/433c9925d88c84457cb29bb9d5a7598ae6c14242)https://github.com/angel-git/tarkov-stash/pull/158[)](https://github.com/angel-git/tarkov-stash/commit/433c9925d88c84457cb29bb9d5a7598ae6c14242)
+
+* [don't crash if cache image is not found (](https://github.com/angel-git/tarkov-stash/commit/560f7dfc41abb27069a11f1d23adf90a681b401e)https://github.com/angel-git/tarkov-stash/pull/162[)](https://github.com/angel-git/tarkov-stash/commit/560f7dfc41abb27069a11f1d23adf90a681b401e)
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.10.5...v0.10.6
+```
+
+
+## Release: v0.11.2 @ 2024-05-12T11:17:03Z
+```
+## What's Changed
+* #149 reload only the profile that is selected by @angel-git in https://github.com/angel-git/tarkov-stash/pull/150
+* 154: Fix resource calculation for labs cards by @angel-git in https://github.com/angel-git/tarkov-stash/pull/155
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.1...v0.11.2
+```
+
+
+## Release: v0.10.5 @ 2024-05-12T10:56:04Z
+```
+#154 Fix a problem reading lab cards
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.1...v0.10.5
+```
+
+
 ## Release: v0.11.1 @ 2024-05-07T08:58:53Z
 ```
 ## What's Changed
@@ -281,7 +328,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.2...v0.2.3
 ```
 
-
 ## Release: v0.2.2 @ 2023-10-17T08:22:05Z
 ```
 ## What's Changed
@@ -323,6 +369,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.1.5...v0.1.6
 ```
+
 
 ## Release: v0.1.5 @ 2023-08-20T22:34:10Z
 ```
