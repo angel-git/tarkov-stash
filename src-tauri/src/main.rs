@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use log::LevelFilter;
+use log::{error, LevelFilter};
 use tauri::{Manager, State, Wry};
 use tauri_plugin_log::LogTarget;
 use tauri_plugin_store::Store;
