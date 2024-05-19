@@ -38,7 +38,7 @@ namespace TarkovStash
 
         public void handleMessage(string message)
         {
-            if (message.Contains("\"type\":\"test-stash\""))
+            if (message.Contains("\"type\":\"tarkov-stash-reload\""))
             {
                 Logger.LogInfo($"refresh message received!");
 
