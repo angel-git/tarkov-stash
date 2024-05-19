@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir "dist/user/mods/tarkov-stash"
           mkdir "dist/BepInEx/plugins"
-          xcopy .\src-client-mod\bin\Debug\net471\*.dll .\dist\BepInEx\plugins /e
+          xcopy .\src-client-mod\bin\Debug\net471\TarkovStash.dll .\dist\BepInEx\plugins /e
           xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash /e
           Remove-Item -Path .\dist\user\mods\tarkov-stash\types -Force -Recurse
           mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash/tarkov-stash_x64-portable.exe
