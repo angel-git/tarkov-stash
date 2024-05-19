@@ -2,6 +2,8 @@
   import type { Item } from '../../../types';
   import { profile } from '../../../store';
   import { getShortName } from '../../../helper';
+  import Grid from '../grid/grid.svelte';
+
   export let title: string;
   export let item: Item | undefined;
   export let onDblClick: (item: Item) => void;
@@ -17,6 +19,12 @@
       return backgroundImageUrl;
     }
   }
+
+  function onOptionClicked() {
+    console.log('option clicked');
+  }
+
+  console.log(`item ${title}`, item);
 </script>
 
 <div tabindex="-1" role="button" class="body-item" on:dblclick={() => item && onDblClick(item)}>
@@ -26,25 +34,44 @@
     </div>
   {/if}
   <div class="content">
-    {#if item && $profile?.locale}
-      <div class="item-image">
-        <img alt="item" src={calculateBackgroundStyle(item)} />
-      </div>
-      <div class="short-name">{getShortName(item.tpl, $profile.locale)}</div>
-      <div class="item-data">
-        {#if item.isFir}
-          <div class="fir" />
-        {/if}
-        {#if item.isStockable}
-          <div class="amount">{item.amount}</div>
-        {/if}
-        {#if item.maxResource && item.maxResource !== 1}
-          <div class="resource">
-            {`${item.resource || item.maxResource}/${item.maxResource}`}
-          </div>
-        {/if}
-      </div>
-    {/if}
+    <div>
+      {#if item && $profile?.locale}
+        <div class="item-image">
+          <img alt="item" src={calculateBackgroundStyle(item)} />
+        </div>
+        <div class="short-name">{getShortName(item.tpl, $profile.locale)}</div>
+        <div class="item-data">
+          {#if item.isFir}
+            <div class="fir" />
+          {/if}
+          {#if item.isStockable}
+            <div class="amount">{item.amount}</div>
+          {/if}
+          {#if item.maxResource && item.maxResource !== 1}
+            <div class="resource">
+              {`${item.resource || item.maxResource}/${item.maxResource}`}
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
+    <div class="grid-items">
+      {#if title === 'pouch'}
+        <!--        TODO remove this if -->
+        {#each item.gridItems ?? [] as gridItem}
+          <Grid
+            locale={$profile.locale}
+            nestedLevel={2}
+            bsgItems={{}}
+            presetItems={[]}
+            items={gridItem.items}
+            sizeX={gridItem.cellsH}
+            sizeY={gridItem.cellsV}
+            {onOptionClicked}
+          />
+        {/each}
+      {/if}
+    </div>
   </div>
 </div>
 
@@ -83,6 +110,12 @@
     position: relative;
     width: 100%;
     height: 100%;
+  }
+
+  .content .grid-items {
+    position: absolute;
+    right: -230px;
+    top: -42px;
   }
 
   .fir {
