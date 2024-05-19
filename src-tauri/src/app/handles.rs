@@ -5,7 +5,7 @@ use crate::prelude::{
     SETTING_IMAGE_CACHE, SETTING_LOCALE,
 };
 use crate::spt::server::{
-    is_server_running, is_tarkov_running, load_bsg_items_from_server, load_globals_from_server,
+    is_server_running, load_bsg_items_from_server, load_globals_from_server,
     load_locale_from_server, load_profile_from_server, load_server_info, load_sessions_from_server,
     refresh_profile_on_server, ServerProps,
 };
@@ -17,8 +17,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use tauri::{AppHandle, Manager, State};
 
-const SPT_RUNNING_ERROR: &str = "Looks like Tarkov is running, quit the game before using this mod";
-
 #[tauri::command]
 pub async fn connect_to_server(
     server: ServerProps,
@@ -26,8 +24,6 @@ pub async fn connect_to_server(
 ) -> Result<Vec<Session>, String> {
     if !is_server_running(&server) {
         Err(format!("Server is not running at {}", server))
-    } else if is_tarkov_running() {
-        Err(SPT_RUNNING_ERROR.to_string())
     } else {
         {
             let state: State<TarkovStashState> = app.state();
@@ -63,9 +59,6 @@ pub async fn connect_to_server(
 
 #[tauri::command]
 pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<UIProfile, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     let state: State<TarkovStashState> = app.state();
 
     let server_props = {
@@ -142,9 +135,6 @@ pub async fn refresh_profile_from_spt(
     session: Session,
     app: AppHandle,
 ) -> Result<UIProfile, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     let state: State<TarkovStashState> = app.state();
 
     let server_props = {
@@ -213,9 +203,6 @@ pub async fn refresh_profile_from_spt(
 
 #[tauri::command]
 pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Changing amount to id {} and tpl {}",
         item.id.as_str(),
@@ -231,9 +218,6 @@ pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, 
 
 #[tauri::command]
 pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Setting fir to item id {} and tpl {}",
         item.id.as_str(),
@@ -249,9 +233,6 @@ pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, Str
 
 #[tauri::command]
 pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Restoring durability to item {} and tpl {}",
         item.id.as_str(),
@@ -267,9 +248,6 @@ pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<Str
 
 #[tauri::command]
 pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Deleting item {} and tpl {}",
         item.id.as_str(),
@@ -285,9 +263,6 @@ pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, St
 
 #[tauri::command]
 pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Adding {} item {} on [{},{}]",
         item.amount,
@@ -328,9 +303,6 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
 
 #[tauri::command]
 pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
-    if is_tarkov_running() {
-        return Err(SPT_RUNNING_ERROR.to_string());
-    }
     info!(
         "Adding preset id {} on [{},{}]",
         item.id.as_str(),
