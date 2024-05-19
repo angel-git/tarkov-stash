@@ -1,3 +1,4 @@
+use log::error;
 use serde_json::Map;
 use std::collections::{HashMap, HashSet};
 
@@ -21,16 +22,20 @@ pub struct UIProfile {
     pub locale: HashMap<String, Value>,
     #[serde(rename = "presetItems")]
     pub preset_items: Vec<PresetItem>,
+    #[serde(rename = "bodyItems")]
+    pub body_items: BodyItems,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Item {
     pub id: String,
     pub tpl: String,
     #[serde(rename = "parentId")]
     pub parent_id: Option<String>,
-    pub x: u16,
-    pub y: u16,
+    #[serde(rename = "slotId")]
+    pub slot_id: Option<String>,
+    pub x: Option<u16>,
+    pub y: Option<u16>,
     #[serde(rename = "sizeX")]
     pub size_x: u16,
     #[serde(rename = "sizeY")]
@@ -43,7 +48,7 @@ pub struct Item {
     #[serde(rename = "isFir")]
     pub is_fir: bool,
     #[serde(rename = "rotation")]
-    pub r: String,
+    pub r: Option<String>,
     pub resource: Option<u16>,
     #[serde(rename = "maxResource")]
     pub max_resource: Option<u16>,
@@ -62,6 +67,31 @@ pub struct Item {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
+pub struct BodyItems {
+    pub earpierce: Option<Item>,
+    pub headwear: Option<Item>,
+    pub eyewear: Option<Item>,
+    #[serde(rename = "armorVest")]
+    pub armor_vest: Option<Item>,
+    #[serde(rename = "faceCover")]
+    pub face_cover: Option<Item>,
+    #[serde(rename = "armBand")]
+    pub arm_band: Option<Item>,
+    pub holster: Option<Item>,
+    pub sheath: Option<Item>,
+    #[serde(rename = "primaryWeapon")]
+    pub primary_weapon: Option<Item>,
+    #[serde(rename = "secondaryWeapon")]
+    pub secondary_weapon: Option<Item>,
+    pub backpack: Option<Item>,
+    #[serde(rename = "tacticalVest")]
+    pub tactical_vest: Option<Item>,
+    pub pockets: Option<Item>,
+    #[serde(rename = "securedContainer")]
+    pub secured_container: Option<Item>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
 pub struct PresetItem {
     pub id: String,
     pub encyclopedia: Option<String>,
@@ -70,7 +100,7 @@ pub struct PresetItem {
     pub height: u16,
 }
 
-#[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Hash, Eq, PartialEq, Clone)]
 pub struct SlotItem {
     pub id: String,
     pub tpl: String,
@@ -79,7 +109,7 @@ pub struct SlotItem {
     pub upd: Option<spt_profile_serializer::UPD>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GridItem {
     #[serde(rename = "name")]
     pub _name: String,
@@ -140,6 +170,7 @@ pub fn convert_profile_to_ui(
     load_image_cache: bool,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
+    let equipment = &tarkov_profile.characters.pmc.inventory.equipment;
     let (stash_size_x, stash_size_y) = calculate_stash_size(&tarkov_profile, bsg_items_root);
 
     let cache_icon_index_file = if load_image_cache {
@@ -155,6 +186,7 @@ pub fn convert_profile_to_ui(
         "hideout",
         globals,
         &cache_icon_index_file,
+        false,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -231,6 +263,41 @@ pub fn convert_profile_to_ui(
         );
     });
 
+    let get_body_item = |slot: &str| -> Option<Item> {
+        match parse_items(
+            &tarkov_profile.characters.pmc.inventory.items,
+            bsg_items_root,
+            equipment.as_str(),
+            slot,
+            globals,
+            &cache_icon_index_file,
+            true,
+        ) {
+            Ok(result) => result.first().cloned(),
+            Err(e) => {
+                error!("Can't parse item on slot {}: {}", slot, e);
+                None
+            }
+        }
+    };
+
+    let body_items = BodyItems {
+        earpierce: get_body_item("Earpiece"),
+        headwear: get_body_item("Headwear"),
+        eyewear: get_body_item("Eyewear"),
+        armor_vest: get_body_item("ArmorVest"),
+        face_cover: get_body_item("FaceCover"),
+        arm_band: get_body_item("ArmBand"),
+        holster: get_body_item("Holster"),
+        sheath: get_body_item("Scabbard"),
+        primary_weapon: get_body_item("FirstPrimaryWeapon"),
+        secondary_weapon: get_body_item("SecondPrimaryWeapon"),
+        backpack: get_body_item("Backpack"),
+        tactical_vest: get_body_item("TacticalVest"),
+        pockets: get_body_item("Pockets"),
+        secured_container: get_body_item("SecuredContainer"),
+    };
+
     Ok(UIProfile {
         name: tarkov_profile.characters.pmc.info.nickname,
         size_x: stash_size_x,
@@ -240,16 +307,18 @@ pub fn convert_profile_to_ui(
         spt_version: None,
         locale: locale_root.clone(),
         preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
+        body_items,
     })
 }
 
 fn parse_items(
-    profile_items: &Vec<spt_profile_serializer::InventoryItem>,
+    profile_items: &[spt_profile_serializer::InventoryItem],
     bsg_items_root: &HashMap<String, Value>,
     parent_slot: &str,
     parent_item_slot: &str,
     globals: &HashMap<String, Value>,
     index_cache: &Option<Map<String, Value>>,
+    ignore_location: bool,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -264,15 +333,17 @@ fn parse_items(
         if item_slot.is_none() || item_slot.unwrap() != parent_item_slot {
             continue;
         };
-        if location.is_none() {
+        if !ignore_location && location.is_none() {
             return Err(format!(
                 "Item with id [{}] has no location, can't parse this profile :(",
                 item._id
             ));
         }
         let location_in_stash =
-            if let spt_profile_serializer::Location::LocationInStash(xy) = location.unwrap() {
-                xy
+            if let Some(spt_profile_serializer::Location::LocationInStash(xy)) = location {
+                Some(xy)
+            } else if ignore_location {
+                None
             } else {
                 panic!("oh no, wrong item: {}", item._id);
             };
@@ -303,6 +374,7 @@ fn parse_items(
                     grid_name,
                     globals,
                     index_cache,
+                    ignore_location,
                 )?;
 
                 let grid_item = GridItem {
@@ -413,15 +485,16 @@ fn parse_items(
             id: item._id.to_string(),
             tpl: item._tpl.to_string(),
             parent_id: item.parent_id.clone(),
-            x: location_in_stash.x,
-            y: location_in_stash.y,
+            slot_id: item.slot_id.clone(),
+            x: location_in_stash.map(|l| l.x),
+            y: location_in_stash.map(|l| l.y),
             size_x,
             size_y,
             amount,
             is_stockable: stack_max_size != 1,
             stack_max_size,
             is_fir: spawned_in_session,
-            r: location_in_stash.r.to_string(),
+            r: location_in_stash.map(|l| l.r.to_string()),
             max_resource,
             resource,
             background_color,
@@ -634,6 +707,7 @@ mod tests {
             "hideout",
             &HashMap::new(),
             &None,
+            false,
         )
         .ok()
         .unwrap();
@@ -676,6 +750,7 @@ mod tests {
             "hideout",
             &HashMap::new(),
             &None,
+            false,
         )
         .ok()
         .unwrap();
@@ -686,5 +761,37 @@ mod tests {
             .unwrap();
         let slot_items = vpo.slot_items.as_ref().unwrap().len();
         assert_eq!(slot_items, 14);
+    }
+
+    #[test]
+    fn should_get_items_from_character_body() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/user/profiles/380-bonus-stash.json"
+            ))
+            .as_ref(),
+        );
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        assert!(tarkov_profile.is_ok());
+        let profile_ui = convert_profile_to_ui(
+            tarkov_profile.unwrap(),
+            &bsg_items_root,
+            &HashMap::new(),
+            &HashMap::new(),
+            false,
+        );
+        assert!(profile_ui.is_ok());
+        assert!(profile_ui
+            .as_ref()
+            .unwrap()
+            .body_items
+            .primary_weapon
+            .is_some());
     }
 }

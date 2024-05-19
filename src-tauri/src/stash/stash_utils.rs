@@ -462,15 +462,15 @@ mod tests {
         let item = Item {
             id: "41d413738e53a1eaa78d3112".to_string(),
             tpl: "5449016a4bdc2d6f028b456f".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 66,
             stack_max_size: 1,
             is_stockable: false,
             is_fir: false,
-            r: "Horitzontal".to_string(),
+            r: Some("Horitzontal".to_string()),
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -480,6 +480,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let updated = update_item_amount(json, &item, &HashMap::new()).unwrap();
         let root: Value = serde_json::from_str(updated.as_str()).unwrap();
@@ -560,15 +561,15 @@ mod tests {
         let item_41d413738e53a1eaa78d3112 = Item {
             id: "41d413738e53a1eaa78d3112".to_string(),
             tpl: "5449016a4bdc2d6f028b456f".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 66,
             stack_max_size: 1,
             is_stockable: false,
             is_fir: false,
-            r: "Horitzontal".to_string(),
+            r: Some("Horitzontal".to_string()),
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -578,19 +579,20 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let item_3eb9393a58f797c0c5f0e38e = Item {
             id: "3eb9393a58f797c0c5f0e38e".to_string(),
             tpl: "590c37d286f77443be3d7827".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 66,
             stack_max_size: 1,
             is_stockable: false,
             is_fir: false,
-            r: "Horitzontal".to_string(),
+            r: Some("Horitzontal".to_string()),
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -600,6 +602,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         // update both items
         let update_41d413738e53a1eaa78d3112 =
@@ -671,15 +674,15 @@ mod tests {
         let item = Item {
             id: "49c6ab1c3e2c828a32c60307".to_string(),
             tpl: "57513f07245977207e26a311".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -689,6 +692,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -752,15 +756,15 @@ mod tests {
         let item = Item {
             id: "49c6ab1c3e2c828a32c60307".to_string(),
             tpl: "590c661e86f7741e566b646a".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -770,6 +774,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -833,15 +838,15 @@ mod tests {
         let item = Item {
             id: "49c6ab1c3e2c828a32c60307".to_string(),
             tpl: "5d1b36a186f7742523398433".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -851,6 +856,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -915,15 +921,15 @@ mod tests {
         let item = Item {
             id: "49c6ab1c3e2c828a32c60307".to_string(),
             tpl: "606dae0ab0e443224b421bb7".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -933,6 +939,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -1002,15 +1009,15 @@ mod tests {
         let item = Item {
             id: "49c6ab1c3e2c828a32c60307".to_string(),
             tpl: "".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -1020,6 +1027,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
 
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
@@ -1091,15 +1099,15 @@ mod tests {
         let item = Item {
             id: "e87f54571e3fd5233c878f75".to_string(),
             tpl: "".to_string(),
-            x: 0,
-            y: 0,
+            x: Some(0),
+            y: Some(0),
             size_x: 0,
             size_y: 0,
             amount: 0,
             stack_max_size: 0,
             is_stockable: false,
             is_fir: false,
-            r: "".to_string(),
+            r: None,
             resource: None,
             max_resource: None,
             background_color: "".to_string(),
@@ -1109,6 +1117,7 @@ mod tests {
             parent_id: None,
             preset_image_id: None,
             cache_image: None,
+            slot_id: None,
         };
 
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(

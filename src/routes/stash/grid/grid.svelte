@@ -5,14 +5,10 @@
   import Grid from './grid.svelte';
   import NewItemModal from '../modal/modal-item.svelte';
   import NewPresetModal from '../modal/modal-preset.svelte';
-  import { getName } from '../../../helper';
   import WeaponIcon from '$lib/images/icon_weapons.png';
-  import FirIcon from '$lib/images/fir.png';
-  import InspectIcon from '$lib/images/inspect.png';
-  import OpenIcon from '$lib/images/open.png';
-  import RepairIcon from '$lib/images/repair.png';
-  import DiscardIcon from '$lib/images/discard.png';
-  import AmountIcon from '$lib/images/amount.png';
+  import SecondaryMenu from '../secondary-menu/secondary-menu.svelte';
+  import { getName } from '../../../helper';
+  import { contextMenu } from '../../../store';
 
   export let items: Array<Item>;
   export let locale: Record<string, string>;
@@ -37,7 +33,6 @@
 
   let isNewItemModalOpen = false;
   let isPresetItemModalOpen = false;
-  let secondaryItemMenuId = '-1';
   let containerOpenId = '-1';
   let orderedItems: Array<Item | undefined>;
   $: orderedItems = [];
@@ -92,18 +87,6 @@
     }
   }
 
-  function handleOpenClick(item: Item | undefined) {
-    if (!item) {
-      secondaryItemMenuId = '-1';
-      return;
-    }
-    if (secondaryItemMenuId === item.id) {
-      secondaryItemMenuId = '-1';
-    } else {
-      secondaryItemMenuId = item.id;
-    }
-  }
-
   function handleOpenDetails(item: Item | undefined) {
     if (!item) return;
     onOptionClicked('details', item);
@@ -111,7 +94,6 @@
 
   function handleOptionClicked(option: Option, item: Item | undefined) {
     if (!item) return;
-    secondaryItemMenuId = '-1';
     if (option === 'open') {
       containerOpenId = item.id;
     } else {
@@ -120,12 +102,10 @@
   }
 
   function openNewItemModal() {
-    secondaryItemMenuId = '-1';
     isNewItemModalOpen = true;
   }
 
   function openPresetItemModal() {
-    secondaryItemMenuId = '-1';
     isPresetItemModalOpen = true;
   }
 </script>
@@ -155,96 +135,25 @@
   {#each orderedItems as item}
     <div class="grid-item">
       {#if item}
-        <StashItem {locale} {handleOpenClick} {handleOpenDetails} {item} />
+        <StashItem {locale} onOpenDetails={handleOpenDetails} {item} />
       {:else}
         <div class="empty" />
       {/if}
-      {#if item?.id === secondaryItemMenuId}
-        <div class="options">
-          <div class="title">{getName(item.tpl, locale)}</div>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
-            class="option"
-            tabindex="-1"
-            role="button"
-            on:click={() => handleOptionClicked('details', item)}
-          >
-            <img alt="inspect logo" src={InspectIcon} />
-            <div>Inspect</div>
-          </div>
-          {#if item.isContainer}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="option"
-              tabindex="-1"
-              role="button"
-              on:click={() => handleOptionClicked('open', item)}
-            >
-              <img alt="open logo" src={OpenIcon} />
-              <div>Open</div>
-            </div>
-          {/if}
-          {#if item.isStockable}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="option"
-              tabindex="-1"
-              role="button"
-              on:click={() => handleOptionClicked('amount', item)}
-            >
-              <img alt="amount logo" src={AmountIcon} />
-              <div>Change amount</div>
-            </div>
-          {/if}
-          {#if !item.isFir}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="option"
-              tabindex="-1"
-              role="button"
-              on:click={() => handleOptionClicked('fir', item)}
-            >
-              <img alt="fir logo" src={FirIcon} />
-              <div>Set fir</div>
-            </div>
-          {/if}
-          {#if item.maxResource && item.maxResource !== 1 && item.resource !== item.maxResource}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="option"
-              tabindex="-1"
-              role="button"
-              on:click={() => handleOptionClicked('resource', item)}
-            >
-              <img alt="repair logo" src={RepairIcon} />
-              <div>Restore durability</div>
-            </div>
-          {/if}
-          {#if !item.isContainer}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="option destructive"
-              tabindex="-1"
-              role="button"
-              on:click={() => handleOptionClicked('delete', item)}
-            >
-              <img alt="discard logo" src={DiscardIcon} />
-              <div>Discard</div>
-            </div>
-          {/if}
-        </div>
+      {#if item && item?.id === $contextMenu?.id}
+        <SecondaryMenu {locale} onOptionClicked={handleOptionClicked} />
       {/if}
-      {#if item?.id === containerOpenId}
+      {#if item && item?.id === containerOpenId}
         <div class="nested-grid" style={`z-index: ${nestedLevel + 10}`}>
           <div class="nested-grid-header">
             <div>{getName(item.tpl, locale)}</div>
             <button on:click={() => (containerOpenId = '-1')}>close</button>
           </div>
-          {#each item.gridItems as gridItem}
+          {#each item.gridItems ?? [] as gridItem}
             <Grid
               {locale}
               nestedLevel={nestedLevel + 1}
               {bsgItems}
+              presetItems={[]}
               items={gridItem.items}
               sizeX={gridItem.cellsH}
               sizeY={gridItem.cellsV}
@@ -261,7 +170,7 @@
   .grid {
     display: grid;
     margin: 16px auto;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 350px);
     overflow-y: auto;
   }
 
@@ -290,62 +199,6 @@
   .empty {
     height: 64px;
     width: 64px;
-  }
-
-  .options {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: var(--color-background);
-    border: 1px solid var(--color-background);
-    font-size: 12px;
-    z-index: 5;
-    min-width: 170px;
-  }
-
-  .options .option {
-    font-size: 11px;
-    padding: 2px 10px;
-    margin: 2px 0;
-    border-top-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    text-transform: uppercase;
-    background-color: var(--color-menu);
-    display: flex;
-    gap: 16px;
-    justify-items: center;
-    align-self: center;
-    align-content: center;
-    align-items: center;
-  }
-
-  .options .option img {
-    max-height: 14px;
-    max-width: 14px;
-  }
-
-  .options .option:hover img {
-    filter: invert();
-  }
-
-  .options .option.destructive {
-    color: var(--color-destructive);
-  }
-
-  .options .option.destructive:hover {
-    color: var(--color-background);
-    background-color: var(--color-destructive);
-  }
-
-  .options .title {
-    font-weight: bold;
-    border-bottom: 1px solid var(--color-menu);
-  }
-
-  .options .option:hover {
-    cursor: pointer;
-    background-color: var(--color-text);
-    color: var(--color-background);
   }
 
   button img {
