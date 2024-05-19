@@ -31,15 +31,15 @@ jobs:
         shell: pwsh
         run: |
           $accessToken = "${{ secrets.DLL_TOKEN }}"
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/0Harmony.dll" -outputPath ".\src-client-mod\dependencies\0Harmony.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Aki.Reflection.dll" -outputPath ".\src-client-mod\dependencies\Aki.Reflection.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Assembly-CSharp.dll" -outputPath ".\src-client-mod\dependencies\Assembly-CSharp.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/BepInEx.dll" -outputPath ".\src-client-mod\dependencies\BepInEx.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.dll" -outputPath ".\src-client-mod\dependencies\Comfort.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.Unity.dll" -outputPath ".\src-client-mod\dependencies\Comfort.Unity.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Sirenix.Serialization.dll" -outputPath ".\src-client-mod\dependencies\Sirenix.Serialization.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.CoreModule.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.CoreModule.dll" -accessToken $accessToken
-          ./download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/0Harmony.dll" -outputPath ".\src-client-mod\dependencies\0Harmony.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Aki.Reflection.dll" -outputPath ".\src-client-mod\dependencies\Aki.Reflection.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Assembly-CSharp.dll" -outputPath ".\src-client-mod\dependencies\Assembly-CSharp.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/BepInEx.dll" -outputPath ".\src-client-mod\dependencies\BepInEx.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.dll" -outputPath ".\src-client-mod\dependencies\Comfort.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.Unity.dll" -outputPath ".\src-client-mod\dependencies\Comfort.Unity.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Sirenix.Serialization.dll" -outputPath ".\src-client-mod\dependencies\Sirenix.Serialization.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.CoreModule.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.CoreModule.dll" -accessToken $accessToken
+          .\src-client-mod\download.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.dll" -accessToken $accessToken
         env:
           DLL_TOKEN: ${{ secrets.DLL_TOKEN }}
       - name: Setup dotnet
