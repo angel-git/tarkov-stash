@@ -1,8 +1,8 @@
 use crate::prelude::server::Session;
 use crate::prelude::{
-    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event,
-    update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile,
-    SETTING_IMAGE_CACHE, SETTING_LOCALE,
+    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event, unwatch,
+    update_durability, update_item_amount, update_spawned_in_session, watch, Item, NewItem,
+    UIProfile, SETTING_IMAGE_CACHE, SETTING_LOCALE,
 };
 use crate::spt::server::{
     is_server_running, load_bsg_items_from_server, load_globals_from_server,
@@ -17,6 +17,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use tauri::{AppHandle, Manager, State};
 
+const PROFILE_CHANGED_EVENT: &str = "profile_loaded";
+
 #[tauri::command]
 pub async fn connect_to_server(
     server: ServerProps,
@@ -29,6 +31,9 @@ pub async fn connect_to_server(
             let state: State<TarkovStashState> = app.state();
             let mut internal_state = state.state.lock().unwrap();
             internal_state.server_props = Some(server.clone());
+            // unwatch previous profile events
+            let watcher_collection = &mut internal_state.watcher;
+            unwatch(PROFILE_CHANGED_EVENT.to_string(), watcher_collection);
         }
         let server_info_result = load_server_info(&server).await;
         if server_info_result.is_ok() {
@@ -116,14 +121,24 @@ pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<U
 
     match ui_profile_result {
         Ok(mut ui_profile) => {
-            let internal_state = state.state.lock().unwrap();
+            let mut internal_state = state.state.lock().unwrap();
             ui_profile
                 .spt_version
                 .clone_from(&internal_state.server_spt_version);
             let server_file_path = internal_state.server_file_path.as_ref().unwrap();
-            let session_id = internal_state.session_id.as_ref().unwrap();
-            let profile_file = get_profile_filename(server_file_path, session_id);
+            let session_id = internal_state.session_id.as_ref().unwrap().clone();
+            let profile_file = get_profile_filename(server_file_path, session_id.clone());
+            let watcher_collection = &mut internal_state.watcher;
             create_backup(profile_file.as_path().display().to_string().as_str());
+
+            watch(
+                PROFILE_CHANGED_EVENT.to_string(),
+                &profile_file,
+                app.get_window("main").unwrap(),
+                watcher_collection,
+                session_id.clone(),
+            );
+
             Ok(ui_profile)
         }
         Err(e) => Err(e),
@@ -365,7 +380,7 @@ async fn with_state_do(
         {
             return Err("Could not find file inside app state".to_string());
         }
-        let session_id = session_id_option.as_ref().unwrap();
+        let session_id = session_id_option.as_ref().unwrap().clone();
         let server_file_path = server_file_path_option.as_ref().unwrap();
         let profile_file_path = get_profile_filename(server_file_path, session_id);
         let bsg_items = bsg_items_option.as_ref().unwrap();
@@ -386,14 +401,14 @@ async fn with_state_do(
     result
 }
 
-fn get_profile_filename(server_file_path: &String, session_id: &String) -> PathBuf {
+fn get_profile_filename(server_file_path: &String, session_id: String) -> PathBuf {
     Path::new(server_file_path)
         .join("user")
         .join("profiles")
         .join(format!("{}.json", session_id))
 }
 
-fn get_session_and_server(app: &tauri::AppHandle) -> (String, ServerProps) {
+fn get_session_and_server(app: &AppHandle) -> (String, ServerProps) {
     let state: State<TarkovStashState> = app.state();
     let internal_state = state.state.lock().unwrap();
 
@@ -403,11 +418,9 @@ fn get_session_and_server(app: &tauri::AppHandle) -> (String, ServerProps) {
     (session_id_option.unwrap(), server_props_option.unwrap())
 }
 
-async fn refresh_profile(app: &tauri::AppHandle) {
+async fn refresh_profile(app: &AppHandle) {
     let (session_id, server_props) = get_session_and_server(app);
     let _ = refresh_profile_on_server(&server_props, &session_id).await;
-    app.emit_all("profile_loaded", session_id)
-        .expect("Can't emit event to window!");
 }
 
 fn create_backup(profile_path: &str) {
@@ -424,7 +437,7 @@ fn get_profile_file_path(app: &AppHandle) -> PathBuf {
     let profile_file_path = {
         let state: State<TarkovStashState> = app.state();
         let internal_state = state.state.lock().unwrap();
-        let session_id = internal_state.session_id.as_ref().unwrap();
+        let session_id = internal_state.session_id.as_ref().unwrap().clone();
         let server_file_path = internal_state.server_file_path.as_ref().unwrap();
         get_profile_filename(server_file_path, session_id)
     };
