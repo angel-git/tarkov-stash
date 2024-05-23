@@ -36,11 +36,23 @@ namespace TarkovStash
             return _mainMenuControllerField.GetValue(tarkovApplication) as MainMenuController;
         }
 
+        private bool IsInRaid()
+        {
+            var game = Singleton<AbstractGame>.Instance;
+            return game != null && game.InRaid;
+        }
+
         public void handleMessage(string message)
         {
             if (message.Contains("\"type\":\"tarkov-stash-reload\""))
             {
                 Logger.LogInfo($"refresh message received!");
+
+                if (IsInRaid())
+                {
+                    Logger.LogInfo($"In raid, not refreshing profile");
+                    return;
+                }
 
                 GetMainMenuController().OnProfileChangeApplied(ENotificationRequirements.ReloadProfile);
             }
