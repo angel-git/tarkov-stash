@@ -59,9 +59,8 @@ class TarkovStash implements IPreAkiLoadMod {
               `[tarkov-stash] Refreshing profile [${sessionId}] from disk`,
               LogTextColor.GREEN,
             );
-            webSocketServer.sendMessage(sessionId, { type: 'tarkov-stash-reload', eventId: '' });
-
             saveServer.loadProfile(sessionId);
+            webSocketServer.sendMessage(sessionId, { type: 'tarkov-stash-reload', eventId: '' });
             return 'ok';
           },
         },
