@@ -102,7 +102,7 @@ pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<U
             .unwrap()
             .to_owned()
     };
-    
+
     let server_path = {
         let internal_state = state.state.lock().unwrap();
         internal_state.server_file_path.as_ref().unwrap().clone()
@@ -117,8 +117,14 @@ pub async fn load_profile_from_spt(session: Session, app: AppHandle) -> Result<U
         .await
         .unwrap();
 
-    let ui_profile_result =
-        convert_profile_to_ui(profile, &bsg_items, &locale, &globals, load_image_cache, server_path.as_str());
+    let ui_profile_result = convert_profile_to_ui(
+        profile,
+        &bsg_items,
+        &locale,
+        &globals,
+        load_image_cache,
+        server_path.as_str(),
+    );
 
     {
         let mut internal_state = state.state.lock().unwrap();
@@ -206,7 +212,14 @@ pub async fn refresh_profile_from_spt(
         let internal_state = state.state.lock().unwrap();
         let bsg_items = internal_state.bsg_items.as_ref().unwrap();
         let globals = internal_state.globals.as_ref().unwrap();
-        convert_profile_to_ui(profile, bsg_items, &locale_root, globals, load_image_cache, server_path.as_str())
+        convert_profile_to_ui(
+            profile,
+            bsg_items,
+            &locale_root,
+            globals,
+            load_image_cache,
+            server_path.as_str(),
+        )
     };
 
     match ui_profile_result {
