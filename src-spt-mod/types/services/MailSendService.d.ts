@@ -1,30 +1,35 @@
-import { DialogueHelper } from '@spt-aki/helpers/DialogueHelper';
-import { ItemHelper } from '@spt-aki/helpers/ItemHelper';
-import { NotificationSendHelper } from '@spt-aki/helpers/NotificationSendHelper';
-import { NotifierHelper } from '@spt-aki/helpers/NotifierHelper';
-import { TraderHelper } from '@spt-aki/helpers/TraderHelper';
-import { Item } from '@spt-aki/models/eft/common/tables/IItem';
+import { DialogueHelper } from '@spt/helpers/DialogueHelper';
+import { ItemHelper } from '@spt/helpers/ItemHelper';
+import { NotificationSendHelper } from '@spt/helpers/NotificationSendHelper';
+import { NotifierHelper } from '@spt/helpers/NotifierHelper';
+import { TraderHelper } from '@spt/helpers/TraderHelper';
+import { Item } from '@spt/models/eft/common/tables/IItem';
 import {
   Dialogue,
+  ISystemData,
   IUserDialogInfo,
   Message,
+  MessageContentRagfair,
   MessageItems,
-} from '@spt-aki/models/eft/profile/IAkiProfile';
-import { MessageType } from '@spt-aki/models/enums/MessageType';
-import { Traders } from '@spt-aki/models/enums/Traders';
-import { ISendMessageDetails } from '@spt-aki/models/spt/dialog/ISendMessageDetails';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { SaveServer } from '@spt-aki/servers/SaveServer';
-import { LocalisationService } from '@spt-aki/services/LocalisationService';
-import { HashUtil } from '@spt-aki/utils/HashUtil';
-import { TimeUtil } from '@spt-aki/utils/TimeUtil';
+} from '@spt/models/eft/profile/ISptProfile';
+import { MessageType } from '@spt/models/enums/MessageType';
+import { Traders } from '@spt/models/enums/Traders';
+import {
+  IProfileChangeEvent,
+  ISendMessageDetails,
+} from '@spt/models/spt/dialog/ISendMessageDetails';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { SaveServer } from '@spt/servers/SaveServer';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { LocalisationService } from '@spt/services/LocalisationService';
+import { HashUtil } from '@spt/utils/HashUtil';
+import { TimeUtil } from '@spt/utils/TimeUtil';
 export declare class MailSendService {
   protected logger: ILogger;
   protected hashUtil: HashUtil;
   protected timeUtil: TimeUtil;
   protected saveServer: SaveServer;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected notifierHelper: NotifierHelper;
   protected dialogueHelper: DialogueHelper;
   protected notificationSendHelper: NotificationSendHelper;
@@ -37,7 +42,7 @@ export declare class MailSendService {
     hashUtil: HashUtil,
     timeUtil: TimeUtil,
     saveServer: SaveServer,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     notifierHelper: NotifierHelper,
     dialogueHelper: DialogueHelper,
     notificationSendHelper: NotificationSendHelper,
@@ -60,9 +65,9 @@ export declare class MailSendService {
     messageType: MessageType,
     message: string,
     items?: Item[],
-    maxStorageTimeSeconds?: any,
-    systemData?: any,
-    ragfair?: any,
+    maxStorageTimeSeconds?: number,
+    systemData?: ISystemData,
+    ragfair?: MessageContentRagfair,
   ): void;
   /**
    * Send a message from an NPC (e.g. prapor) to the player with or without items
@@ -79,9 +84,9 @@ export declare class MailSendService {
     messageType: MessageType,
     messageLocaleId: string,
     items?: Item[],
-    maxStorageTimeSeconds?: any,
-    systemData?: any,
-    ragfair?: any,
+    maxStorageTimeSeconds?: number,
+    systemData?: ISystemData,
+    ragfair?: MessageContentRagfair,
   ): void;
   /**
    * Send a message from SYSTEM to the player with or without items
@@ -94,7 +99,8 @@ export declare class MailSendService {
     sessionId: string,
     message: string,
     items?: Item[],
-    maxStorageTimeSeconds?: any,
+    maxStorageTimeSeconds?: number,
+    profileChangeEvents?: IProfileChangeEvent[],
   ): void;
   /**
    * Send a message from SYSTEM to the player with or without items with localised text
@@ -107,8 +113,8 @@ export declare class MailSendService {
     sessionId: string,
     messageLocaleId: string,
     items?: Item[],
-    profileChangeEvents?: any[],
-    maxStorageTimeSeconds?: any,
+    profileChangeEvents?: IProfileChangeEvent[],
+    maxStorageTimeSeconds?: number,
   ): void;
   /**
    * Send a USER message to a player with or without items
@@ -123,7 +129,7 @@ export declare class MailSendService {
     senderDetails: IUserDialogInfo,
     message: string,
     items?: Item[],
-    maxStorageTimeSeconds?: any,
+    maxStorageTimeSeconds?: number,
   ): void;
   /**
    * Large function to send messages to players from a variety of sources (SYSTEM/NPC/USER)
@@ -153,8 +159,8 @@ export declare class MailSendService {
    */
   protected addRewardItemsToMessage(
     message: Message,
-    itemsToSendToPlayer: MessageItems,
-    maxStorageTimeSeconds: number,
+    itemsToSendToPlayer: MessageItems | undefined,
+    maxStorageTimeSeconds: number | undefined,
   ): void;
   /**
    * perform various sanitising actions on the items before they're considered ready for insertion into message
@@ -184,5 +190,5 @@ export declare class MailSendService {
    * @param messageDetails
    * @returns gets an id of the individual sending it
    */
-  protected getMessageSenderIdByType(messageDetails: ISendMessageDetails): string;
+  protected getMessageSenderIdByType(messageDetails: ISendMessageDetails): string | undefined;
 }

@@ -1,27 +1,29 @@
-import { ApplicationContext } from '@spt-aki/context/ApplicationContext';
-import { BotGenerator } from '@spt-aki/generators/BotGenerator';
-import { BotDifficultyHelper } from '@spt-aki/helpers/BotDifficultyHelper';
-import { BotHelper } from '@spt-aki/helpers/BotHelper';
-import { ProfileHelper } from '@spt-aki/helpers/ProfileHelper';
-import { IGenerateBotsRequestData } from '@spt-aki/models/eft/bot/IGenerateBotsRequestData';
-import { IPmcData } from '@spt-aki/models/eft/common/IPmcData';
-import { IBotBase } from '@spt-aki/models/eft/common/tables/IBotBase';
-import { IBotCore } from '@spt-aki/models/eft/common/tables/IBotCore';
-import { Difficulty } from '@spt-aki/models/eft/common/tables/IBotType';
-import { IBotConfig } from '@spt-aki/models/spt/config/IBotConfig';
-import { IPmcConfig } from '@spt-aki/models/spt/config/IPmcConfig';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { ConfigServer } from '@spt-aki/servers/ConfigServer';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { BotGenerationCacheService } from '@spt-aki/services/BotGenerationCacheService';
-import { LocalisationService } from '@spt-aki/services/LocalisationService';
-import { MatchBotDetailsCacheService } from '@spt-aki/services/MatchBotDetailsCacheService';
-import { SeasonalEventService } from '@spt-aki/services/SeasonalEventService';
-import { JsonUtil } from '@spt-aki/utils/JsonUtil';
-import { RandomUtil } from '@spt-aki/utils/RandomUtil';
+import { ApplicationContext } from '@spt/context/ApplicationContext';
+import { BotGenerator } from '@spt/generators/BotGenerator';
+import { BotDifficultyHelper } from '@spt/helpers/BotDifficultyHelper';
+import { BotHelper } from '@spt/helpers/BotHelper';
+import { ProfileHelper } from '@spt/helpers/ProfileHelper';
+import { MinMax } from '@spt/models/common/MinMax';
+import { Condition, IGenerateBotsRequestData } from '@spt/models/eft/bot/IGenerateBotsRequestData';
+import { IPmcData } from '@spt/models/eft/common/IPmcData';
+import { IBotBase } from '@spt/models/eft/common/tables/IBotBase';
+import { IBotCore } from '@spt/models/eft/common/tables/IBotCore';
+import { Difficulty } from '@spt/models/eft/common/tables/IBotType';
+import { BotGenerationDetails } from '@spt/models/spt/bots/BotGenerationDetails';
+import { IBotConfig } from '@spt/models/spt/config/IBotConfig';
+import { IPmcConfig } from '@spt/models/spt/config/IPmcConfig';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { ConfigServer } from '@spt/servers/ConfigServer';
+import { BotGenerationCacheService } from '@spt/services/BotGenerationCacheService';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { LocalisationService } from '@spt/services/LocalisationService';
+import { MatchBotDetailsCacheService } from '@spt/services/MatchBotDetailsCacheService';
+import { SeasonalEventService } from '@spt/services/SeasonalEventService';
+import { ICloner } from '@spt/utils/cloners/ICloner';
+import { RandomUtil } from '@spt/utils/RandomUtil';
 export declare class BotController {
   protected logger: ILogger;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected botGenerator: BotGenerator;
   protected botHelper: BotHelper;
   protected botDifficultyHelper: BotDifficultyHelper;
@@ -33,12 +35,12 @@ export declare class BotController {
   protected configServer: ConfigServer;
   protected applicationContext: ApplicationContext;
   protected randomUtil: RandomUtil;
-  protected jsonUtil: JsonUtil;
+  protected cloner: ICloner;
   protected botConfig: IBotConfig;
   protected pmcConfig: IPmcConfig;
   constructor(
     logger: ILogger,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     botGenerator: BotGenerator,
     botHelper: BotHelper,
     botDifficultyHelper: BotDifficultyHelper,
@@ -50,7 +52,7 @@ export declare class BotController {
     configServer: ConfigServer,
     applicationContext: ApplicationContext,
     randomUtil: RandomUtil,
-    jsonUtil: JsonUtil,
+    cloner: ICloner,
   );
   /**
    * Return the number of bot load-out varieties to be generated
@@ -66,19 +68,21 @@ export declare class BotController {
   getBotCoreDifficulty(): IBotCore;
   /**
    * Get bot difficulty settings
-   * adjust PMC settings to ensure they engage the correct bot types
+   * Adjust PMC settings to ensure they engage the correct bot types
    * @param type what bot the server is requesting settings for
    * @param diffLevel difficulty level server requested settings for
+   * @param ignoreRaidSettings should raid settings chosen pre-raid be ignored
    * @returns Difficulty object
    */
-  getBotDifficulty(type: string, diffLevel: string): Difficulty;
+  getBotDifficulty(type: string, diffLevel: string, ignoreRaidSettings?: boolean): Difficulty;
+  getAllBotDifficulties(): Record<string, any>;
   /**
    * Generate bot profiles and store in cache
    * @param sessionId Session id
    * @param info bot generation request info
    * @returns IBotBase array
    */
-  generate(sessionId: string, info: IGenerateBotsRequestData): IBotBase[];
+  generate(sessionId: string, info: IGenerateBotsRequestData): Promise<IBotBase[]>;
   /**
    * On first bot generation bots are generated and stored inside a cache, ready to be used later
    * @param request Bot generation request object
@@ -90,7 +94,55 @@ export declare class BotController {
     request: IGenerateBotsRequestData,
     pmcProfile: IPmcData,
     sessionId: string,
-  ): IBotBase[];
+  ): Promise<IBotBase[]>;
+  /**
+   * Create a BotGenerationDetails for the bot generator to use
+   * @param condition Client data defining bot type and difficulty
+   * @param pmcProfile Player who is generating bots
+   * @param allPmcsHaveSameNameAsPlayer Should all PMCs have same name as player
+   * @param pmcLevelRangeForMap Min/max levels for PMCs to generate within
+   * @param botCountToGenerate How many bots to generate
+   * @param generateAsPmc Force bot being generated a PMC
+   * @returns BotGenerationDetails
+   */
+  protected getBotGenerationDetailsForWave(
+    condition: Condition,
+    pmcProfile: IPmcData,
+    allPmcsHaveSameNameAsPlayer: boolean,
+    pmcLevelRangeForMap: MinMax,
+    botCountToGenerate: number,
+    generateAsPmc: boolean,
+  ): BotGenerationDetails;
+  /**
+   * Get players profile level
+   * @param pmcProfile Profile to get level from
+   * @returns Level as number
+   */
+  protected getPlayerLevelFromProfile(pmcProfile: IPmcData): number;
+  /**
+   * Generate many bots and store then on the cache
+   * @param condition the condition details to generate the bots with
+   * @param botGenerationDetails the bot details to generate the bot with
+   * @param sessionId Session id
+   * @returns A promise for the bots to be done generating
+   */
+  protected generateWithBotDetails(
+    condition: Condition,
+    botGenerationDetails: BotGenerationDetails,
+    sessionId: string,
+  ): Promise<void>;
+  /**
+   * Generate a single bot and store it in the cache
+   * @param botGenerationDetails the bot details to generate the bot with
+   * @param sessionId Session id
+   * @param cacheKey the cache key to store the bot with
+   * @returns A promise for the bot to be stored
+   */
+  protected generateSingleBotAndStoreInCache(
+    botGenerationDetails: BotGenerationDetails,
+    sessionId: string,
+    cacheKey: string,
+  ): Promise<void>;
   /**
    * Pull a single bot out of cache and return, if cache is empty add bots to it and then return
    * @param sessionId Session id
@@ -100,7 +152,7 @@ export declare class BotController {
   protected returnSingleBotFromCache(
     sessionId: string,
     request: IGenerateBotsRequestData,
-  ): IBotBase[];
+  ): Promise<IBotBase[]>;
   /**
    * Get the difficulty passed in, if its not "asonline", get selected difficulty from config
    * @param requestedDifficulty
@@ -110,8 +162,9 @@ export declare class BotController {
   /**
    * Get the max number of bots allowed on a map
    * Looks up location player is entering when getting cap value
+   * @param location The map location cap was requested for
    * @returns cap number
    */
-  getBotCap(): number;
+  getBotCap(location: string): number;
   getAiBotBrainTypes(): any;
 }

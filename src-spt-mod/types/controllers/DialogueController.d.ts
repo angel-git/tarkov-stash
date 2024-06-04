@@ -1,29 +1,33 @@
-import { IDialogueChatBot } from '@spt-aki/helpers/Dialogue/IDialogueChatBot';
-import { DialogueHelper } from '@spt-aki/helpers/DialogueHelper';
-import { IGetAllAttachmentsResponse } from '@spt-aki/models/eft/dialog/IGetAllAttachmentsResponse';
-import { IGetFriendListDataResponse } from '@spt-aki/models/eft/dialog/IGetFriendListDataResponse';
-import { IGetMailDialogViewRequestData } from '@spt-aki/models/eft/dialog/IGetMailDialogViewRequestData';
-import { IGetMailDialogViewResponseData } from '@spt-aki/models/eft/dialog/IGetMailDialogViewResponseData';
-import { ISendMessageRequest } from '@spt-aki/models/eft/dialog/ISendMessageRequest';
+import { IDialogueChatBot } from '@spt/helpers/Dialogue/IDialogueChatBot';
+import { DialogueHelper } from '@spt/helpers/DialogueHelper';
+import { IFriendRequestData } from '@spt/models/eft/dialog/IFriendRequestData';
+import { IFriendRequestSendResponse } from '@spt/models/eft/dialog/IFriendRequestSendResponse';
+import { IGetAllAttachmentsResponse } from '@spt/models/eft/dialog/IGetAllAttachmentsResponse';
+import { IGetFriendListDataResponse } from '@spt/models/eft/dialog/IGetFriendListDataResponse';
+import { IGetMailDialogViewRequestData } from '@spt/models/eft/dialog/IGetMailDialogViewRequestData';
+import { IGetMailDialogViewResponseData } from '@spt/models/eft/dialog/IGetMailDialogViewResponseData';
+import { ISendMessageRequest } from '@spt/models/eft/dialog/ISendMessageRequest';
 import {
   Dialogue,
   DialogueInfo,
-  IAkiProfile,
+  ISptProfile,
   IUserDialogInfo,
   Message,
-} from '@spt-aki/models/eft/profile/IAkiProfile';
-import { MessageType } from '@spt-aki/models/enums/MessageType';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { ConfigServer } from '@spt-aki/servers/ConfigServer';
-import { SaveServer } from '@spt-aki/servers/SaveServer';
-import { MailSendService } from '@spt-aki/services/MailSendService';
-import { TimeUtil } from '@spt-aki/utils/TimeUtil';
+} from '@spt/models/eft/profile/ISptProfile';
+import { MessageType } from '@spt/models/enums/MessageType';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { ConfigServer } from '@spt/servers/ConfigServer';
+import { SaveServer } from '@spt/servers/SaveServer';
+import { LocalisationService } from '@spt/services/LocalisationService';
+import { MailSendService } from '@spt/services/MailSendService';
+import { TimeUtil } from '@spt/utils/TimeUtil';
 export declare class DialogueController {
   protected logger: ILogger;
   protected saveServer: SaveServer;
   protected timeUtil: TimeUtil;
   protected dialogueHelper: DialogueHelper;
   protected mailSendService: MailSendService;
+  protected localisationService: LocalisationService;
   protected configServer: ConfigServer;
   protected dialogueChatBots: IDialogueChatBot[];
   constructor(
@@ -32,6 +36,7 @@ export declare class DialogueController {
     timeUtil: TimeUtil,
     dialogueHelper: DialogueHelper,
     mailSendService: MailSendService,
+    localisationService: LocalisationService,
     configServer: ConfigServer,
     dialogueChatBots: IDialogueChatBot[],
   );
@@ -69,7 +74,7 @@ export declare class DialogueController {
     dialog: Dialogue,
     messageType: MessageType,
     sessionID: string,
-  ): IUserDialogInfo[];
+  ): IUserDialogInfo[] | undefined;
   /**
    * Handle client/mail/dialog/view
    * Handle player clicking 'messenger' and seeing all the messages they've recieved
@@ -90,7 +95,7 @@ export declare class DialogueController {
    * @returns Dialogue
    */
   protected getDialogByIdFromProfile(
-    profile: IAkiProfile,
+    profile: ISptProfile,
     request: IGetMailDialogViewRequestData,
   ): Dialogue;
   /**
@@ -100,8 +105,8 @@ export declare class DialogueController {
    * @returns IUserDialogInfo array
    */
   protected getProfilesForMail(
-    fullProfile: IAkiProfile,
-    dialogUsers: IUserDialogInfo[],
+    fullProfile: ISptProfile,
+    dialogUsers?: IUserDialogInfo[],
   ): IUserDialogInfo[];
   /**
    * Get a count of messages with attachments from a particular dialog
@@ -139,7 +144,7 @@ export declare class DialogueController {
    * @param sessionId Session id
    * @returns IGetAllAttachmentsResponse
    */
-  getAllAttachments(dialogueId: string, sessionId: string): IGetAllAttachmentsResponse;
+  getAllAttachments(dialogueId: string, sessionId: string): IGetAllAttachmentsResponse | undefined;
   /** client/mail/msg/send */
   sendMessage(sessionId: string, request: ISendMessageRequest): string;
   /**
@@ -172,4 +177,6 @@ export declare class DialogueController {
    * @returns true or false
    */
   protected messageHasExpired(message: Message): boolean;
+  /** Handle client/friend/request/send  */
+  sendFriendRequest(sessionID: string, request: IFriendRequestData): IFriendRequestSendResponse;
 }

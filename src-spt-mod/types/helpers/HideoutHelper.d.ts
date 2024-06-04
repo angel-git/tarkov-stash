@@ -1,37 +1,37 @@
-import { InventoryHelper } from '@spt-aki/helpers/InventoryHelper';
-import { ItemHelper } from '@spt-aki/helpers/ItemHelper';
-import { ProfileHelper } from '@spt-aki/helpers/ProfileHelper';
-import { IPmcData } from '@spt-aki/models/eft/common/IPmcData';
+import { InventoryHelper } from '@spt/helpers/InventoryHelper';
+import { ItemHelper } from '@spt/helpers/ItemHelper';
+import { ProfileHelper } from '@spt/helpers/ProfileHelper';
+import { IPmcData } from '@spt/models/eft/common/IPmcData';
 import {
   HideoutArea,
   IHideoutImprovement,
   Production,
   Productive,
-} from '@spt-aki/models/eft/common/tables/IBotBase';
-import { Item, Upd } from '@spt-aki/models/eft/common/tables/IItem';
-import { StageBonus } from '@spt-aki/models/eft/hideout/IHideoutArea';
-import { IHideoutContinuousProductionStartRequestData } from '@spt-aki/models/eft/hideout/IHideoutContinuousProductionStartRequestData';
-import { IHideoutProduction } from '@spt-aki/models/eft/hideout/IHideoutProduction';
-import { IHideoutSingleProductionStartRequestData } from '@spt-aki/models/eft/hideout/IHideoutSingleProductionStartRequestData';
-import { IHideoutTakeProductionRequestData } from '@spt-aki/models/eft/hideout/IHideoutTakeProductionRequestData';
-import { IItemEventRouterResponse } from '@spt-aki/models/eft/itemEvent/IItemEventRouterResponse';
-import { SkillTypes } from '@spt-aki/models/enums/SkillTypes';
-import { IHideoutConfig } from '@spt-aki/models/spt/config/IHideoutConfig';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { EventOutputHolder } from '@spt-aki/routers/EventOutputHolder';
-import { ConfigServer } from '@spt-aki/servers/ConfigServer';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { LocalisationService } from '@spt-aki/services/LocalisationService';
-import { PlayerService } from '@spt-aki/services/PlayerService';
-import { HashUtil } from '@spt-aki/utils/HashUtil';
-import { HttpResponseUtil } from '@spt-aki/utils/HttpResponseUtil';
-import { JsonUtil } from '@spt-aki/utils/JsonUtil';
-import { TimeUtil } from '@spt-aki/utils/TimeUtil';
+} from '@spt/models/eft/common/tables/IBotBase';
+import { Item, Upd } from '@spt/models/eft/common/tables/IItem';
+import { StageBonus } from '@spt/models/eft/hideout/IHideoutArea';
+import { IHideoutContinuousProductionStartRequestData } from '@spt/models/eft/hideout/IHideoutContinuousProductionStartRequestData';
+import { IHideoutProduction } from '@spt/models/eft/hideout/IHideoutProduction';
+import { IHideoutSingleProductionStartRequestData } from '@spt/models/eft/hideout/IHideoutSingleProductionStartRequestData';
+import { IHideoutTakeProductionRequestData } from '@spt/models/eft/hideout/IHideoutTakeProductionRequestData';
+import { IItemEventRouterResponse } from '@spt/models/eft/itemEvent/IItemEventRouterResponse';
+import { SkillTypes } from '@spt/models/enums/SkillTypes';
+import { IHideoutConfig } from '@spt/models/spt/config/IHideoutConfig';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { EventOutputHolder } from '@spt/routers/EventOutputHolder';
+import { ConfigServer } from '@spt/servers/ConfigServer';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { LocalisationService } from '@spt/services/LocalisationService';
+import { PlayerService } from '@spt/services/PlayerService';
+import { ICloner } from '@spt/utils/cloners/ICloner';
+import { HashUtil } from '@spt/utils/HashUtil';
+import { HttpResponseUtil } from '@spt/utils/HttpResponseUtil';
+import { TimeUtil } from '@spt/utils/TimeUtil';
 export declare class HideoutHelper {
   protected logger: ILogger;
   protected hashUtil: HashUtil;
   protected timeUtil: TimeUtil;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected eventOutputHolder: EventOutputHolder;
   protected httpResponse: HttpResponseUtil;
   protected profileHelper: ProfileHelper;
@@ -40,7 +40,7 @@ export declare class HideoutHelper {
   protected localisationService: LocalisationService;
   protected itemHelper: ItemHelper;
   protected configServer: ConfigServer;
-  protected jsonUtil: JsonUtil;
+  protected cloner: ICloner;
   static bitcoinFarm: string;
   static bitcoinProductionId: string;
   static waterCollector: string;
@@ -52,7 +52,7 @@ export declare class HideoutHelper {
     logger: ILogger,
     hashUtil: HashUtil,
     timeUtil: TimeUtil,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     eventOutputHolder: EventOutputHolder,
     httpResponse: HttpResponseUtil,
     profileHelper: ProfileHelper,
@@ -61,7 +61,7 @@ export declare class HideoutHelper {
     localisationService: LocalisationService,
     itemHelper: ItemHelper,
     configServer: ConfigServer,
-    jsonUtil: JsonUtil,
+    cloner: ICloner,
   );
   /**
    * Add production to profiles' Hideout.Production array
@@ -210,7 +210,7 @@ export declare class HideoutHelper {
    * @param applyHideoutManagementBonus should the hideout mgmt bonus be appled to the calculation
    * @returns Items craft time with bonuses subtracted
    */
-  protected getAdjustedCraftTimeWithSkills(
+  getAdjustedCraftTimeWithSkills(
     pmcData: IPmcData,
     recipeId: string,
     applyHideoutManagementBonus?: boolean,
@@ -277,7 +277,7 @@ export declare class HideoutHelper {
     pmcData: IPmcData,
     btcFarmCGs: number,
     isGeneratorOn: boolean,
-  ): Production;
+  ): Production | undefined;
   /**
    * Add bitcoin object to btc production products array and set progress time
    * @param btcProd Bitcoin production object

@@ -1,22 +1,22 @@
-import { SellResult } from '@spt-aki/models/eft/ragfair/IRagfairOffer';
-import { IRagfairConfig } from '@spt-aki/models/spt/config/IRagfairConfig';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { ConfigServer } from '@spt-aki/servers/ConfigServer';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { RandomUtil } from '@spt-aki/utils/RandomUtil';
-import { TimeUtil } from '@spt-aki/utils/TimeUtil';
+import { SellResult } from '@spt/models/eft/ragfair/IRagfairOffer';
+import { IRagfairConfig } from '@spt/models/spt/config/IRagfairConfig';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { ConfigServer } from '@spt/servers/ConfigServer';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { RandomUtil } from '@spt/utils/RandomUtil';
+import { TimeUtil } from '@spt/utils/TimeUtil';
 export declare class RagfairSellHelper {
   protected logger: ILogger;
   protected randomUtil: RandomUtil;
   protected timeUtil: TimeUtil;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected configServer: ConfigServer;
   protected ragfairConfig: IRagfairConfig;
   constructor(
     logger: ILogger,
     randomUtil: RandomUtil,
     timeUtil: TimeUtil,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     configServer: ConfigServer,
   );
   /**
