@@ -239,19 +239,18 @@ pub fn add_new_item(
                     let tpl = stack_slot.filter.to_string();
                     let amount = stack_slot.max_count;
                     cloned_items.push(json!({
-                            "_id": hash_utils::generate(),
-                            "_tpl": tpl,
-                            "parentId": item_id,
-                            "slotId": slot_id,
-                            "upd":  {
-                                "StackObjectsCount": amount,
-                                "SpawnedInSession": true
-                            },
-                }));
+                                "_id": hash_utils::generate(),
+                                "_tpl": tpl,
+                                "parentId": item_id,
+                                "slotId": slot_id,
+                                "upd":  {
+                                    "StackObjectsCount": amount,
+                                    "SpawnedInSession": true
+                                },
+                    }));
                 }
             }
         }
-        
 
         if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
             *root_items = Value::Array(cloned_items);
