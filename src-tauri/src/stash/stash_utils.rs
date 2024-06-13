@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 pub use crate::prelude::*;
+use crate::utils::item_utils::is_ammo_box;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewItem {
@@ -231,12 +232,13 @@ pub fn add_new_item(
         }
 
         // adds ammo inside ammo boxes
-        if let Some(stack_slot) = get_stack_slot(template_id, bsg_items) {
-            let slot_id = stack_slot.slot_id.to_string();
-            if slot_id == "cartridges" {
-                let tpl = stack_slot.filter.to_string();
-                let amount = stack_slot.max_count;
-                cloned_items.push(json!({
+        if is_ammo_box(template_id, bsg_items) {
+            if let Some(stack_slot) = get_stack_slot(template_id, bsg_items) {
+                let slot_id = stack_slot.slot_id.to_string();
+                if slot_id == "cartridges" {
+                    let tpl = stack_slot.filter.to_string();
+                    let amount = stack_slot.max_count;
+                    cloned_items.push(json!({
                             "_id": hash_utils::generate(),
                             "_tpl": tpl,
                             "parentId": item_id,
@@ -246,8 +248,10 @@ pub fn add_new_item(
                                 "SpawnedInSession": true
                             },
                 }));
+                }
             }
         }
+        
 
         if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
             *root_items = Value::Array(cloned_items);

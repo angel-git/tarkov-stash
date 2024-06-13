@@ -182,6 +182,10 @@ pub fn is_ammo_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool 
     find_parent_by_name(bsg_items_root, tpl, "Ammo").is_some()
 }
 
+pub fn is_ammo_box(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
+    find_parent_by_name(bsg_items_root, tpl, "AmmoBox").is_some()
+}
+
 pub fn is_weapon_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     find_parent_by_name(bsg_items_root, tpl, "Weapon").is_some()
 }
