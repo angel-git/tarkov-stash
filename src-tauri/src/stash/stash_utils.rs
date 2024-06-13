@@ -436,7 +436,7 @@ fn get_stack_slot(template_id: &str, bsg_items: &HashMap<String, Value>) -> Opti
             value
                 .pointer("/_props/StackSlots")
                 .and_then(|s| s.as_array())
-                .and_then(|s| s.get(0))
+                .and_then(|s| s.first())
                 .map(|slot| StackSlot {
                     max_count: slot["_max_count"].as_u64().unwrap() as u32,
                     slot_id: slot["_name"].as_str().unwrap().to_string(),
