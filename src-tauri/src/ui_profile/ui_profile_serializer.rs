@@ -138,12 +138,13 @@ pub fn convert_profile_to_ui(
     locale_root: &HashMap<String, Value>,
     globals: &HashMap<String, Value>,
     load_image_cache: bool,
+    server_path: &str,
 ) -> Result<UIProfile, String> {
     let stash = &tarkov_profile.characters.pmc.inventory.stash;
     let (stash_size_x, stash_size_y) = calculate_stash_size(&tarkov_profile, bsg_items_root);
 
     let cache_icon_index_file = if load_image_cache {
-        load_cache_icon_index_file()
+        load_cache_icon_index_file(server_path)
     } else {
         None
     };
@@ -155,6 +156,7 @@ pub fn convert_profile_to_ui(
         "hideout",
         globals,
         &cache_icon_index_file,
+        server_path,
     )?;
 
     let mut bsg_items: HashMap<String, BsgItem> = HashMap::new();
@@ -250,6 +252,7 @@ fn parse_items(
     parent_item_slot: &str,
     globals: &HashMap<String, Value>,
     index_cache: &Option<Map<String, Value>>,
+    server_path: &str,
 ) -> Result<Vec<Item>, String> {
     let mut items: Vec<Item> = Vec::new();
 
@@ -303,6 +306,7 @@ fn parse_items(
                     grid_name,
                     globals,
                     index_cache,
+                    server_path,
                 )?;
 
                 let grid_item = GridItem {
@@ -435,6 +439,7 @@ fn parse_items(
                     profile_items,
                     bsg_items_root,
                     index_cache.as_ref().unwrap(),
+                    server_path,
                 )
             } else {
                 None
@@ -580,6 +585,7 @@ mod tests {
             &HashMap::new(),
             &HashMap::new(),
             false,
+            "",
         );
         assert!(profile_ui.is_ok());
         assert_eq!(profile_ui.as_ref().unwrap().size_y, 70);
@@ -634,6 +640,7 @@ mod tests {
             "hideout",
             &HashMap::new(),
             &None,
+            "",
         )
         .ok()
         .unwrap();
@@ -676,6 +683,7 @@ mod tests {
             "hideout",
             &HashMap::new(),
             &None,
+            "",
         )
         .ok()
         .unwrap();

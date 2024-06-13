@@ -1,28 +1,28 @@
-import { ApplicationContext } from '@spt-aki/context/ApplicationContext';
-import { ContainerHelper } from '@spt-aki/helpers/ContainerHelper';
-import { DurabilityLimitsHelper } from '@spt-aki/helpers/DurabilityLimitsHelper';
-import { InventoryHelper } from '@spt-aki/helpers/InventoryHelper';
-import { ItemHelper } from '@spt-aki/helpers/ItemHelper';
-import { Inventory } from '@spt-aki/models/eft/common/tables/IBotBase';
-import { Item, Repairable, Upd } from '@spt-aki/models/eft/common/tables/IItem';
-import { Grid, ITemplateItem } from '@spt-aki/models/eft/common/tables/ITemplateItem';
-import { ItemAddedResult } from '@spt-aki/models/enums/ItemAddedResult';
-import { IChooseRandomCompatibleModResult } from '@spt-aki/models/spt/bots/IChooseRandomCompatibleModResult';
+import { ApplicationContext } from '@spt/context/ApplicationContext';
+import { ContainerHelper } from '@spt/helpers/ContainerHelper';
+import { DurabilityLimitsHelper } from '@spt/helpers/DurabilityLimitsHelper';
+import { InventoryHelper } from '@spt/helpers/InventoryHelper';
+import { ItemHelper } from '@spt/helpers/ItemHelper';
+import { Inventory } from '@spt/models/eft/common/tables/IBotBase';
+import { Item, Repairable, Upd } from '@spt/models/eft/common/tables/IItem';
+import { Grid, ITemplateItem } from '@spt/models/eft/common/tables/ITemplateItem';
+import { ItemAddedResult } from '@spt/models/enums/ItemAddedResult';
+import { IChooseRandomCompatibleModResult } from '@spt/models/spt/bots/IChooseRandomCompatibleModResult';
 import {
   EquipmentFilters,
   IBotConfig,
   IRandomisedResourceValues,
-} from '@spt-aki/models/spt/config/IBotConfig';
-import { IPmcConfig } from '@spt-aki/models/spt/config/IPmcConfig';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { ConfigServer } from '@spt-aki/servers/ConfigServer';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { LocalisationService } from '@spt-aki/services/LocalisationService';
-import { RandomUtil } from '@spt-aki/utils/RandomUtil';
+} from '@spt/models/spt/config/IBotConfig';
+import { IPmcConfig } from '@spt/models/spt/config/IPmcConfig';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { ConfigServer } from '@spt/servers/ConfigServer';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { LocalisationService } from '@spt/services/LocalisationService';
+import { RandomUtil } from '@spt/utils/RandomUtil';
 export declare class BotGeneratorHelper {
   protected logger: ILogger;
   protected randomUtil: RandomUtil;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected durabilityLimitsHelper: DurabilityLimitsHelper;
   protected itemHelper: ItemHelper;
   protected inventoryHelper: InventoryHelper;
@@ -35,7 +35,7 @@ export declare class BotGeneratorHelper {
   constructor(
     logger: ILogger,
     randomUtil: RandomUtil,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     durabilityLimitsHelper: DurabilityLimitsHelper,
     itemHelper: ItemHelper,
     inventoryHelper: InventoryHelper,
@@ -71,11 +71,11 @@ export declare class BotGeneratorHelper {
    * Get the chance for the weapon attachment or helmet equipment to be set as activated
    * @param botRole role of bot with weapon/helmet
    * @param setting the setting of the weapon attachment/helmet equipment to be activated
-   * @param defaultValue default value for the chance of activation if the botrole or bot equipment role is null
+   * @param defaultValue default value for the chance of activation if the botrole or bot equipment role is undefined
    * @returns Percent chance to be active
    */
   protected getBotEquipmentSettingFromConfig(
-    botRole: string,
+    botRole: string | undefined,
     setting: keyof EquipmentFilters,
     defaultValue: number,
   ): number;
@@ -87,7 +87,7 @@ export declare class BotGeneratorHelper {
    */
   protected generateWeaponRepairableProperties(
     itemTemplate: ITemplateItem,
-    botRole: string,
+    botRole?: string,
   ): Repairable;
   /**
    * Create a repairable object for an armor that containers durability + max durability properties
@@ -97,7 +97,7 @@ export declare class BotGeneratorHelper {
    */
   protected generateArmorRepairableProperties(
     itemTemplate: ITemplateItem,
-    botRole: string,
+    botRole?: string,
   ): Repairable;
   isWeaponModIncompatibleWithCurrentMods(
     itemsEquipped: Item[],
@@ -137,6 +137,7 @@ export declare class BotGeneratorHelper {
     rootItemTplId: string,
     itemWithChildren: Item[],
     inventory: Inventory,
+    containersIdFull?: Set<string>,
   ): ItemAddedResult;
   /**
    * Is the provided item allowed inside a container

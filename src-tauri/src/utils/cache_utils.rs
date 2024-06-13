@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
@@ -11,8 +11,8 @@ use serde_json::{Map, Value};
 
 use crate::spt::spt_profile_serializer::InventoryItem;
 
-pub fn load_cache_icon_index_file() -> Option<Map<String, Value>> {
-    let cache_index_file = get_cache_index_path();
+pub fn load_cache_icon_index_file(server_path: &str) -> Option<Map<String, Value>> {
+    let cache_index_file = get_cache_index_path(server_path);
     let exists = cache_index_file.exists();
     if !exists {
         warn!(
@@ -50,10 +50,11 @@ pub fn load_image_from_cache(
     items: &[InventoryItem],
     bsg_items_root: &HashMap<String, Value>,
     index_cache: &Map<String, Value>,
+    server_path: &str,
 ) -> Option<String> {
     let hash = get_item_hash(item, items, bsg_items_root);
     match index_cache.get(hash.to_string().as_str()) {
-        Some(index) => load_image(index.as_u64().unwrap().to_string().as_str()),
+        Some(index) => load_image(server_path, index.as_u64().unwrap().to_string().as_str()),
         None => {
             warn!(
                 "Couldn't find hash {} for item {} in cache index.json",
@@ -64,21 +65,19 @@ pub fn load_image_from_cache(
     }
 }
 
-fn get_cache_index_path() -> PathBuf {
-    get_cache_path().join("index.json")
+fn get_cache_index_path(server_path: &str) -> PathBuf {
+    get_cache_path(server_path).join("index.json")
 }
 
-fn get_cache_path() -> PathBuf {
-    let temp_dir = std::env::temp_dir();
-    temp_dir
-        .join("Battlestate Games")
-        .join("EscapeFromTarkov")
-        .join("Icon Cache")
+fn get_cache_path(server_path: &str) -> PathBuf {
+    Path::new(server_path)
+        .join("user")
+        .join("sptappdata")
         .join("live")
 }
 
-fn load_image(index_name: &str) -> Option<String> {
-    let image_path = get_cache_path().join(index_name.to_owned() + ".png");
+fn load_image(server_path: &str, index_name: &str) -> Option<String> {
+    let image_path = get_cache_path(server_path).join(index_name.to_owned() + ".png");
     let mut file_content = Vec::new();
     match File::open(image_path) {
         Ok(mut file) => {

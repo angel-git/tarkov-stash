@@ -2939,36 +2939,54 @@
       "_id": "5a88afdc86f7746de12fcc20",
       "_items": [
         {
-          "_id": "5a88595b86f7741822597733",
-          "_tpl": "5a7ae0c351dfba0017554310"
+          "_id": "660fbe8e1566565bce071015",
+          "_tpl": "5a7ae0c351dfba0017554310",
+          "upd": {
+            "Repairable": {
+              "Durability": 100,
+              "MaxDurability": 100
+            }
+          }
         },
         {
-          "_id": "5a8864f986f774796c36ca5f",
+          "_id": "660fbe8e1566565bce071016",
           "_tpl": "5a6b5b8a8dc32e001207faf3",
-          "parentId": "5a88595b86f7741822597733",
+          "parentId": "660fbe8e1566565bce071015",
           "slotId": "mod_barrel"
         },
         {
-          "_id": "5a8864f986f774796c36ca60",
+          "_id": "660fbe8e1566565bce071017",
           "_tpl": "5a7ad1fb51dfba0013379715",
-          "parentId": "5a8864f986f774796c36ca5f",
+          "parentId": "660fbe8e1566565bce071016",
           "slotId": "mod_muzzle"
         },
         {
-          "_id": "5a88595b86f7741822597745",
+          "_id": "660fbe8e1566565bce071018",
           "_tpl": "5a702d198dc32e000b452fc3",
-          "parentId": "5a88595b86f7741822597733",
+          "parentId": "660fbe8e1566565bce071015",
           "slotId": "mod_reciever"
         },
         {
-          "_id": "5a88595b86f7741822597746",
+          "_id": "660fbe8e1566565bce071019",
+          "_tpl": "5a7d9104159bd400134c8c21",
+          "parentId": "660fbe8e1566565bce071018",
+          "slotId": "mod_sight_front"
+        },
+        {
+          "_id": "660fbe8e1566565bce07101a",
+          "_tpl": "5a7d912f159bd400165484f3",
+          "parentId": "660fbe8e1566565bce071018",
+          "slotId": "mod_sight_rear"
+        },
+        {
+          "_id": "660fbe8e1566565bce07101b",
           "_tpl": "5a718b548dc32e000d46d262",
-          "parentId": "5a88595b86f7741822597733",
+          "parentId": "660fbe8e1566565bce071015",
           "slotId": "mod_magazine"
         }
       ],
       "_name": "glock_alpha_wolf",
-      "_parent": "5a88595b86f7741822597733",
+      "_parent": "660fbe8e1566565bce071015",
       "_type": "Preset"
     },
     "5a88b0f686f77416370eca3e": {
@@ -6176,59 +6194,60 @@
       "_id": "5c0c1dba86f7743e667da897",
       "_items": [
         {
-          "_id": "5c0c1dba86f7743e667da89d",
+          "_id": "661f7b0f3eea903b300c84ab",
           "_tpl": "5bfea6e90db834001b7347f3",
           "upd": {
-            "FireMode": {
-              "FireMode": "single"
+            "Repairable": {
+              "Durability": 100,
+              "MaxDurability": 100
             }
           }
         },
         {
-          "_id": "5c0c1dba86f7743e667da89e",
+          "_id": "661f7b0f3eea903b300c84ac",
           "_tpl": "5bfea7ad0db834001c38f1ee",
-          "parentId": "5c0c1dba86f7743e667da89d",
+          "parentId": "661f7b0f3eea903b300c84ab",
           "slotId": "mod_magazine"
         },
         {
-          "_id": "5c0c1dba86f7743e667da89f",
+          "_id": "661f7b0f3eea903b300c84ad",
           "_tpl": "5bfeb32b0db834001a6694d9",
-          "parentId": "5c0c1dba86f7743e667da89d",
+          "parentId": "661f7b0f3eea903b300c84ab",
           "slotId": "mod_stock"
         },
         {
-          "_id": "5c0c1dba86f7743e667da8a0",
+          "_id": "661f7b0f3eea903b300c84ae",
           "_tpl": "5bfebc320db8340019668d79",
-          "parentId": "5c0c1dba86f7743e667da89d",
+          "parentId": "661f7b0f3eea903b300c84ab",
           "slotId": "mod_barrel"
         },
         {
-          "_id": "5c0c1dba86f7743e667da8a1",
+          "_id": "661f7b0f3eea903b300c84af",
           "_tpl": "5a34fd2bc4a282329a73b4c5",
-          "parentId": "5c0c1dba86f7743e667da8a0",
+          "parentId": "661f7b0f3eea903b300c84ae",
           "slotId": "mod_muzzle"
         },
         {
-          "_id": "5c0c1dba86f7743e667da8a2",
+          "_id": "661f7b0f3eea903b300c84b0",
           "_tpl": "5a34fe59c4a282000b1521a2",
-          "parentId": "5c0c1dba86f7743e667da8a1",
+          "parentId": "661f7b0f3eea903b300c84af",
           "slotId": "mod_muzzle"
         },
         {
-          "_id": "5c0c1dba86f7743e667da8a3",
+          "_id": "661f7b0f3eea903b300c84b1",
           "_tpl": "5bfebc5e0db834001a6694e5",
-          "parentId": "5c0c1dba86f7743e667da89d",
+          "parentId": "661f7b0f3eea903b300c84ab",
           "slotId": "mod_mount"
         },
         {
-          "_id": "5c0c1dba86f7743e667da8a4",
-          "_tpl": "5a37cb10c4a282329a73b4e7",
-          "parentId": "5c0c1dba86f7743e667da8a3",
+          "_id": "661f7b0f3eea903b300c84b2",
+          "_tpl": "5b2388675acfc4771e1be0be",
+          "parentId": "661f7b0f3eea903b300c84b1",
           "slotId": "mod_scope"
         }
       ],
       "_name": "rem700 AAC SD",
-      "_parent": "5c0c1dba86f7743e667da89d",
+      "_parent": "661f7b0f3eea903b300c84ab",
       "_type": "Preset"
     },
     "5c0c1dff86f7744dba7a2892": {
@@ -21242,6 +21261,32 @@
       "_name": "Helmet Adept Neosteel Standart",
       "_parent": "657faa32e65c0122b70ffdc5",
       "_type": "Preset"
+    },
+    "6606af2cc690b729e20beb56": {
+      "_changeWeaponName": false,
+      "_encyclopedia": "66015072e9f84d5680039678",
+      "_id": "6606af2cc690b729e20beb56",
+      "_items": [
+        {
+          "_id": "6606af2cc690b729e20beb59",
+          "_tpl": "66015072e9f84d5680039678",
+          "upd": {
+            "Repairable": {
+              "Durability": 100,
+              "MaxDurability": 100
+            }
+          }
+        },
+        {
+          "_id": "6606af2cc690b729e20beb5a",
+          "_tpl": "66015dc4aaad2f54cb04c56a",
+          "parentId": "6606af2cc690b729e20beb59",
+          "slotId": "mod_magazine"
+        }
+      ],
+      "_name": "ussr_pd_20x1mm",
+      "_parent": "6606af2cc690b729e20beb59",
+      "_type": "Preset"
     }
   },
   "bot_presets": [
@@ -21481,7 +21526,7 @@
     }
   ],
   "config": {
-    "AimPunchMagnitude": 17,
+    "AimPunchMagnitude": 14.4,
     "Aiming": {
       "AimProceduralIntensity": 0.75,
       "CameraSnapGlobalMult": 2,
@@ -21831,13 +21876,28 @@
       "HeightWheelOffset": -0.075,
       "LocationsWithBTR": [
         "develop",
+        "Woods",
         "TarkovStreets"
       ],
       "MapsConfigs": {
         "Develop": {
+          "BtrSkin": "Cleare",
+          "CheckSurfaceForWheelsTimer": 0.3,
+          "DiameterWheel": 57.5,
+          "HeightWheel": 0.65,
+          "HeightWheelMaxPosLimit": 0.8,
+          "HeightWheelMinPosLimit": 0.46,
+          "HeightWheelOffset": -0.075,
+          "SnapToSurfaceWheelsSpeed": 0.2,
+          "SuspensionDamperStiffness": 7000,
+          "SuspensionRestLength": 0.4,
+          "SuspensionSpringStiffness": 80000,
+          "SuspensionTravel": 0.3,
+          "SuspensionWheelRadius": 1.143,
           "mapID": "develop",
           "pathsConfigurations": [
             {
+              "active": true,
               "circle": true,
               "circleCount": 143,
               "enterPoint": "p7",
@@ -21854,6 +21914,7 @@
               ]
             },
             {
+              "active": true,
               "circle": false,
               "circleCount": 0,
               "enterPoint": "p7",
@@ -21871,9 +21932,23 @@
           ]
         },
         "TarkovStreets": {
+          "BtrSkin": "Cleare",
+          "CheckSurfaceForWheelsTimer": 0.3,
+          "DiameterWheel": 57.5,
+          "HeightWheel": 0.65,
+          "HeightWheelMaxPosLimit": 0.8,
+          "HeightWheelMinPosLimit": 0.46,
+          "HeightWheelOffset": -0.075,
+          "SnapToSurfaceWheelsSpeed": 0.2,
+          "SuspensionDamperStiffness": 7000,
+          "SuspensionRestLength": 0.4,
+          "SuspensionSpringStiffness": 80000,
+          "SuspensionTravel": 0.3,
+          "SuspensionWheelRadius": 1.143,
           "mapID": "TarkovStreets",
           "pathsConfigurations": [
             {
+              "active": true,
               "circle": true,
               "circleCount": 5,
               "enterPoint": "p7",
@@ -21890,6 +21965,7 @@
               ]
             },
             {
+              "active": true,
               "circle": true,
               "circleCount": 3,
               "enterPoint": "p8",
@@ -21906,6 +21982,7 @@
               ]
             },
             {
+              "active": true,
               "circle": true,
               "circleCount": 4,
               "enterPoint": "p9",
@@ -21922,6 +21999,7 @@
               ]
             },
             {
+              "active": true,
               "circle": true,
               "circleCount": 2,
               "enterPoint": "p10",
@@ -21935,6 +22013,117 @@
                 "p1",
                 "p4"
               ]
+            }
+          ]
+        },
+        "Woods": {
+          "BtrSkin": "Dirt",
+          "CheckSurfaceForWheelsTimer": 0.05,
+          "DiameterWheel": 57.5,
+          "HeightWheel": 0.65,
+          "HeightWheelMaxPosLimit": 0.8,
+          "HeightWheelMinPosLimit": 0.46,
+          "HeightWheelOffset": -0.075,
+          "SnapToSurfaceWheelsSpeed": 0.15,
+          "SuspensionDamperStiffness": 7000,
+          "SuspensionRestLength": 0.4,
+          "SuspensionSpringStiffness": 80000,
+          "SuspensionTravel": 0.3,
+          "SuspensionWheelRadius": 1.143,
+          "mapID": "Woods",
+          "pathsConfigurations": [
+            {
+              "active": true,
+              "circle": true,
+              "circleCount": 5,
+              "enterPoint": "p10",
+              "exitPoint": "p10",
+              "id": "RouteOne",
+              "once": false,
+              "pathPoints": [
+                "p5",
+                "p4",
+                "p1",
+                "p2",
+                "p7",
+                "p3"
+              ],
+              "skinType": []
+            },
+            {
+              "active": true,
+              "circle": true,
+              "circleCount": 5,
+              "enterPoint": "p10",
+              "exitPoint": "p10",
+              "id": "RouteWho",
+              "once": false,
+              "pathPoints": [
+                "p5",
+                "p4",
+                "p1",
+                "p2",
+                "p7",
+                "p3",
+                "p6"
+              ],
+              "skinType": []
+            },
+            {
+              "active": true,
+              "circle": true,
+              "circleCount": 5,
+              "enterPoint": "p12",
+              "exitPoint": "p12",
+              "id": "RouteThree",
+              "once": false,
+              "pathPoints": [
+                "p7",
+                "p3",
+                "p4",
+                "p5",
+                "p1",
+                "p2"
+              ],
+              "skinType": []
+            },
+            {
+              "active": false,
+              "circle": false,
+              "circleCount": 0,
+              "enterPoint": "p9",
+              "exitPoint": "p10",
+              "id": "RouteFour",
+              "once": true,
+              "pathPoints": [
+                "p1",
+                "p2",
+                "p7",
+                "p3",
+                "p4",
+                "p6",
+                "p5"
+              ],
+              "skinType": []
+            },
+            {
+              "active": false,
+              "circle": false,
+              "circleCount": 0,
+              "enterPoint": "p10",
+              "exitPoint": "p9",
+              "id": "RouteFive",
+              "once": true,
+              "pathPoints": [
+                "p5",
+                "p6",
+                "p4",
+                "p3",
+                "p7",
+                "p2",
+                "p1"
+              ],
+              "skinType": []
             }
           ]
         }
@@ -21952,6 +22141,138 @@
     "BaseLoadTime": 0.85,
     "BaseUnloadTime": 0.3,
     "BluntDamageReduceFromSoftArmorMod": 0.6,
+    "BodyPartColliderSettings": {
+      "BackHead": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "Ears": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "Eyes": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "HeadCommon": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "Jaw": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "LeftCalf": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "LeftForearm": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "LeftSideChestDown": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "LeftSideChestUp": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "LeftThigh": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "LeftUpperArm": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "NeckBack": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "NeckFront": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "ParietalHead": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "Pelvis": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "PelvisBack": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "RibcageLow": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "RibcageUp": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "RightCalf": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "RightForearm": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "RightSideChestDown": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "RightSideChestUp": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "RightThigh": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "RightUpperArm": {
+        "PenetrationChance": 0.3,
+        "PenetrationDamageMod": 0.1,
+        "PenetrationLevel": 20
+      },
+      "SpineDown": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      },
+      "SpineTop": {
+        "PenetrationChance": 0,
+        "PenetrationDamageMod": 0,
+        "PenetrationLevel": 100
+      }
+    },
     "BotsEnabled": true,
     "BufferZone": {
       "CustomerAccessTime": 600,
@@ -21962,7 +22283,9 @@
       "AvailableVersions": [
         "edge_of_darkness",
         "press_edition",
-        "tournament_live"
+        "tournament_live",
+        "unheard_edition",
+        "eod_tue_edition"
       ]
     },
     "Customization": {
@@ -22195,6 +22518,38 @@
             "Savage"
           ],
           "voice": "Boss_Sturman"
+        },
+        {
+          "isNotRandom": true,
+          "side": [
+            "Usec",
+            "Savage"
+          ],
+          "voice": "Usec_4"
+        },
+        {
+          "isNotRandom": true,
+          "side": [
+            "Usec",
+            "Savage"
+          ],
+          "voice": "Usec_5"
+        },
+        {
+          "isNotRandom": true,
+          "side": [
+            "Bear",
+            "Savage"
+          ],
+          "voice": "Bear_1_Eng"
+        },
+        {
+          "isNotRandom": true,
+          "side": [
+            "Bear",
+            "Savage"
+          ],
+          "voice": "Bear_2_Eng "
         }
       ],
       "SavageBody": {
@@ -22263,10 +22618,100 @@
           "hands": "5cc2e68f14c02e28b47de290",
           "isNotRandom": true
         },
+        "bear_top_borey": {
+          "body": "5fce3e47fe40296c1d5fd784",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_top_ops_windshirt ": {
+          "body": "657058fddf9b3231400e9188",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_tshirt_termo": {
+          "body": "5fce3e0cfe40296c1d5fd782",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_OPS_Windshirt_black ": {
+          "body": "660440d2c8949a435906e43a",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_SpNa": {
+          "body": "6377266693a3b4967208e42b",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_blacklynx": {
+          "body": "5d1f566d86f7744bcd13459a",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_contractortshirt ": {
+          "body": "5d1f565786f7743f8362bcd5",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_fsbfastresponse ": {
+          "body": "5d1f568486f7744bca3f0b98",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_g99": {
+          "body": "5f5e401747344c2e4f6c42c5",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_ghostmarksman": {
+          "body": "5d1f567786f7744bcc04874f",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_summerfield": {
+          "body": "5d1f564b86f7744bcb0acd16",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_tactical_long": {
+          "body": "6295e698e9de5e7b3751c47a",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_telnik ": {
+          "body": "5e4bb31586f7740695730568",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_tiger": {
+          "body": "5e9d9fa986f774054d6b89f2",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_turtleneck_black ": {
+          "body": "66043cc27502eca33a08cad0",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "bear_upper_zaslon": {
+          "body": "5df89f1f86f77412631087ea",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
         "scav_kit_upper_meteor": {
           "body": "5df8a10486f77412672a1e3a",
           "hands": "5df8eac086f77412640e2ea7",
           "isNotRandom": false
+        },
+        "top_bear_sumrak ": {
+          "body": "617bca4b4013b06b0b78df2a",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "top_bear_voin ": {
+          "body": "6033a31e9ec839204e6a2f3e",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
         },
         "top_boss_tagilla": {
           "body": "609e86926e8078716f600883",
@@ -22288,6 +22733,11 @@
           "hands": "5cc2e68f14c02e28b47de290",
           "isNotRandom": true
         },
+        "usec_upper_CryeAC_Alpha_Green": {
+          "body": "66043728333907134309d647",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
         "usec_upper_acu": {
           "body": "5fd3e9f71b735718c25cd9f8",
           "hands": "5cc2e68f14c02e28b47de290",
@@ -22295,6 +22745,21 @@
         },
         "usec_upper_aggressor": {
           "body": "5d1f56c686f7744bcd13459c",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "usec_upper_carinthia_softshell ": {
+          "body": "637b945722e2a933ed0e33c8",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "usec_upper_cereum": {
+          "body": "618109c96d7ca35d076b3363",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "usec_upper_chameleon_softshell": {
+          "body": "6295e8c3e08ed747e64aea00",
           "hands": "5cc2e68f14c02e28b47de290",
           "isNotRandom": true
         },
@@ -22335,6 +22800,16 @@
         },
         "usec_upper_tier_2": {
           "body": "5e4bb35286f77406a511c9bc",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "usec_upper_velocity ": {
+          "body": "6571cb0923aa6d72760a7f8f",
+          "hands": "5cc2e68f14c02e28b47de290",
+          "isNotRandom": true
+        },
+        "usec_upper_velocity_multicam": {
+          "body": "660437e57502eca33a08caca",
           "hands": "5cc2e68f14c02e28b47de290",
           "isNotRandom": true
         },
@@ -22510,6 +22985,81 @@
           "feet": "5cdea3c47d6c8b0475341734",
           "isNotRandom": true
         },
+        "bear_lower_Windshirt_tan ": {
+          "NotRandom": false,
+          "feet": "66043d7ac8949a435906e434",
+          "isNotRandom": true
+        },
+        "bear_lower_combat": {
+          "NotRandom": false,
+          "feet": "5e4bb39386f774067f79de05",
+          "isNotRandom": true
+        },
+        "bear_lower_fsburban": {
+          "NotRandom": false,
+          "feet": "5d1f58cb86f7744bca3f0b9a",
+          "isNotRandom": true
+        },
+        "bear_lower_g99": {
+          "NotRandom": false,
+          "feet": "5f5e40400bc58666c37e7819",
+          "isNotRandom": true
+        },
+        "bear_lower_gorkakobra": {
+          "NotRandom": false,
+          "feet": "5d1f58a086f7743f8362bcd9",
+          "isNotRandom": true
+        },
+        "bear_lower_gorkasso ": {
+          "NotRandom": false,
+          "feet": "5d1f58bd86f7744bce0ee9ef",
+          "isNotRandom": true
+        },
+        "bear_lower_oldschool": {
+          "NotRandom": false,
+          "feet": "5df89f8f86f77412672a1e38",
+          "isNotRandom": true
+        },
+        "bear_lower_ops_windshirt ": {
+          "NotRandom": false,
+          "feet": "65707a89f5a6f1412f0c5f7b",
+          "isNotRandom": true
+        },
+        "bear_lower_spna": {
+          "NotRandom": false,
+          "feet": "6377315993a3b4967208e437",
+          "isNotRandom": true
+        },
+        "bear_lower_srvv_surpat ": {
+          "NotRandom": false,
+          "feet": "66043cf87502eca33a08cad2",
+          "isNotRandom": true
+        },
+        "bear_lower_summerfield ": {
+          "NotRandom": false,
+          "feet": "5d1f588e86f7744bcc048753",
+          "isNotRandom": true
+        },
+        "bear_lower_sumrak ": {
+          "NotRandom": false,
+          "feet": "617be9e4e02b3b3fa50fa8f2",
+          "isNotRandom": true
+        },
+        "bear_lower_triarius": {
+          "NotRandom": false,
+          "feet": "5fce3e965a9f8c40685693bc",
+          "isNotRandom": true
+        },
+        "bear_lower_voin ": {
+          "NotRandom": false,
+          "feet": "6033a3d8ed2e0509b15f9031",
+          "isNotRandom": true
+        },
+        "bear_lower_zaslon": {
+          "NotRandom": false,
+          "feet": "5e9dc97c86f774054c19ac9a",
+          "isNotRandom": true
+        },
         "pants_boss_tagilla": {
           "NotRandom": false,
           "feet": "609e86c09776a947754429b2",
@@ -22529,6 +23079,91 @@
           "NotRandom": false,
           "feet": "5df8a15186f77412640e2e6a",
           "isNotRandom": false
+        },
+        "usec_lower_CryeAC_Alpha_Green": {
+          "NotRandom": false,
+          "feet": "660436487502eca33a08cac8",
+          "isNotRandom": true
+        },
+        "usec_lower_DeepRecon": {
+          "NotRandom": false,
+          "feet": "5e9dcadd86f7743e20652f23",
+          "isNotRandom": true
+        },
+        "usec_lower_UrbanResponder ": {
+          "NotRandom": false,
+          "feet": "5f5e40a06760b4138443b341",
+          "isNotRandom": true
+        },
+        "usec_lower_beltstaff ": {
+          "NotRandom": false,
+          "feet": "6033a3fee29c9f6c9b14e74e",
+          "isNotRandom": true
+        },
+        "usec_lower_carinthia_softshell": {
+          "NotRandom": false,
+          "feet": "637ba17aa10a96c2b605dbc2",
+          "isNotRandom": true
+        },
+        "usec_lower_cereum": {
+          "NotRandom": false,
+          "feet": "617c02e24013b06b0b78df80",
+          "isNotRandom": true
+        },
+        "usec_lower_chameleon_softshell": {
+          "NotRandom": false,
+          "feet": "6295e944e9de5e7b3751c4da",
+          "isNotRandom": true
+        },
+        "usec_lower_commando ": {
+          "NotRandom": false,
+          "feet": "5e4bb3b586f77406812bd579",
+          "isNotRandom": true
+        },
+        "usec_lower_gen2khyber": {
+          "NotRandom": false,
+          "feet": "5d1f591186f7744bcc048755",
+          "isNotRandom": true
+        },
+        "usec_lower_infiltrator": {
+          "NotRandom": false,
+          "feet": "5d1f592286f7743f8362bcdb",
+          "isNotRandom": true
+        },
+        "usec_lower_jeansranger": {
+          "NotRandom": false,
+          "feet": "5d1f590486f7744bcd13459e",
+          "isNotRandom": true
+        },
+        "usec_lower_taclifeterrain ": {
+          "NotRandom": false,
+          "feet": "5d1f58ed86f7744bcb0acd1c",
+          "isNotRandom": true
+        },
+        "usec_lower_tacres ": {
+          "NotRandom": false,
+          "feet": "5d1f593286f7743014162044",
+          "isNotRandom": true
+        },
+        "usec_lower_tier3": {
+          "NotRandom": false,
+          "feet": "5fcf940bce1ba36a513bb9cc",
+          "isNotRandom": true
+        },
+        "usec_lower_tier_2": {
+          "NotRandom": false,
+          "feet": "5df8a08886f7740bfe6df775",
+          "isNotRandom": true
+        },
+        "usec_lower_velocity": {
+          "NotRandom": false,
+          "feet": "6571cad4c8673f00290f5657",
+          "isNotRandom": true
+        },
+        "usec_lower_velocity_multicam": {
+          "NotRandom": false,
+          "feet": "660436a810bcdf80ff0e9f78",
+          "isNotRandom": true
         },
         "wild_feet": {
           "NotRandom": false,
@@ -22677,6 +23312,26 @@
           "head": "5cc084dd14c02e000b0550a3",
           "isNotRandom": true
         },
+        "bear_head_3": {
+          "NotRandom": false,
+          "head": "5fdb7571e4ed5b5ea251e529",
+          "isNotRandom": true
+        },
+        "bear_head_5 ": {
+          "NotRandom": false,
+          "head": "619f94f5b90286142b59d45f",
+          "isNotRandom": true
+        },
+        "bear_head_6": {
+          "NotRandom": false,
+          "head": "62a9e7d15ea3b87d6f642a28",
+          "isNotRandom": true
+        },
+        "bear_head_eug": {
+          "NotRandom": false,
+          "head": "6574aa9a1b144de18c0fba45",
+          "isNotRandom": true
+        },
         "head_cultist_01": {
           "NotRandom": false,
           "head": "5fb5297a0359a84b77066e56",
@@ -22710,6 +23365,21 @@
         "usec_head_5": {
           "NotRandom": false,
           "head": "60a6aa8fd559ae040d0d951f",
+          "isNotRandom": true
+        },
+        "usec_head_6": {
+          "NotRandom": false,
+          "head": "619f9e338858a474c8685cc9",
+          "isNotRandom": true
+        },
+        "usec_head_7": {
+          "NotRandom": false,
+          "head": "62aca6a1310e67685a2fc2e7",
+          "isNotRandom": true
+        },
+        "usec_head_eric": {
+          "NotRandom": false,
+          "head": "6574aabee0423b9ebe0c79cf",
           "isNotRandom": true
         },
         "wild_head_1": {
@@ -22750,6 +23420,14 @@
       }
     },
     "DiscardLimitsEnabled": true,
+    "EnvironmentSettings": {
+      "EnvironmentUIData": {
+        "TheUnheardEditionEnvironmentUiType": [
+          "unheard_edition",
+          "eod_tue_edition"
+        ]
+      }
+    },
     "EventSettings": {
       "EventActive": false,
       "EventTime": 390,
@@ -22832,6 +23510,7 @@
           "PriceModDelivery": -500,
           "PriceModTaxi": -200,
           "PriceModifier": 1.05,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 1.25,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 1.25,
@@ -22859,6 +23538,7 @@
           "PriceModDelivery": -800,
           "PriceModTaxi": -400,
           "PriceModifier": 1.08,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 1.5,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 1.5,
@@ -22886,6 +23566,7 @@
           "PriceModDelivery": -1200,
           "PriceModTaxi": -600,
           "PriceModifier": 1.1,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 2,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 2,
@@ -22913,6 +23594,7 @@
           "PriceModDelivery": -1600,
           "PriceModTaxi": -800,
           "PriceModifier": 1.12,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 2.5,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 3,
@@ -22940,6 +23622,7 @@
           "PriceModDelivery": -2000,
           "PriceModTaxi": -1000,
           "PriceModifier": 1.15,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 3,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 3.5,
@@ -22967,6 +23650,7 @@
           "PriceModDelivery": -2000,
           "PriceModTaxi": -1000,
           "PriceModifier": 1.17,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 4,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 5.5,
@@ -22994,6 +23678,7 @@
           "PriceModDelivery": -2000,
           "PriceModTaxi": -1000,
           "PriceModifier": 1.2,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 6,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 9,
@@ -23021,6 +23706,7 @@
           "PriceModDelivery": 0,
           "PriceModTaxi": 0,
           "PriceModifier": 1,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 1,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 1,
@@ -23048,6 +23734,7 @@
           "PriceModDelivery": 200,
           "PriceModTaxi": 100,
           "PriceModifier": 0.97,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 0.9,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 0.95,
@@ -23075,6 +23762,7 @@
           "PriceModDelivery": 400,
           "PriceModTaxi": 200,
           "PriceModifier": 0.95,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 0.8,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 0.9,
@@ -23102,6 +23790,7 @@
           "PriceModDelivery": 800,
           "PriceModTaxi": 400,
           "PriceModifier": 0.92,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 0.7,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 0.8,
@@ -23129,6 +23818,7 @@
           "PriceModDelivery": 1200,
           "PriceModTaxi": 600,
           "PriceModifier": 0.9,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 0.6,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 0.7,
@@ -23156,6 +23846,7 @@
           "PriceModDelivery": 1600,
           "PriceModTaxi": 800,
           "PriceModifier": 0.85,
+          "ReactOnMarkOnUnknowns": false,
           "SavageCooldownModifier": 0.5,
           "ScavAttackSupport": false,
           "ScavCaseTimeModifier": 0.6,
@@ -23183,6 +23874,7 @@
           "PriceModDelivery": 2000,
           "PriceModTaxi": 1000,
           "PriceModifier": 0.8,
+          "ReactOnMarkOnUnknowns": true,
           "SavageCooldownModifier": 0.4,
           "ScavAttackSupport": true,
           "ScavCaseTimeModifier": 0.5,
@@ -23206,6 +23898,7 @@
     "GameSearchingTimeout": 45,
     "GlobalItemPriceModifier": 1,
     "GlobalLootChanceModifier": 0.2,
+    "GlobalLootChanceModifierPvE": 0.2,
     "GraphicSettings": {
       "ExperimentalFogInCity": true
     },
@@ -23741,6 +24434,44 @@
                 "Value": -1.4
               }
             ],
+            "Buffs_2A2bTG": [
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 900,
+                "SkillName": "Attention",
+                "Value": 10
+              },
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 900,
+                "SkillName": "Perception",
+                "Value": 10
+              },
+              {
+                "AbsoluteValue": false,
+                "BuffType": "WeightLimit",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 900,
+                "SkillName": "",
+                "Value": 0.15
+              },
+              {
+                "AbsoluteValue": true,
+                "BuffType": "HydrationRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 900,
+                "SkillName": "",
+                "Value": -0.1
+              }
+            ],
             "Buffs_3bTG": [
               {
                 "AbsoluteValue": true,
@@ -23891,6 +24622,53 @@
                 "Duration": 120,
                 "SkillName": "",
                 "Value": 0
+              }
+            ],
+            "Buffs_EndOfWinterBonfire": [
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 90,
+                "SkillName": "Endurance",
+                "Value": 3
+              },
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 90,
+                "SkillName": "Strength",
+                "Value": 3
+              },
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 90,
+                "SkillName": "Vitality",
+                "Value": 3
+              },
+              {
+                "AbsoluteValue": true,
+                "BuffType": "SkillRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 90,
+                "SkillName": "Immunity",
+                "Value": 3
+              },
+              {
+                "AbsoluteValue": false,
+                "BuffType": "StaminaRate",
+                "Chance": 1,
+                "Delay": 1,
+                "Duration": 90,
+                "SkillName": "",
+                "Value": 3
               }
             ],
             "Buffs_KultistsToxin": [
@@ -25489,7 +26267,7 @@
       },
       "InertiaLimits": {
         "x": 0,
-        "y": 65,
+        "y": 73,
         "z": 0.5
       },
       "InertiaLimitsStep": 0.025,
@@ -25520,8 +26298,8 @@
         "z": 0
       },
       "MoveTimeRange": {
-        "x": 0.1,
-        "y": 0.45,
+        "x": 0.07,
+        "y": 0.25,
         "z": 0
       },
       "PenaltyPower": 1.23,
@@ -25616,8 +26394,8 @@
         "z": 0
       },
       "WalkInertia": {
-        "x": 0.05,
-        "y": 0.4675,
+        "x": 0.005,
+        "y": 0.335,
         "z": 0
       },
       "WeaponFlipSpeed": {
@@ -25627,6 +26405,8 @@
       }
     },
     "Insurance": {
+      "CoefOfHavingMarkOfUnknown": 0.7,
+      "CoefOfSendingMessageTime": 1,
       "MaxStorageTimeInHour": 72
     },
     "ItemsCommonSettings": {
@@ -25781,7 +26561,8 @@
         "Name": "PM",
         "Templates": [
           "5448bd6b4bdc2dfc2f8b4569",
-          "579204f224597773d619e051"
+          "579204f224597773d619e051",
+          "66015072e9f84d5680039678"
         ]
       },
       {
@@ -26298,6 +27079,7 @@
       }
     ],
     "MaxBotsAliveOnMap": 36,
+    "MaxBotsAliveOnMapPvE": 50,
     "MaxLoyaltyLevelForAll": false,
     "Overheat": {
       "AutoshotChance": 0.2,
@@ -26329,6 +27111,18 @@
       "OverheatWearLimit": 0.55,
       "StartSlideOverheat": 200
     },
+    "PveSettings": {
+      "AvailableVersions": [
+        "edge_of_darkness",
+        "unheard_edition",
+        "eod_tue_edition"
+      ],
+      "ModeEnabled": true
+    },
+    "QuestSettings": {
+      "GlobalRewardRepModifierDailyQuestPvE": 1,
+      "GlobalRewardRepModifierQuestPvE": 1
+    },
     "RagFair": {
       "ChangePriceCoef": 1,
       "balancerAveragePriceCoefficient": 10,
@@ -26346,66 +27140,85 @@
       "maxActiveOfferCount": [
         {
           "count": 1,
+          "countForSpecialEditions": 1,
           "from": -10000,
+          "to": -10
+        },
+        {
+          "count": 2,
+          "countForSpecialEditions": 3,
+          "from": -10,
           "to": -2
         },
         {
-          "count": 1,
+          "count": 3,
+          "countForSpecialEditions": 4,
           "from": -2,
           "to": 0.2
         },
         {
-          "count": 2,
+          "count": 4,
+          "countForSpecialEditions": 5,
           "from": 0.2,
           "to": 7
         },
         {
-          "count": 3,
+          "count": 5,
+          "countForSpecialEditions": 6,
           "from": 7,
           "to": 30
         },
         {
-          "count": 4,
+          "count": 6,
+          "countForSpecialEditions": 7,
           "from": 30,
           "to": 60
         },
         {
-          "count": 5,
+          "count": 7,
+          "countForSpecialEditions": 8,
           "from": 60,
           "to": 100
         },
         {
-          "count": 6,
+          "count": 7,
+          "countForSpecialEditions": 8,
           "from": 100,
           "to": 150
         },
         {
           "count": 8,
+          "countForSpecialEditions": 9,
           "from": 150,
           "to": 200
         },
         {
-          "count": 8,
+          "count": 9,
+          "countForSpecialEditions": 10,
           "from": 200,
           "to": 250
         },
         {
-          "count": 8,
+          "count": 10,
+          "countForSpecialEditions": 11,
           "from": 250,
           "to": 500
         },
         {
-          "count": 8,
+          "count": 11,
+          "countForSpecialEditions": 12,
           "from": 500,
           "to": 750
         },
         {
-          "count": 8,
+          "count": 12,
+          "countForSpecialEditions": 13,
           "from": 750,
           "to": 1000
         },
         {
-          "count": 10,
+          "count": 15,
+          "countForSpecialEditions": 16,
           "from": 1000,
           "to": 10000
         }
@@ -26956,6 +27769,11 @@
         "MaxInLobby": 2,
         "MaxInRaid": 2,
         "TemplateId": "628baf0b967de16aab5a4f36"
+      },
+      {
+        "MaxInLobby": 0,
+        "MaxInRaid": 1,
+        "TemplateId": "6638a5474e92f038531e210e"
       }
     ],
     "SavagePlayCooldown": 1500,
@@ -27398,11 +28216,11 @@
       "BaseHoldBreathConsumption": 4,
       "BaseOverweightLimits": {
         "x": 26,
-        "y": 67,
+        "y": 77,
         "z": 0
       },
       "BaseRestorationRate": 4.5,
-      "Capacity": 100,
+      "Capacity": 115,
       "ClimbLegsConsumption": {
         "x": 0,
         "y": 20,
@@ -27430,7 +28248,7 @@
       "FatigueRestorationRate": 0.42,
       "GrenadeHighThrow": 11,
       "GrenadeLowThrow": 8,
-      "HandsCapacity": 70,
+      "HandsCapacity": 80,
       "HandsRestoration": 2.1,
       "HoldBreathStaminaMultiplier": {
         "x": 2,
@@ -27477,7 +28295,7 @@
       "SprintDrainRate": 4,
       "SprintOverweightLimits": {
         "x": 26,
-        "y": 63,
+        "y": 72,
         "z": 0
       },
       "SprintSensitivityLowerLimit": 0.5,
@@ -27512,12 +28330,12 @@
       },
       "WalkOverweightLimits": {
         "x": 45,
-        "y": 75,
+        "y": 86,
         "z": 0
       },
       "WalkSpeedOverweightLimits": {
         "x": 35,
-        "y": 70,
+        "y": 80,
         "z": 0
       },
       "WalkVisualEffectMultiplier": 0.1,
@@ -27692,6 +28510,7 @@
       "root": ""
     },
     "exp": {
+      "expForLevelOneDogtag": 0.02,
       "expForLockedDoorBreach": 20,
       "expForLockedDoorOpen": 30,
       "heal": {

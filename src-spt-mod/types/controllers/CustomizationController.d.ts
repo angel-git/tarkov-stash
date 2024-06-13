@@ -1,21 +1,21 @@
-import { ProfileHelper } from '@spt-aki/helpers/ProfileHelper';
-import { IPmcData } from '@spt-aki/models/eft/common/IPmcData';
-import { ISuit } from '@spt-aki/models/eft/common/tables/ITrader';
+import { ProfileHelper } from '@spt/helpers/ProfileHelper';
+import { IPmcData } from '@spt/models/eft/common/IPmcData';
+import { ISuit } from '@spt/models/eft/common/tables/ITrader';
 import {
   ClothingItem,
   IBuyClothingRequestData,
-} from '@spt-aki/models/eft/customization/IBuyClothingRequestData';
-import { IWearClothingRequestData } from '@spt-aki/models/eft/customization/IWearClothingRequestData';
-import { IItemEventRouterResponse } from '@spt-aki/models/eft/itemEvent/IItemEventRouterResponse';
-import { ILogger } from '@spt-aki/models/spt/utils/ILogger';
-import { EventOutputHolder } from '@spt-aki/routers/EventOutputHolder';
-import { DatabaseServer } from '@spt-aki/servers/DatabaseServer';
-import { SaveServer } from '@spt-aki/servers/SaveServer';
-import { LocalisationService } from '@spt-aki/services/LocalisationService';
+} from '@spt/models/eft/customization/IBuyClothingRequestData';
+import { IWearClothingRequestData } from '@spt/models/eft/customization/IWearClothingRequestData';
+import { IItemEventRouterResponse } from '@spt/models/eft/itemEvent/IItemEventRouterResponse';
+import { ILogger } from '@spt/models/spt/utils/ILogger';
+import { EventOutputHolder } from '@spt/routers/EventOutputHolder';
+import { SaveServer } from '@spt/servers/SaveServer';
+import { DatabaseService } from '@spt/services/DatabaseService';
+import { LocalisationService } from '@spt/services/LocalisationService';
 export declare class CustomizationController {
   protected logger: ILogger;
   protected eventOutputHolder: EventOutputHolder;
-  protected databaseServer: DatabaseServer;
+  protected databaseService: DatabaseService;
   protected saveServer: SaveServer;
   protected localisationService: LocalisationService;
   protected profileHelper: ProfileHelper;
@@ -26,7 +26,7 @@ export declare class CustomizationController {
   constructor(
     logger: ILogger,
     eventOutputHolder: EventOutputHolder,
-    databaseServer: DatabaseServer,
+    databaseService: DatabaseService,
     saveServer: SaveServer,
     localisationService: LocalisationService,
     profileHelper: ProfileHelper,
