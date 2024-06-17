@@ -1,11 +1,11 @@
-import { Item, Upd } from '@spt-aki/models/eft/common/tables/IItem';
-import { IPmcDataRepeatableQuest } from '@spt-aki/models/eft/common/tables/IRepeatableQuests';
-import { IRagfairOffer } from '@spt-aki/models/eft/ragfair/IRagfairOffer';
-import { BonusSkillType } from '@spt-aki/models/enums/BonusSkillType';
-import { BonusType } from '@spt-aki/models/enums/BonusType';
-import { HideoutAreas } from '@spt-aki/models/enums/HideoutAreas';
-import { MemberCategory } from '@spt-aki/models/enums/MemberCategory';
-import { QuestStatus } from '@spt-aki/models/enums/QuestStatus';
+import { Item, Upd } from '@spt/models/eft/common/tables/IItem';
+import { IPmcDataRepeatableQuest } from '@spt/models/eft/common/tables/IRepeatableQuests';
+import { IRagfairOffer } from '@spt/models/eft/ragfair/IRagfairOffer';
+import { BonusSkillType } from '@spt/models/enums/BonusSkillType';
+import { BonusType } from '@spt/models/enums/BonusType';
+import { HideoutAreas } from '@spt/models/enums/HideoutAreas';
+import { MemberCategory } from '@spt/models/enums/MemberCategory';
+import { QuestStatus } from '@spt/models/enums/QuestStatus';
 export interface IBotBase {
   _id: string;
   aid: number;
@@ -83,7 +83,7 @@ export interface Settings {
   AggressorBonus: number;
 }
 export interface IBan {
-  type: BanType;
+  banType: BanType;
   dateTime: number;
 }
 export declare enum BanType {
@@ -162,7 +162,7 @@ export interface Common extends IBaseSkill {
 }
 export interface Mastering extends IBaseSkill {}
 export interface Stats {
-  Eft: IEftStats;
+  Eft?: IEftStats;
 }
 export interface IEftStats {
   CarriedQuestItems: string[];
@@ -306,6 +306,9 @@ export interface Productive {
   ProductionTime?: number;
   GivenItemsInStart?: string[];
   Interrupted?: boolean;
+  Code?: string;
+  Decoded?: boolean;
+  AvailableForFinish?: boolean;
   /** Used in hideout production.json */
   needFuelForAllProductionTime?: boolean;
   /** Used when sending data to client */
@@ -371,7 +374,7 @@ export interface IQuestStatus {
   startTime: number;
   status: QuestStatus;
   statusTimers?: Record<string, number>;
-  /** Property does not exist in live profile data, but is used by ProfileChanges.questsStatus when sent to client*/
+  /** Property does not exist in live profile data, but is used by ProfileChanges.questsStatus when sent to client */
   completedConditions?: string[];
   availableAfter?: number;
 }

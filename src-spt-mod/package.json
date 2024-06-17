@@ -4,7 +4,7 @@
   "version": "0.11.3",
   "license": "MIT",
   "main": "src/mod.js",
-  "akiVersion": "~3.8",
+  "sptVersion": "~3.9",
   "loadBefore": [],
   "loadAfter": [],
   "isBundleMod": false,

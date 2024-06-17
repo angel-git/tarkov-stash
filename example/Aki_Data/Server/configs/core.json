@@ -1,10 +1,11 @@
 {
-    "akiVersion": "3.8.0",
-    "projectName": "SPT-AKI",
-    "compatibleTarkovVersion": "0.14.1.29197",
+    "sptVersion": "3.9.0",
+    "projectName": "SPT",
+    "compatibleTarkovVersion": "0.14.8.30268",
     "serverName": "SPT Server",
     "profileSaveIntervalSeconds": 15,
     "sptFriendNickname": "SPT",
+    "allowProfileWipe": true,
     "bsgLogging": {
         "verbosity": 6,
         "sendToServer": false
@@ -27,5 +28,6 @@
                 "giveCommandEnabled": true
             }
         }
-    }
+    },
+	"customWatermarkLocaleKeys": []
 }

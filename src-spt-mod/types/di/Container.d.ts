@@ -8,6 +8,7 @@ export declare class Container {
     childContainer: DependencyContainer,
   ): void;
   static registerTypes(depContainer: DependencyContainer): void;
+  static registerPrimaryDependencies(depContainer: DependencyContainer): void;
   static registerListTypes(depContainer: DependencyContainer): void;
   private static registerUtils;
   private static registerRouters;

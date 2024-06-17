@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 pub use crate::prelude::*;
+use crate::utils::item_utils::is_ammo_box;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewItem {
@@ -15,6 +16,12 @@ pub struct NewItem {
 struct LockedSlot {
     _tpl: String,
     slot_id: String,
+}
+
+struct StackSlot {
+    max_count: u32,
+    slot_id: String,
+    filter: String,
 }
 
 struct Filter {
@@ -224,6 +231,27 @@ pub fn add_new_item(
             })
         }
 
+        // adds ammo inside ammo boxes
+        if is_ammo_box(template_id, bsg_items) {
+            if let Some(stack_slot) = get_stack_slot(template_id, bsg_items) {
+                let slot_id = stack_slot.slot_id.to_string();
+                if slot_id == "cartridges" {
+                    let tpl = stack_slot.filter.to_string();
+                    let amount = stack_slot.max_count;
+                    cloned_items.push(json!({
+                                "_id": hash_utils::generate(),
+                                "_tpl": tpl,
+                                "parentId": item_id,
+                                "slotId": slot_id,
+                                "upd":  {
+                                    "StackObjectsCount": amount,
+                                    "SpawnedInSession": true
+                                },
+                    }));
+                }
+            }
+        }
+
         if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
             *root_items = Value::Array(cloned_items);
         }
@@ -400,12 +428,32 @@ fn get_locked_slots(
         .unwrap_or(None)
 }
 
+fn get_stack_slot(template_id: &str, bsg_items: &HashMap<String, Value>) -> Option<StackSlot> {
+    bsg_items
+        .get(template_id)
+        .map(|value| {
+            value
+                .pointer("/_props/StackSlots")
+                .and_then(|s| s.as_array())
+                .and_then(|s| s.first())
+                .map(|slot| StackSlot {
+                    max_count: slot["_max_count"].as_u64().unwrap() as u32,
+                    slot_id: slot["_name"].as_str().unwrap().to_string(),
+                    filter: slot["_props"]["filters"][0]["Filter"][0]
+                        .as_str()
+                        .unwrap()
+                        .to_string(),
+                })
+        })
+        .unwrap_or(None)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
-        add_new_preset, delete_item, get_locked_slots, update_durability, update_item_amount,
-        update_spawned_in_session,
+        add_new_preset, delete_item, get_locked_slots, get_stack_slot, update_durability,
+        update_item_amount, update_spawned_in_session,
     };
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
@@ -1201,5 +1249,20 @@ mod tests {
         assert_eq!(soft_armor_back._tpl, "6570e87c23c1f638ef0b0ee2");
         let groin = slots.iter().find(|s| s.slot_id == "Groin").unwrap();
         assert_eq!(groin._tpl, "6570e90b3a5689d85f08db97");
+    }
+
+    #[test]
+    fn should_get_the_stack_slot_for_ammo_box() {
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+            .as_ref(),
+        )
+        .unwrap();
+        let stack_slot = get_stack_slot("657024f9bfc87b3a3409323b", &bsg_items_root).unwrap();
+        assert_eq!(stack_slot.max_count, 50);
+        assert_eq!(stack_slot.slot_id, "cartridges");
+        assert_eq!(stack_slot.filter, "60194943740c5d77f6705eea");
     }
 }
