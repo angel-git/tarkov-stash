@@ -294,14 +294,9 @@ fn is_magazine_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool 
 
 fn is_foldable_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     let node = bsg_items_root.get(tpl).unwrap();
-    if let Some(fold) = node
-        .get("_props")
+    node.get("_props")
         .and_then(|p| p.get("Foldable").and_then(|fold| fold.as_bool()))
-    {
-        fold
-    } else {
-        false
-    }
+        .unwrap_or_default()
 }
 
 fn get_parent_item(item: &InventoryItem, items: &[InventoryItem]) -> InventoryItem {
@@ -314,14 +309,9 @@ fn get_parent_item(item: &InventoryItem, items: &[InventoryItem]) -> InventoryIt
 
 fn is_hide_entrails(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     let node = bsg_items_root.get(tpl).unwrap();
-    if let Some(hide) = node
-        .get("_props")
+    node.get("_props")
         .and_then(|p| p.get("HideEntrails").and_then(|hide| hide.as_bool()))
-    {
-        hide
-    } else {
-        false
-    }
+        .unwrap_or_default()
 }
 
 fn get_children(item: &InventoryItem, items: &[InventoryItem]) -> Vec<InventoryItem> {
