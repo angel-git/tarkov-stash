@@ -1,0 +1,3 @@
+dependencies/*.dll
+bin/
+obj/

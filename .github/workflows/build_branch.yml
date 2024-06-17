@@ -27,6 +27,27 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
+      - name: Download DLLs
+        shell: pwsh
+        run: |
+          $accessToken = "${{ secrets.DLL_TOKEN }}"
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/0Harmony.dll" -outputPath ".\src-client-mod\dependencies\0Harmony.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Aki.Reflection.dll" -outputPath ".\src-client-mod\dependencies\Aki.Reflection.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Assembly-CSharp.dll" -outputPath ".\src-client-mod\dependencies\Assembly-CSharp.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/BepInEx.dll" -outputPath ".\src-client-mod\dependencies\BepInEx.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.dll" -outputPath ".\src-client-mod\dependencies\Comfort.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Comfort.Unity.dll" -outputPath ".\src-client-mod\dependencies\Comfort.Unity.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/Sirenix.Serialization.dll" -outputPath ".\src-client-mod\dependencies\Sirenix.Serialization.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.CoreModule.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.CoreModule.dll" -accessToken $accessToken
+          ./src-client-mod/download-dll.ps1 -url "https://raw.githubusercontent.com/angel-git/tarkov-stash-dll/master/dependencies/UnityEngine.dll" -outputPath ".\src-client-mod\dependencies\UnityEngine.dll" -accessToken $accessToken
+        env:
+          DLL_TOKEN: ${{ secrets.DLL_TOKEN }}
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+      - name: Build
+        run: dotnet build ./src-client-mod/tarkov-stash-client.sln
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install frontend dependencies
@@ -34,10 +55,14 @@ jobs:
       - name: Build Portable Binaries (Windows)
         run: |
           pnpm tauri build
-          mkdir "dist/user/mods/tarkov-stash-${{ github.sha }}"
-          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash-${{ github.sha }} /e
-          Remove-Item -Path .\dist\user\mods\tarkov-stash-${{ github.sha }}\types -Force -Recurse
-          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash-${{ github.sha }}/tarkov-stash-${{ github.sha }}_x64-portable.exe
+      - name: Copy and zip files
+        run: |
+          mkdir "dist/user/mods/tarkov-stash"
+          mkdir "dist/BepInEx/plugins"
+          xcopy .\src-client-mod\bin\Debug\net471\TarkovStash.dll .\dist\BepInEx\plugins /e
+          xcopy .\src-spt-mod .\dist\user\mods\tarkov-stash /e
+          Remove-Item -Path .\dist\user\mods\tarkov-stash\types -Force -Recurse
+          mv ./src-tauri/target/release/tarkov-stash.exe ./dist/user/mods/tarkov-stash/tarkov-stash_x64-portable.exe
           Compress-Archive -Path ./dist/* -Destination ./tarkov-stash-${{ github.sha }}.zip
       - uses: actions/upload-artifact@v4
         with:

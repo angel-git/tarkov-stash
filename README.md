@@ -116,6 +116,7 @@ pnpm tauri dev
 
 - Update version in `src-tauri/tauri.conf.json`
 - Update version in `src-spt-mod/package.json`
+- Update version in `src-client-mod/Plugin.cs`
 - commit and push (TODO: automate this in future)
 - Create a new release with proper tag
 - Github action will take over and upload the zip

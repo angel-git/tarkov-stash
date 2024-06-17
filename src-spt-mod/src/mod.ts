@@ -5,6 +5,7 @@ import { SaveServer } from '@spt/servers/SaveServer';
 import { LogTextColor } from '@spt/models/spt/logging/LogTextColor';
 import { Watermark } from '@spt/utils/Watermark';
 import { PreSptModLoader } from '@spt/loaders/PreSptModLoader';
+import { SptWebSocketConnectionHandler } from '@spt/servers/ws/SptWebSocketConnectionHandler';
 import type { IPreSptLoadMod } from '@spt/models/external/IPreSptLoadMod';
 import type { ILogger } from '@spt/models/spt/utils/ILogger';
 import type { StaticRouterModService } from '@spt/services/mod/staticRouter/StaticRouterModService';
@@ -16,6 +17,9 @@ class TarkovStash implements IPreSptLoadMod {
     const saveServer = container.resolve<SaveServer>('SaveServer');
     const watermark = container.resolve<Watermark>('Watermark');
     const preAkiModLoader = container.resolve<PreSptModLoader>('PreSptModLoader');
+    const webSocketServer = container.resolve<SptWebSocketConnectionHandler>(
+      'SptWebSocketConnectionHandler',
+    );
 
     const staticRouterModService =
       container.resolve<StaticRouterModService>('StaticRouterModService');
@@ -58,6 +62,7 @@ class TarkovStash implements IPreSptLoadMod {
               LogTextColor.GREEN,
             );
             saveServer.loadProfile(sessionId);
+            webSocketServer.sendMessage(sessionId, { type: 'tarkov-stash-reload', eventId: '' });
             return Promise.resolve('ok');
           },
         },
