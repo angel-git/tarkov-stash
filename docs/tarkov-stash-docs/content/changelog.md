@@ -2,6 +2,18 @@
 title = ""
 +++
 
+## Release: v0.12.0 @ 2024-07-06T19:15:24Z
+```
+## What's Changed
+* #164 Support 3.9.0 by @angel-git in https://github.com/angel-git/tarkov-stash/pull/165
+* #166 Add ammo inside ammo boxes by @angel-git in https://github.com/angel-git/tarkov-stash/pull/167
+* #168 cargo clippy issues by @angel-git in https://github.com/angel-git/tarkov-stash/pull/169
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.11.3...v0.12.0
+```
+
+
 ## Release: v0.11.3 @ 2024-05-17T09:18:41Z
 ```
 ## What's Changed
@@ -318,7 +330,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.3...v0.2.4
 ```
 
-
 ## Release: v0.2.3 @ 2023-10-17T15:18:44Z
 ```
 ## What's Changed
@@ -327,6 +338,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.2...v0.2.3
 ```
+
 
 ## Release: v0.2.2 @ 2023-10-17T08:22:05Z
 ```
