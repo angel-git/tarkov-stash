@@ -1134,6 +1134,33 @@
 						"slotId": "Pockets"
 					},
 					{
+						"_id": "a03deba9624d19dad40a5d57",
+						"_tpl": "6570265f1419851aef03e739",
+						"location": {
+							"isSearched": true,
+							"r": "Horizontal",
+							"x": 4,
+							"y": 50
+						},
+						"upd": {
+							"StackObjectsCount": 1,
+							"SpawnedInSession": false
+						},
+						"parentId": "664115f68b8ae85875060b39",
+						"slotId": "hideout"
+					},
+					{
+						"_id": "a43936d453252896a9adbb6e",
+						"_tpl": "59e690b686f7746c9f75e848",
+						"parentId": "a03deba9624d19dad40a5d57",
+						"slotId": "cartridges",
+						"upd": {
+							"StackObjectsCount": 100,
+							"SpawnedInSession": true
+						}
+					},
+
+					{
 						"_id": "066450d9409fe3d72804d77b",
 						"_tpl": "5c0558060db834001b735271",
 						"location": {

@@ -845,4 +845,37 @@ mod tests {
         );
         assert_eq!(hash, 1165599878)
     }
+
+
+    #[test]
+    fn should_get_hash_from_ammo_box() {
+        let tarkov_profile = load_profile(
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/cache.json"))
+                .as_ref(),
+        )
+            .unwrap();
+        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
+            String::from_utf8_lossy(include_bytes!(
+                "../../../example/Aki_Data/Server/database/templates/items.json"
+            ))
+                .as_ref(),
+        )
+            .unwrap();
+
+        let item = tarkov_profile
+            .characters
+            .pmc
+            .inventory
+            .items
+            .iter()
+            .find(|item| item._id == "a03deba9624d19dad40a5d57")
+            .unwrap();
+
+        let hash = get_item_hash(
+            item,
+            &tarkov_profile.characters.pmc.inventory.items,
+            &bsg_items_root,
+        );
+        assert_eq!(hash, -1980068270)
+    }
 }
