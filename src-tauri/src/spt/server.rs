@@ -6,9 +6,6 @@ use std::collections::HashMap;
 use std::fmt;
 use std::net::TcpStream;
 use std::string::ToString;
-use sysinfo::System;
-
-const TARKOV_PROCESS: &str = "EscapeFromTarkov.exe";
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ServerProps {
@@ -38,12 +35,6 @@ pub struct Session {
 
 pub fn is_server_running(server_props: &ServerProps) -> bool {
     TcpStream::connect(server_props.to_string()).is_ok()
-}
-
-pub fn is_tarkov_running() -> bool {
-    let mut sys = System::new_all();
-    sys.refresh_all();
-    sys.processes_by_name(TARKOV_PROCESS).count() > 0
 }
 
 pub async fn load_server_info(server_props: &ServerProps) -> Result<ServerInfo, tauri::Error> {

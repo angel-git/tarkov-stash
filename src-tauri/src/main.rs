@@ -27,6 +27,7 @@ mod prelude {
     pub use crate::app::menu::*;
     pub use crate::app::store::*;
     pub use crate::app::telemetry::*;
+    pub use crate::spt::watch::*;
     pub use crate::spt::*;
     pub use crate::stash::stash_utils::*;
     pub use crate::ui_profile::ui_profile_serializer::*;
@@ -45,6 +46,7 @@ pub struct MutexState {
     pub bsg_items: Option<HashMap<String, Value>>,
     pub globals: Option<HashMap<String, Value>>,
     pub store: Option<Store<Wry>>,
+    pub watcher: WatcherCollection,
 }
 
 fn main() {
@@ -68,6 +70,7 @@ fn main() {
                 session_id: None,
                 server_spt_version: None,
                 store: None,
+                watcher: WatcherCollection::default(),
             }),
         })
         .on_menu_event(handle_menu_event)
