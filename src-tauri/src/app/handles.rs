@@ -413,10 +413,7 @@ pub async fn add_user_preset(item: NewItem, app: AppHandle) -> Result<String, St
     let profile_file_path = get_profile_file_path(&app);
 
     let response = {
-        let state: State<TarkovStashState> = app.state();
-        let internal_state = state.state.lock().unwrap();
         let profile_content = fs::read_to_string(profile_file_path.clone()).unwrap();
-        let globals_option = &internal_state.globals;
         add_new_user_preset(
             profile_content.as_str(),
             item.id.as_str(),
