@@ -145,7 +145,7 @@
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add item into stash</h2>
 
   <div class="modal-content">
     <div class="modal-inputs">

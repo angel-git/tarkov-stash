@@ -4,6 +4,8 @@ pub use crate::prelude::*;
 pub struct TarkovProfile {
     pub info: Info,
     pub characters: Characters,
+    #[serde(rename = "userbuilds")]
+    pub user_builds: UserBuilds,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -170,15 +172,31 @@ pub struct Repairable {
     pub max_durability: Option<u16>,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserBuilds {
+    #[serde(rename = "weaponBuilds")]
+    pub weapon_builds: Vec<WeaponBuild>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct WeaponBuild {
+    #[serde(rename = "Id")]
+    pub id: String,
+    #[serde(rename = "Name")]
+    pub name: String,
+    #[serde(rename = "Items")]
+    pub items: Vec<InventoryItem>
+}
+
 fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let rotation_value: serde_json::Value = Deserialize::deserialize(deserializer)?;
+    let rotation_value: Value = Deserialize::deserialize(deserializer)?;
 
     match rotation_value {
-        serde_json::Value::Number(num) if num.as_u64() == Some(0) => Ok("Horizontal".to_string()),
-        serde_json::Value::Number(num) if num.as_u64() == Some(1) => Ok("Vertical".to_string()),
+        Value::Number(num) if num.as_u64() == Some(0) => Ok("Horizontal".to_string()),
+        Value::Number(num) if num.as_u64() == Some(1) => Ok("Vertical".to_string()),
         _ => Ok(rotation_value.as_str().unwrap().to_string()),
     }
 }

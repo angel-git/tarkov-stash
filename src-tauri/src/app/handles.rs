@@ -1,6 +1,6 @@
 use crate::prelude::server::Session;
 use crate::prelude::{
-    add_new_item, add_new_preset, convert_profile_to_ui, delete_item, track_event,
+    add_new_item, add_new_preset, add_new_user_preset, convert_profile_to_ui, delete_item, track_event,
     update_durability, update_item_amount, update_spawned_in_session, Item, NewItem, UIProfile,
     SETTING_IMAGE_CACHE, SETTING_LOCALE,
 };
@@ -350,7 +350,7 @@ pub async fn add_item(item: NewItem, app: tauri::AppHandle) -> Result<String, St
 }
 
 #[tauri::command]
-pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn add_preset(item: NewItem, app: AppHandle) -> Result<String, String> {
     if is_tarkov_running() {
         return Err(SPT_RUNNING_ERROR.to_string());
     }
@@ -380,6 +380,48 @@ pub async fn add_preset(item: NewItem, app: tauri::AppHandle) -> Result<String, 
             item.location_x,
             item.location_y,
             globals,
+        )
+    };
+
+    match response {
+        Ok(new_content) => {
+            fs::write(&profile_file_path, new_content).expect("Cant write profile file!");
+            refresh_profile(&app).await;
+            Ok("done".to_string())
+        }
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+pub async fn add_user_preset(item: NewItem, app: AppHandle) -> Result<String, String> {
+    if is_tarkov_running() {
+        return Err(SPT_RUNNING_ERROR.to_string());
+    }
+    info!(
+        "Adding user preset id {} on [{},{}]",
+        item.id.as_str(),
+        item.location_x,
+        item.location_y
+    );
+    track_event(
+        &app,
+        "add_user_preset",
+        Some(json!({"item_id": item.id.as_str()})),
+    );
+
+    let profile_file_path = get_profile_file_path(&app);
+
+    let response = {
+        let state: State<TarkovStashState> = app.state();
+        let internal_state = state.state.lock().unwrap();
+        let profile_content = fs::read_to_string(profile_file_path.clone()).unwrap();
+        let globals_option = &internal_state.globals;
+        add_new_user_preset(
+            profile_content.as_str(),
+            item.id.as_str(),
+            item.location_x,
+            item.location_y,
         )
     };
 

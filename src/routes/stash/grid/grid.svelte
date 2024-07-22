@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import type { BsgItem, Item, Option, PresetItem } from '../../../types';
+  import type { BsgItem, Item, Option, PresetItem, UserPresetItem } from '../../../types';
   import StashItem from '../item/stash-item.svelte';
   import Grid from './grid.svelte';
   import NewItemModal from '../modal/modal-item.svelte';
   import NewPresetModal from '../modal/modal-preset.svelte';
+  import UserPresetModal from '../modal/modal-user-preset.svelte';
   import { getName } from '../../../helper';
   import WeaponIcon from '$lib/images/icon_weapons.png';
   import FirIcon from '$lib/images/fir.png';
@@ -21,6 +22,7 @@
   export let nestedLevel: number;
   export let bsgItems: Record<string, BsgItem>;
   export let presetItems: Array<PresetItem>;
+  export let userPresets: Array<UserPresetItem>;
   export let onOptionClicked: (option: Option, item: Item) => void;
 
   onMount(() => {
@@ -37,6 +39,7 @@
 
   let isNewItemModalOpen = false;
   let isPresetItemModalOpen = false;
+  let isUserBuildPresetItemModalOpen = false;
   let secondaryItemMenuId = '-1';
   let containerOpenId = '-1';
   let orderedItems: Array<Item | undefined>;
@@ -128,12 +131,20 @@
     secondaryItemMenuId = '-1';
     isPresetItemModalOpen = true;
   }
+
+  function openUserBuildPresetItemModal() {
+    secondaryItemMenuId = '-1';
+    isUserBuildPresetItemModalOpen = true;
+  }
 </script>
 
 {#if nestedLevel === 1}
   <button class="primary" on:click={openNewItemModal}>Add item</button>
   <button class="primary" on:click={openPresetItemModal}
     ><img alt="weapon logo" src={WeaponIcon} />Add preset
+  </button>
+  <button class="primary" on:click={openUserBuildPresetItemModal}
+    ><img alt="weapon logo" src={WeaponIcon} />Add user weapon build
   </button>
 {/if}
 {#if isNewItemModalOpen}
@@ -146,6 +157,15 @@
     allItems={bsgItems}
     {locale}
     onClose={() => (isPresetItemModalOpen = false)}
+  />
+{/if}
+{#if isUserBuildPresetItemModalOpen}
+  <UserPresetModal
+    {userPresets}
+    {grid}
+    allItems={bsgItems}
+    {locale}
+    onClose={() => (isUserBuildPresetItemModalOpen = false)}
   />
 {/if}
 <div

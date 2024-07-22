@@ -30,6 +30,7 @@
   nestedLevel={1}
   bsgItems={profile.bsgItems}
   presetItems={profile.presetItems}
+  userPresets={profile.userPresets}
   items={filteredItems}
   sizeX={profile.sizeX}
   sizeY={profile.sizeY}

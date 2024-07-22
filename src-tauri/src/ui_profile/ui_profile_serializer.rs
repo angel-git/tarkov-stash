@@ -21,6 +21,8 @@ pub struct UIProfile {
     pub locale: HashMap<String, Value>,
     #[serde(rename = "presetItems")]
     pub preset_items: Vec<PresetItem>,
+    #[serde(rename = "userPresets")]
+    pub user_presets: Vec<UserPresetItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -65,6 +67,15 @@ pub struct Item {
 pub struct PresetItem {
     pub id: String,
     pub encyclopedia: Option<String>,
+    pub items: Vec<spt_profile_serializer::InventoryItem>,
+    pub width: u16,
+    pub height: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserPresetItem {
+    pub id: String,
+    pub name: String,
     pub items: Vec<spt_profile_serializer::InventoryItem>,
     pub width: u16,
     pub height: u16,
@@ -242,6 +253,7 @@ pub fn convert_profile_to_ui(
         spt_version: None,
         locale: locale_root.clone(),
         preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
+        user_presets: global_utils::find_all_user_builds(&tarkov_profile.user_builds, bsg_items_root),
     })
 }
 

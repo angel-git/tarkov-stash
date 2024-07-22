@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
+use crate::prelude::spt_profile_serializer::UserBuilds;
 use crate::prelude::*;
+// TODO rename this to preset_utils.rs ?
 
 pub fn find_id_from_encyclopedia(
     encyclopedia_id: &str,
@@ -78,6 +80,35 @@ fn ignore_encyclopedia_item(item_id: &str, bsg_items: &HashMap<String, Value>) -
     item_utils::is_armor_item(item_id, bsg_items)
         || item_utils::is_vest_item(item_id, bsg_items)
         || item_utils::is_headwear_item(item_id, bsg_items)
+}
+
+pub fn find_all_user_builds(
+    user_builds: &UserBuilds,
+    bsg_items_root: &HashMap<String, Value>,
+) -> Vec<UserPresetItem> {
+    let items: Vec<UserPresetItem> = user_builds
+        .weapon_builds
+        .iter()
+        .map(|obj| {
+            let items: &Vec<spt_profile_serializer::InventoryItem> = obj.items.as_ref();
+            let (width, height) = item_utils::calculate_item_size(
+                items.first().unwrap(),
+                &items,
+                bsg_items_root,
+                false,
+            );
+
+            UserPresetItem {
+                id: obj.id.to_string(),
+                items: items.clone(),
+                width,
+                height,
+                name: obj.name.to_string(),
+            }
+        })
+        .collect::<Vec<UserPresetItem>>();
+
+    items
 }
 
 #[cfg(test)]
