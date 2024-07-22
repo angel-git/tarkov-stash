@@ -548,6 +548,7 @@ mod tests {
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
     use std::collections::HashMap;
+    use crate::prelude::add_new_user_preset;
 
     #[test]
     fn should_update_json_with_new_currency() {
@@ -1314,6 +1315,35 @@ mod tests {
             mod_handguard.parent_id.as_ref().unwrap(),
             mod_gas_block._id.as_str()
         );
+    }
+
+    #[test]
+    fn should_add_a_user_preset() {
+        let binding =
+            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/user-presets.json"));
+        let profile = binding.as_ref();
+
+        let new_profile =
+            add_new_user_preset(profile, "66957e8d0100124716a15e9a", 0, 38).unwrap();
+
+        let root: Value = serde_json::from_str(new_profile.as_str()).unwrap();
+
+        let items_option = root
+            .pointer("/characters/pmc/Inventory/items")
+            .expect("Items missing");
+
+        let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
+        let main = items
+            .iter()
+            .find(|i| i._tpl == "618428466ef05c2ce828f218")
+            .unwrap();
+
+        assert!(main.upd.is_some());
+        assert_eq!(
+            main.parent_id.as_ref().unwrap().as_str(),
+            "664115f68b8ae85875060b39"
+        );
+        assert_eq!(main.slot_id.as_ref().unwrap().as_str(), "hideout");
     }
 
     #[test]

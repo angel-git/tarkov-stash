@@ -82,7 +82,7 @@ fn ignore_encyclopedia_item(item_id: &str, bsg_items: &HashMap<String, Value>) -
         || item_utils::is_headwear_item(item_id, bsg_items)
 }
 
-pub fn find_all_user_builds(
+pub fn find_all_user_weapons_builds(
     user_builds: &UserBuilds,
     bsg_items_root: &HashMap<String, Value>,
 ) -> Vec<UserPresetItem> {
@@ -93,7 +93,7 @@ pub fn find_all_user_builds(
             let items: &Vec<spt_profile_serializer::InventoryItem> = obj.items.as_ref();
             let (width, height) = item_utils::calculate_item_size(
                 items.first().unwrap(),
-                &items,
+                items,
                 bsg_items_root,
                 false,
             );
