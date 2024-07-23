@@ -8,6 +8,7 @@
   import UserPresetModal from '../modal/modal-user-preset.svelte';
   import { getName } from '../../../helper';
   import WeaponIcon from '$lib/images/icon_weapons.png';
+  import InfoIcon from '$lib/images/icon_info.png';
   import FirIcon from '$lib/images/fir.png';
   import InspectIcon from '$lib/images/inspect.png';
   import OpenIcon from '$lib/images/open.png';
@@ -139,13 +140,15 @@
 </script>
 
 {#if nestedLevel === 1}
-  <button class="primary" on:click={openNewItemModal}>Add item</button>
-  <button class="primary" on:click={openPresetItemModal}
-    ><img alt="weapon logo" src={WeaponIcon} />Add preset
-  </button>
-  <button class="primary" on:click={openUserBuildPresetItemModal}
-    ><img alt="weapon logo" src={WeaponIcon} />Add user weapon build
-  </button>
+  <div class="button-container">
+    <button class="primary" on:click={openNewItemModal}>Add item</button>
+    <button class="primary" on:click={openPresetItemModal}
+      ><img alt="weapon logo" src={WeaponIcon} />Add preset
+    </button>
+    <button class="primary" on:click={openUserBuildPresetItemModal}
+      ><img alt="weapon logo" src={InfoIcon} />Add user weapon build
+    </button>
+  </div>
 {/if}
 {#if isNewItemModalOpen}
   <NewItemModal {grid} allItems={bsgItems} {locale} onClose={() => (isNewItemModalOpen = false)} />
@@ -368,7 +371,17 @@
     color: var(--color-background);
   }
 
-  button img {
+  .button-container {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .button-container button {
+    display: flex;
+    align-items: center;
+  }
+  .button-container button img {
     max-height: 15px;
   }
 </style>
