@@ -114,9 +114,6 @@
             alt="item"
             src={`https://assets.tarkov.dev/${$addNewUserPreset.item.items[0].tpl}-base-image.png`}
           />
-          <div class="details">
-            {getDescription($addNewUserPreset.item.items[0].tpl, locale)}
-          </div>
           <Slots
             itemsInSlots={$addNewUserPreset.item?.items}
             bsgItems={allItems}
@@ -143,13 +140,14 @@
 
   input {
     padding: 8px;
+    border: 1px solid var(--color-text);
     background-color: var(--color-background);
     color: var(--color-text);
   }
 
   input:focus {
     outline: none;
-    border: 2px solid var(--color-highlight);
+    border: 1px solid var(--color-highlight);
   }
 
   .main {
@@ -167,10 +165,6 @@
     overflow-y: auto;
     flex: 1 1 50vw;
     padding: 8px;
-  }
-
-  .main .right .details {
-    text-align: justify;
   }
 
   .main .right img {

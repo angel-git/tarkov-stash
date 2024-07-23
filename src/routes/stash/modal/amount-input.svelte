@@ -29,13 +29,14 @@
 
   input {
     padding: 8px;
+    border: 1px solid var(--color-text);
     background-color: var(--color-background);
     color: var(--color-text);
   }
 
   input:focus {
     outline: none;
-    border: 2px solid var(--color-highlight);
+    border: 1px solid var(--color-highlight);
   }
 
   button {
