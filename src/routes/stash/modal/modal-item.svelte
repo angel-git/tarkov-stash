@@ -26,6 +26,14 @@
   let categories: Array<string>;
   let notEnoughSpaceError = false;
 
+  const HIDDEN_CATEGORIES = [
+    '55d720f24bdc2d88028b456d',
+    '62f109593b54472778797866',
+    '63da6da4784a55176c018dba',
+    '566abbb64bdc2d144c8b457d',
+    '566965d44bdc2d814c8b4571',
+  ];
+
   const UNKNOWN_CATEGORY = '??';
 
   const sortByName = (a: BsgItemWithParent, b: BsgItemWithParent) => {
@@ -72,14 +80,7 @@
         .filter((i) => i.type === 'Item')
         .filter((i) => !i.unbuyable)
         // remove items from random categories
-        .filter(
-          (i) =>
-            i.parentId !== '55d720f24bdc2d88028b456d' &&
-            i.parentId !== '62f109593b54472778797866' &&
-            i.parentId !== '63da6da4784a55176c018dba' &&
-            i.parentId !== '566abbb64bdc2d144c8b457d' &&
-            i.parentId !== '566965d44bdc2d814c8b4571',
-        )
+        .filter((i) => !HIDDEN_CATEGORIES.includes(i.parentId))
         .filter((i) => getName(i.id, locale))
         .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
         .map((i) => ({ ...i, category: getParentNode(i), name: getName(i.id, locale) }))
