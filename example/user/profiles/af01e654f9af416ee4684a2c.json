@@ -8516,5 +8516,8 @@
       "RightLeg": 0
     }
   },
-  "weaponbuilds": {}
+  "userbuilds": {
+    "equipmentBuilds": [],
+    "weaponBuilds": []
+  }
 }
