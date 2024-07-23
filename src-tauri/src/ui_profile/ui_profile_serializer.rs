@@ -253,7 +253,10 @@ pub fn convert_profile_to_ui(
         spt_version: None,
         locale: locale_root.clone(),
         preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
-        user_presets: global_utils::find_all_user_weapons_builds(&tarkov_profile.user_builds, bsg_items_root),
+        user_presets: global_utils::find_all_user_weapons_builds(
+            &tarkov_profile.user_builds,
+            bsg_items_root,
+        ),
     })
 }
 

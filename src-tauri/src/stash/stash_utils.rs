@@ -373,7 +373,10 @@ pub fn add_new_user_preset(
         // Clone the items array to make it mutable
         let mut cloned_items = items.clone();
 
-        let user_preset = user_presets.iter().find(|v| v.get("Id").unwrap().as_str().unwrap() == preset_id).expect("Can't find preset for id");
+        let user_preset = user_presets
+            .iter()
+            .find(|v| v.get("Id").unwrap().as_str().unwrap() == preset_id)
+            .expect("Can't find preset for id");
 
         let mut old_id_map: HashMap<String, String> = HashMap::new();
 
@@ -437,7 +440,6 @@ pub fn add_new_user_preset(
 
     serde_json::to_string(&root)
 }
-
 
 pub fn delete_item(
     file_content: &str,
@@ -540,6 +542,7 @@ fn get_stack_slot(template_id: &str, bsg_items: &HashMap<String, Value>) -> Opti
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::add_new_user_preset;
     use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
         add_new_preset, delete_item, get_locked_slots, get_stack_slot, update_durability,
@@ -548,7 +551,6 @@ mod tests {
     use crate::ui_profile::ui_profile_serializer::Item;
     use serde_json::Value;
     use std::collections::HashMap;
-    use crate::prelude::add_new_user_preset;
 
     #[test]
     fn should_update_json_with_new_currency() {
@@ -1319,12 +1321,12 @@ mod tests {
 
     #[test]
     fn should_add_a_user_preset() {
-        let binding =
-            String::from_utf8_lossy(include_bytes!("../../../example/user/profiles/user-presets.json"));
+        let binding = String::from_utf8_lossy(include_bytes!(
+            "../../../example/user/profiles/user-presets.json"
+        ));
         let profile = binding.as_ref();
 
-        let new_profile =
-            add_new_user_preset(profile, "66957e8d0100124716a15e9a", 0, 38).unwrap();
+        let new_profile = add_new_user_preset(profile, "66957e8d0100124716a15e9a", 0, 38).unwrap();
 
         let root: Value = serde_json::from_str(new_profile.as_str()).unwrap();
 

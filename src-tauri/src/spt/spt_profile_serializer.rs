@@ -185,7 +185,7 @@ pub struct WeaponBuild {
     #[serde(rename = "Name")]
     pub name: String,
     #[serde(rename = "Items")]
-    pub items: Vec<InventoryItem>
+    pub items: Vec<InventoryItem>,
 }
 
 fn deserialize_rotation<'de, D>(deserializer: D) -> Result<String, D::Error>
