@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use crate::prelude::spt_profile_serializer::UserBuilds;
 use crate::prelude::*;
-// TODO rename this to preset_utils.rs ?
 
 pub fn find_id_from_encyclopedia(
     encyclopedia_id: &str,
@@ -113,7 +112,7 @@ pub fn find_all_user_weapons_builds(
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
+    use crate::utils::preset_utils::{find_all_item_presets, find_id_from_encyclopedia};
     use serde_json::Value;
     use std::collections::HashMap;
 
