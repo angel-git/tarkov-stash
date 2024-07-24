@@ -143,10 +143,13 @@
   <div class="button-container">
     <button class="primary" on:click={openNewItemModal}>Add item</button>
     <button class="primary" on:click={openPresetItemModal}
-      ><img alt="weapon logo" src={WeaponIcon} />Add preset
+      ><img alt="weapon logo" src={InfoIcon} />Add preset
     </button>
-    <button class="primary" on:click={openUserBuildPresetItemModal}
-      ><img alt="weapon logo" src={InfoIcon} />Add user weapon build
+    <button
+      class="primary"
+      disabled={userPresets.length === 0}
+      on:click={openUserBuildPresetItemModal}
+      ><img alt="weapon logo" src={WeaponIcon} />Add user weapon preset
     </button>
   </div>
 {/if}
