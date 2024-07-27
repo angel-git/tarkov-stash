@@ -42,8 +42,8 @@ pub fn calculate_item_size(
         out_x -= parsed_parent_item._props.size_reduced_right.unwrap();
     }
 
-    all_children.iter().for_each(|(_id, tpl)| {
-        let bsg_item = bsg_items_root.get(tpl).unwrap();
+    all_children.iter().for_each(|(id, tpl)| {
+        let bsg_item = bsg_items_root.get(tpl).unwrap_or_else(|| panic!("Item with id [{}] and template id [{}] can't be found", id, tpl));
         let parsed_bsg_item =
             spt_bsg_items_serializer::load_item(bsg_item.to_string().as_str()).unwrap();
 
