@@ -349,6 +349,98 @@ pub fn add_new_preset(
     serde_json::to_string(&root)
 }
 
+pub fn add_new_user_preset(
+    profile_content: &str,
+    preset_id: &str,
+    location_x: u16,
+    location_y: u16,
+) -> Result<String, Error> {
+    let mut root: Value = serde_json::from_str(profile_content).unwrap();
+
+    let stash = root
+        .pointer("/characters/pmc/Inventory/stash")
+        .expect("Stash missing");
+    let items_option = root
+        .pointer("/characters/pmc/Inventory/items")
+        .expect("Items missing");
+    let user_presets = root
+        .pointer("/userbuilds/weaponBuilds")
+        .expect("user presets missing")
+        .as_array()
+        .expect("Can get array from user presets");
+
+    if let Some(items) = items_option.as_array() {
+        // Clone the items array to make it mutable
+        let mut cloned_items = items.clone();
+
+        let user_preset = user_presets
+            .iter()
+            .find(|v| v.get("Id").unwrap().as_str().unwrap() == preset_id)
+            .expect("Can't find preset for id");
+
+        let mut old_id_map: HashMap<String, String> = HashMap::new();
+
+        user_preset
+            .get("Items")
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .clone()
+            .iter_mut()
+            .for_each(|item| {
+                if let Value::Object(item_obj) = item {
+                    {
+                        let old_id = item_obj.get("_id").unwrap().as_str().unwrap().to_string();
+                        let new_id = old_id_map.entry(old_id).or_insert(hash_utils::generate());
+                        item_obj.insert(
+                            "_id".to_string(),
+                            Value::String((*new_id.clone()).parse().unwrap()),
+                        );
+                    }
+
+                    // if there is no parentId is the base item, let's add location and stuff
+                    if item_obj.get("parentId").is_none() {
+                        item_obj.insert("parentId".to_string(), stash.clone());
+                        item_obj.insert("slotId".to_string(), Value::String("hideout".to_string()));
+                        let location = json!(
+                            {
+                                    "isSearched": true,
+                                    "r": "Horizontal",
+                                    "x": location_x,
+                                    "y": location_y,
+                            }
+                        );
+                        item_obj.insert("location".to_string(), location);
+                    } else {
+                        let old_parent = item_obj
+                            .get("parentId")
+                            .unwrap()
+                            .as_str()
+                            .unwrap()
+                            .to_string();
+
+                        {
+                            let new_parent = old_id_map
+                                .entry(old_parent)
+                                .or_insert(hash_utils::generate());
+                            item_obj.insert(
+                                "parentId".to_string(),
+                                Value::String((*new_parent.clone()).parse().unwrap()),
+                            );
+                        }
+                    }
+                }
+                cloned_items.push(item.clone());
+            });
+
+        if let Some(root_items) = root.pointer_mut("/characters/pmc/Inventory/items") {
+            *root_items = Value::Array(cloned_items);
+        }
+    }
+
+    serde_json::to_string(&root)
+}
+
 pub fn delete_item(
     file_content: &str,
     item: &Item,
@@ -450,6 +542,7 @@ fn get_stack_slot(template_id: &str, bsg_items: &HashMap<String, Value>) -> Opti
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::add_new_user_preset;
     use crate::spt::spt_profile_serializer::InventoryItem;
     use crate::stash::stash_utils::{
         add_new_preset, delete_item, get_locked_slots, get_stack_slot, update_durability,
@@ -1224,6 +1317,35 @@ mod tests {
             mod_handguard.parent_id.as_ref().unwrap(),
             mod_gas_block._id.as_str()
         );
+    }
+
+    #[test]
+    fn should_add_a_user_preset() {
+        let binding = String::from_utf8_lossy(include_bytes!(
+            "../../../example/user/profiles/user-presets.json"
+        ));
+        let profile = binding.as_ref();
+
+        let new_profile = add_new_user_preset(profile, "66957e8d0100124716a15e9a", 0, 38).unwrap();
+
+        let root: Value = serde_json::from_str(new_profile.as_str()).unwrap();
+
+        let items_option = root
+            .pointer("/characters/pmc/Inventory/items")
+            .expect("Items missing");
+
+        let items: Vec<InventoryItem> = serde_json::from_value(items_option.clone()).unwrap();
+        let main = items
+            .iter()
+            .find(|i| i._tpl == "618428466ef05c2ce828f218")
+            .unwrap();
+
+        assert!(main.upd.is_some());
+        assert_eq!(
+            main.parent_id.as_ref().unwrap().as_str(),
+            "664115f68b8ae85875060b39"
+        );
+        assert_eq!(main.slot_id.as_ref().unwrap().as_str(), "hideout");
     }
 
     #[test]

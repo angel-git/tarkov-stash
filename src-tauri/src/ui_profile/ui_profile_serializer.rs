@@ -21,6 +21,8 @@ pub struct UIProfile {
     pub locale: HashMap<String, Value>,
     #[serde(rename = "presetItems")]
     pub preset_items: Vec<PresetItem>,
+    #[serde(rename = "userPresets")]
+    pub user_presets: Vec<UserPresetItem>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -65,6 +67,15 @@ pub struct Item {
 pub struct PresetItem {
     pub id: String,
     pub encyclopedia: Option<String>,
+    pub items: Vec<spt_profile_serializer::InventoryItem>,
+    pub width: u16,
+    pub height: u16,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserPresetItem {
+    pub id: String,
+    pub name: String,
     pub items: Vec<spt_profile_serializer::InventoryItem>,
     pub width: u16,
     pub height: u16,
@@ -241,7 +252,11 @@ pub fn convert_profile_to_ui(
         bsg_items,
         spt_version: None,
         locale: locale_root.clone(),
-        preset_items: global_utils::find_all_item_presets(globals, bsg_items_root),
+        preset_items: preset_utils::find_all_item_presets(globals, bsg_items_root),
+        user_presets: preset_utils::find_all_user_weapons_builds(
+            &tarkov_profile.user_builds,
+            bsg_items_root,
+        ),
     })
 }
 
@@ -411,7 +426,7 @@ fn parse_items(
         let stack_max_size = bsg_item._props.stack_max_size;
         let background_color = bsg_item._props.background_color;
         let preset_image_id =
-            global_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals, bsg_items_root);
+            preset_utils::find_id_from_encyclopedia(item._tpl.as_str(), globals, bsg_items_root);
 
         let i = Item {
             id: item._id.to_string(),

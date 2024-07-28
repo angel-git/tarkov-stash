@@ -149,7 +149,7 @@
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add presets into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add presets into stash</h2>
 
   <div class="modal-content">
     <!-- svelte-ignore a11y-autofocus -->
@@ -208,13 +208,14 @@
 
   input {
     padding: 8px;
+    border: 1px solid var(--color-text);
     background-color: var(--color-background);
     color: var(--color-text);
   }
 
   input:focus {
     outline: none;
-    border: 2px solid var(--color-highlight);
+    border: 1px solid var(--color-highlight);
   }
 
   .main {

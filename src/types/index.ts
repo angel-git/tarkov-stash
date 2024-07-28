@@ -12,6 +12,7 @@ export interface Profile {
   sptVersion: string;
   locale: Record<string, string>;
   presetItems: Array<PresetItem>;
+  userPresets: Array<UserPresetItem>;
 }
 
 export interface Item {
@@ -175,6 +176,14 @@ export interface Stats {
 export interface PresetItem {
   id: string;
   encyclopedia: string;
+  items: Array<PresetItemItem>;
+  width: number;
+  height: number;
+}
+
+export interface UserPresetItem {
+  id: string;
+  name: string;
   items: Array<PresetItemItem>;
   width: number;
   height: number;

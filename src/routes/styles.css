@@ -9,6 +9,7 @@
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-mono: 'Fira Mono', monospace;
   --color-text: #aeaeb0;
+  --color-disabled: #8d8d8d;
   --color-highlight: rgb(154, 136, 102);
   --color-secondary: rgb(60, 99, 148);
   --color-destructive: rgb(148, 60, 60);
@@ -138,22 +139,28 @@ button {
   transition-duration: 0.2s;
 }
 
-button.primary {
+button[disabled] {
+  cursor: not-allowed;
+  color: var(--color-disabled);
+  border-color: var(--color-disabled);
+}
+
+button.primary:not([disabled]) {
   color: var(--color-highlight);
   border-color: var(--color-highlight);
 }
 
-button.primary:hover {
+button.primary:hover:not([disabled]) {
   background-color: var(--color-highlight);
   color: var(--color-background);
 }
 
-button.secondary {
+button.secondary:not([disabled]) {
   color: var(--color-text);
   border-color: var(--color-text);
 }
 
-button.secondary:hover {
+button.secondary:hover:not([disabled]) {
   background-color: var(--color-text);
   color: var(--color-background);
 }

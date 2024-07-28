@@ -104,7 +104,8 @@ fn main() {
             restore_durability,
             add_item,
             remove_item,
-            add_preset
+            add_preset,
+            add_user_preset,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

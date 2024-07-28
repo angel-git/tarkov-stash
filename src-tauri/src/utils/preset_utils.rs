@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::prelude::spt_profile_serializer::UserBuilds;
 use crate::prelude::*;
 
 pub fn find_id_from_encyclopedia(
@@ -80,9 +81,38 @@ fn ignore_encyclopedia_item(item_id: &str, bsg_items: &HashMap<String, Value>) -
         || item_utils::is_headwear_item(item_id, bsg_items)
 }
 
+pub fn find_all_user_weapons_builds(
+    user_builds: &UserBuilds,
+    bsg_items_root: &HashMap<String, Value>,
+) -> Vec<UserPresetItem> {
+    let items: Vec<UserPresetItem> = user_builds
+        .weapon_builds
+        .iter()
+        .map(|obj| {
+            let items: &Vec<spt_profile_serializer::InventoryItem> = obj.items.as_ref();
+            let (width, height) = item_utils::calculate_item_size(
+                items.first().unwrap(),
+                items,
+                bsg_items_root,
+                false,
+            );
+
+            UserPresetItem {
+                id: obj.id.to_string(),
+                items: items.clone(),
+                width,
+                height,
+                name: obj.name.to_string(),
+            }
+        })
+        .collect::<Vec<UserPresetItem>>();
+
+    items
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::utils::global_utils::{find_all_item_presets, find_id_from_encyclopedia};
+    use crate::utils::preset_utils::{find_all_item_presets, find_id_from_encyclopedia};
     use serde_json::Value;
     use std::collections::HashMap;
 

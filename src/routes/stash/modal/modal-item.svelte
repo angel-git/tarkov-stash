@@ -154,7 +154,7 @@
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add item into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add item into stash</h2>
 
   <div class="modal-content">
     <div class="modal-inputs">
@@ -221,13 +221,14 @@
   input {
     flex: 1;
     padding: 8px;
+    border: 1px solid var(--color-text);
     background-color: var(--color-background);
     color: var(--color-text);
   }
 
   input:focus {
     outline: none;
-    border: 2px solid var(--color-highlight);
+    border: 1px solid var(--color-highlight);
   }
 
   .main {
