@@ -294,14 +294,7 @@ fn parse_items(
                 panic!("oh no, wrong item: {}", item._id);
             };
 
-        let bsg_item_option = get_bsg_item(item, bsg_items_root);
-        if bsg_item_option.is_none() {
-            return Err(format!(
-                "Item with id [{}] and template [{}] can't be read, check the mod logs for more details. You can find the logs in the menu Help -> Open logs.",
-                item._id, item._tpl
-            ));
-        }
-        let bsg_item = bsg_item_option.unwrap();
+        let bsg_item = get_bsg_item(item, bsg_items_root);
 
         // if it's a container
         let mut grid_items: Option<Vec<GridItem>> = None;
@@ -498,10 +491,16 @@ fn find_all_slots_from_parent(
 fn get_bsg_item(
     item: &spt_profile_serializer::InventoryItem,
     bsg_items_root: &HashMap<String, Value>,
-) -> Option<spt_bsg_items_serializer::BsgItem> {
-    let parent_item = bsg_items_root.get(item._tpl.as_str())?;
-    match spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()) {
-        Ok(bsg_item) => Some(bsg_item),
+) -> spt_bsg_items_serializer::BsgItem {
+    let parent_item = bsg_items_root.get(item._tpl.as_str());
+    if parent_item.is_none() {
+        panic!(
+            "Error finding the item template [{}] in the database",
+            item._tpl
+        );
+    }
+    match spt_bsg_items_serializer::load_item(parent_item.unwrap().to_string().as_str()) {
+        Ok(bsg_item) => bsg_item,
         Err(e) => {
             panic!("Error while parsing item template [{}]: {}", item._tpl, e);
         }
@@ -567,8 +566,8 @@ mod tests {
     use crate::prelude::convert_profile_to_ui;
     use serde_json::Value;
 
-    use crate::spt::spt_profile_serializer::{load_profile, InventoryItem};
-    use crate::ui_profile::ui_profile_serializer::{get_bsg_item, parse_items};
+    use crate::spt::spt_profile_serializer::load_profile;
+    use crate::ui_profile::ui_profile_serializer::parse_items;
 
     #[test]
     fn should_not_crash_if_values_are_float() {
@@ -609,29 +608,6 @@ mod tests {
         assert!(profile_ui.is_ok());
         assert_eq!(profile_ui.as_ref().unwrap().size_y, 70);
         assert_eq!(profile_ui.as_ref().unwrap().size_x, 10);
-    }
-
-    #[test]
-    fn should_not_crash_if_template_is_not_found() {
-        let item = InventoryItem {
-            _id: "6c116ae6e3e795d2e508a5f0".to_string(),
-            _tpl: "FAKE".to_string(),
-            parent_id: None,
-            location: None,
-            slot_id: None,
-            upd: None,
-        };
-
-        let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
-            String::from_utf8_lossy(include_bytes!(
-                "../../../example/Aki_Data/Server/database/templates/items.json"
-            ))
-            .as_ref(),
-        )
-        .unwrap();
-
-        let bsg_item = get_bsg_item(&item, &bsg_items_root);
-        assert!(bsg_item.is_none())
     }
 
     #[test]
