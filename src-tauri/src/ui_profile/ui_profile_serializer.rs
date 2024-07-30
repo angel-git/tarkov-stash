@@ -1,9 +1,8 @@
-use serde_json::Map;
-use std::collections::{HashMap, HashSet};
-
 pub use crate::prelude::*;
 use crate::spt::spt_profile_serializer::TarkovProfile;
 use crate::utils::cache_utils::{load_cache_icon_index_file, load_image_from_cache};
+use serde_json::Map;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UIProfile {
@@ -298,7 +297,7 @@ fn parse_items(
         let bsg_item_option = get_bsg_item(item, bsg_items_root);
         if bsg_item_option.is_none() {
             return Err(format!(
-                "Item with id [{}] and template [{}] can't be read, if you have custom items (from a mod), please move them to your character equipment and try again",
+                "Item with id [{}] and template [{}] can't be read, check the mod logs for more details. You can find the logs in the menu Help -> Open logs.",
                 item._id, item._tpl
             ));
         }
@@ -501,7 +500,12 @@ fn get_bsg_item(
     bsg_items_root: &HashMap<String, Value>,
 ) -> Option<spt_bsg_items_serializer::BsgItem> {
     let parent_item = bsg_items_root.get(item._tpl.as_str())?;
-    spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()).ok()
+    match spt_bsg_items_serializer::load_item(parent_item.to_string().as_str()) {
+        Ok(bsg_item) => Some(bsg_item),
+        Err(e) => {
+            panic!("Error while parsing item template [{}]: {}", item._tpl, e);
+        }
+    }
 }
 
 fn calculate_stash_size(
