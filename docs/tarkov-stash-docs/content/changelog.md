@@ -2,6 +2,18 @@
 title = ""
 +++
 
+## Release: v0.13.0 @ 2024-07-28T10:35:44Z
+```
+## What's Changed
+* #173 filter out wrong item categories by @angel-git in https://github.com/angel-git/tarkov-stash/pull/175
+* #176 Update error message on item_utils.rs when item is not found by @angel-git in https://github.com/angel-git/tarkov-stash/pull/177
+* #172 Allow to add user presets by @angel-git in https://github.com/angel-git/tarkov-stash/pull/174
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.12.0...v0.13.0
+```
+
+
 ## Release: v0.12.0 @ 2024-07-06T19:15:24Z
 ```
 ## What's Changed
@@ -320,7 +332,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.4...v0.2.5
 ```
 
-
 ## Release: v0.2.4 @ 2023-10-20T07:27:20Z
 ```
 ## What's Changed
@@ -329,6 +340,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.3...v0.2.4
 ```
+
 
 ## Release: v0.2.3 @ 2023-10-17T15:18:44Z
 ```
