@@ -34,6 +34,10 @@ This is based out of another project of mine: [task-stash-console](https://githu
 
 ### Screenshots
 
+### 0.13.0
+
+![0.13.0.png](0.13.0.png)
+
 #### 0.9.0
 
 Images are loaded from the cache folder:
