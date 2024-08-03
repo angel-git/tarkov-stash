@@ -117,27 +117,27 @@ pub struct UPD {
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct FoodDrink {
     #[serde(rename = "HpPercent")]
-    pub hp_percent: u16,
+    pub hp_percent: u32,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct MedKit {
     #[serde(rename = "HpResource")]
     #[serde(deserialize_with = "deserialize_to_integer")]
-    pub hp_resource: u16,
+    pub hp_resource: u32,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Resource {
     #[serde(rename = "Value")]
     #[serde(deserialize_with = "deserialize_to_integer")]
-    pub value: u16,
+    pub value: u32,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Key {
     #[serde(rename = "NumberOfUsages")]
-    pub number_of_usages: u16,
+    pub number_of_usages: u32,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
@@ -164,12 +164,12 @@ pub struct Repairable {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_to_option_integer")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub durability: Option<u16>,
+    pub durability: Option<u32>,
     #[serde(rename = "MaxDurability")]
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_to_option_integer")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_durability: Option<u16>,
+    pub max_durability: Option<u32>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -201,21 +201,21 @@ where
     }
 }
 
-fn deserialize_to_integer<'de, D>(deserializer: D) -> Result<u16, D::Error>
+fn deserialize_to_integer<'de, D>(deserializer: D) -> Result<u32, D::Error>
 where
     D: Deserializer<'de>,
 {
     let value: f64 = Deserialize::deserialize(deserializer)?;
-    Ok(value as u16)
+    Ok(value as u32)
 }
 
-fn deserialize_to_option_integer<'de, D>(deserializer: D) -> Result<Option<u16>, D::Error>
+fn deserialize_to_option_integer<'de, D>(deserializer: D) -> Result<Option<u32>, D::Error>
 where
     D: Deserializer<'de>,
 {
     let value: Option<f64> = Deserialize::deserialize(deserializer)?;
     if let Some(float_value) = value {
-        Ok(Some(float_value as u16))
+        Ok(Some(float_value as u32))
     } else {
         Ok(None)
     }

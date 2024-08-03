@@ -28,13 +28,13 @@ pub struct Props {
     #[serde(rename = "StackMaxSize")]
     pub stack_max_size: u32,
     #[serde(rename = "MaxResource")]
-    pub max_resource: Option<u16>,
+    pub max_resource: Option<u32>,
     #[serde(rename = "MaxHpResource")]
-    pub max_hp_resource: Option<u16>,
+    pub max_hp_resource: Option<u32>,
     #[serde(rename = "MaximumNumberOfUsage")]
-    pub maximum_number_of_usages: Option<u16>,
+    pub maximum_number_of_usages: Option<u32>,
     #[serde(rename = "MaxDurability")]
-    pub max_durability: Option<u16>,
+    pub max_durability: Option<u32>,
     #[serde(rename = "BackgroundColor")]
     pub background_color: String,
     #[serde(rename = "Foldable")]
