@@ -2,6 +2,17 @@
 title = ""
 +++
 
+## Release: v0.13.1 @ 2024-08-03T09:08:14Z
+```
+## What's Changed
+* #178 Update error messages by @angel-git in https://github.com/angel-git/tarkov-stash/pull/179
+* #180 Update u16 to u32 few fields so balaclava_development item can be loaded by @angel-git in https://github.com/angel-git/tarkov-stash/pull/181
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.13.0...v0.13.1
+```
+
+
 ## Release: v0.13.0 @ 2024-07-28T10:35:44Z
 ```
 ## What's Changed
@@ -320,7 +331,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.5...v0.3.0
 ```
 
-
 ## Release: v0.2.5 @ 2023-10-20T21:25:38Z
 ```
 ## What's Changed
@@ -331,6 +341,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.4...v0.2.5
 ```
+
 
 ## Release: v0.2.4 @ 2023-10-20T07:27:20Z
 ```
