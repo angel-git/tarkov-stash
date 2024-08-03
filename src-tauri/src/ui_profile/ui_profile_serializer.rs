@@ -45,9 +45,9 @@ pub struct Item {
     pub is_fir: bool,
     #[serde(rename = "rotation")]
     pub r: String,
-    pub resource: Option<u16>,
+    pub resource: Option<u32>,
     #[serde(rename = "maxResource")]
-    pub max_resource: Option<u16>,
+    pub max_resource: Option<u32>,
     #[serde(rename = "backgroundColor")]
     pub background_color: String,
     #[serde(rename = "isContainer")]
@@ -329,7 +329,7 @@ fn parse_items(
 
         let mut amount = 1;
         let mut spawned_in_session = false;
-        let mut resource = None;
+        let mut resource: Option<u32> = None;
         // TODO calculate max resource from slots
         let mut max_resource = None
             .or(bsg_item._props.max_resource)

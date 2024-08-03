@@ -129,8 +129,8 @@ pub fn get_upd_props_from_item(item: &Value) -> spt_profile_serializer::UPD {
 
     if let Some(max_durability) = props.get("MaxDurability") {
         repairable = Some(spt_profile_serializer::Repairable {
-            max_durability: Some(max_durability.as_u64().unwrap() as u16),
-            durability: Some(max_durability.as_u64().unwrap() as u16),
+            max_durability: Some(max_durability.as_u64().unwrap() as u32),
+            durability: Some(max_durability.as_u64().unwrap() as u32),
         });
     }
 
@@ -159,7 +159,7 @@ pub fn get_upd_props_from_item(item: &Value) -> spt_profile_serializer::UPD {
         let max_hp_64 = max_hp.as_u64().unwrap();
         if max_hp_64 > 0 {
             med_kit = Some(spt_profile_serializer::MedKit {
-                hp_resource: max_hp_64 as u16,
+                hp_resource: max_hp_64 as u32,
             });
 
             if let Some(_food_use_time) = props.get("foodUseTime") {
