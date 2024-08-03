@@ -49,8 +49,18 @@ pub fn calculate_item_size(
                 id, tpl
             )
         });
-        let parsed_bsg_item =
-            spt_bsg_items_serializer::load_item(bsg_item.to_string().as_str()).unwrap();
+
+        let parsed_bsg_item_result =
+            spt_bsg_items_serializer::load_item(bsg_item.to_string().as_str());
+        if parsed_bsg_item_result.is_err() {
+            panic!(
+                "Item with id [{}] and template id [{}] can't be parsed: {}",
+                id,
+                tpl,
+                parsed_bsg_item_result.err().unwrap()
+            )
+        }
+        let parsed_bsg_item = parsed_bsg_item_result.unwrap();
 
         if parsed_bsg_item._props.extra_size_force_add {
             forced_up += parsed_bsg_item._props.extra_size_up;
