@@ -12,8 +12,9 @@ This is based out of another project of mine: [task-stash-console](https://githu
 - Increase stock of items (currency, ammo)
 - Restore durability, usage etc from armors, keys, meds...
 - Open containers and backpacks (internal layout might be wrong)
-- Add items into your stash (beta)
-- Add weapons presets into your stash (beta)
+- Add items
+- Add weapons presets
+- Add custom weapons presets (beta)
 - See weapons attachments
 - Delete items
 
