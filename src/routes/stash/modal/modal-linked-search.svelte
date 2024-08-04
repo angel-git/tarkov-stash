@@ -19,7 +19,6 @@
   onMount(() => {
     invokeWithLoader<Record<string, RawBsgItem>>('linked_search', { item })
       .then((response) => {
-        console.log('response: ', response);
         linkedItems = [];
         Object.keys(response).forEach((key) => {
           const linkedItem = response[key];
