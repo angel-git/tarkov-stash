@@ -88,6 +88,11 @@
 </Modal>
 
 <style>
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
   ul li {
     list-style: none;
     display: flex;
