@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+Allow: /
+Sitemap: https://angel-git.github.io/tarkov-stash/sitemap.xml
