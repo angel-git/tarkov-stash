@@ -11,6 +11,7 @@
   import InfoIcon from '$lib/images/icon_info.png';
   import FirIcon from '$lib/images/fir.png';
   import InspectIcon from '$lib/images/inspect.png';
+  import LinkedSearchIcon from '$lib/images/linked-search.png';
   import OpenIcon from '$lib/images/open.png';
   import RepairIcon from '$lib/images/repair.png';
   import DiscardIcon from '$lib/images/discard.png';
@@ -24,7 +25,11 @@
   export let bsgItems: Record<string, BsgItem>;
   export let presetItems: Array<PresetItem>;
   export let userPresets: Array<UserPresetItem>;
-  export let onOptionClicked: (option: Option, item: Item) => void;
+  export let onOptionClicked: (
+    option: Option,
+    item: Item,
+    grid?: Array<Array<Item | undefined>>,
+  ) => void;
 
   onMount(() => {
     window.addEventListener('scroll', onScroll);
@@ -119,7 +124,7 @@
     if (option === 'open') {
       containerOpenId = item.id;
     } else {
-      onOptionClicked(option, item);
+      onOptionClicked(option, item, grid);
     }
   }
 
@@ -197,6 +202,16 @@
           >
             <img alt="inspect logo" src={InspectIcon} />
             <div>Inspect</div>
+          </div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <div
+            class="option"
+            tabindex="-1"
+            role="button"
+            on:click={() => handleOptionClicked('linked-search', item)}
+          >
+            <img alt="inspect logo" src={LinkedSearchIcon} />
+            <div>Linked search</div>
           </div>
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->

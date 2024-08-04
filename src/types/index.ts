@@ -154,7 +154,14 @@ export type SlotKind =
   | 'mod_trigger'
   | 'patron_in_weapon';
 
-export type Option = 'amount' | 'fir' | 'resource' | 'open' | 'delete' | 'details';
+export type Option =
+  | 'amount'
+  | 'fir'
+  | 'resource'
+  | 'open'
+  | 'delete'
+  | 'details'
+  | 'linked-search';
 
 export interface NewItem {
   id: string;
@@ -195,4 +202,18 @@ export interface PresetItemItem {
   parentId: string;
   slotId: SlotKind;
   upd: unknown;
+}
+
+export interface RawBsgItem {
+  _id: string;
+  _parent: string;
+  _name: string;
+  _type: string;
+  _props: RawBsgItemProps;
+}
+
+export interface RawBsgItemProps {
+  Width: number;
+  Height: number;
+  StackMaxSize: number;
 }

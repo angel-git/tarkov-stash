@@ -5,6 +5,7 @@
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
   import DetailsModal from './modal/modal-details.svelte';
+  import LinkedSearchModal from './modal/modal-linked-search.svelte';
   import { goto } from '$app/navigation';
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
@@ -15,12 +16,13 @@
   $: isLoading = $loading;
   let selectedOption: Option | undefined;
   let selectedItem: Item | undefined;
+  let selectedGrid: Array<Array<Item | undefined>>;
 
   listen('go_to_main_page', () => {
     goto('/');
   });
 
-  function handleOptionClicked(option: Option, item: Item) {
+  function handleOptionClicked(option: Option, item: Item, grid?: Array<Array<Item | undefined>>) {
     switch (option) {
       case 'fir': {
         invokeWithLoader('change_fir', { item })
@@ -41,6 +43,9 @@
       default: {
         selectedOption = option;
         selectedItem = item;
+        if (grid) {
+          selectedGrid = grid;
+        }
         break;
       }
     }
@@ -89,6 +94,14 @@
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'delete'}
       <DeleteModal item={selectedItem} locale={$profile.locale} onClose={handleCloseModal} />
+    {/if}
+    {#if selectedItem && selectedOption && selectedOption === 'linked-search'}
+      <LinkedSearchModal
+        item={selectedItem}
+        locale={$profile.locale}
+        onClose={handleCloseModal}
+        grid={selectedGrid}
+      />
     {/if}
     <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />
   {:else}
