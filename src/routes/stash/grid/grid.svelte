@@ -203,16 +203,18 @@
             <img alt="inspect logo" src={InspectIcon} />
             <div>Inspect</div>
           </div>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
-            class="option"
-            tabindex="-1"
-            role="button"
-            on:click={() => handleOptionClicked('linked-search', item)}
-          >
-            <img alt="inspect logo" src={LinkedSearchIcon} />
-            <div>Linked search</div>
-          </div>
+          {#if nestedLevel === 1}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="option"
+              tabindex="-1"
+              role="button"
+              on:click={() => handleOptionClicked('linked-search', item)}
+            >
+              <img alt="inspect logo" src={LinkedSearchIcon} />
+              <div>Linked search</div>
+            </div>
+          {/if}
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
