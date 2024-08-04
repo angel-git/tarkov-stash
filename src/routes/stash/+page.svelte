@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Item, Option, Profile } from '../../types';
-  import { profile, loading } from '../../store';
+  import { profile, loading, stashGrid } from '../../store';
   import StashGrid from './stash-grid.svelte';
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
@@ -16,13 +16,12 @@
   $: isLoading = $loading;
   let selectedOption: Option | undefined;
   let selectedItem: Item | undefined;
-  let selectedGrid: Array<Array<Item | undefined>>;
 
   listen('go_to_main_page', () => {
     goto('/');
   });
 
-  function handleOptionClicked(option: Option, item: Item, grid?: Array<Array<Item | undefined>>) {
+  function handleOptionClicked(option: Option, item: Item) {
     switch (option) {
       case 'fir': {
         invokeWithLoader('change_fir', { item })
@@ -43,9 +42,6 @@
       default: {
         selectedOption = option;
         selectedItem = item;
-        if (grid) {
-          selectedGrid = grid;
-        }
         break;
       }
     }
@@ -100,7 +96,7 @@
         item={selectedItem}
         locale={$profile.locale}
         onClose={handleCloseModal}
-        grid={selectedGrid}
+        grid={$stashGrid}
       />
     {/if}
     <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />

@@ -16,6 +16,7 @@
   import RepairIcon from '$lib/images/repair.png';
   import DiscardIcon from '$lib/images/discard.png';
   import AmountIcon from '$lib/images/amount.png';
+  import { stashGrid } from '../../../store';
 
   export let items: Array<Item>;
   export let locale: Record<string, string>;
@@ -25,11 +26,7 @@
   export let bsgItems: Record<string, BsgItem>;
   export let presetItems: Array<PresetItem>;
   export let userPresets: Array<UserPresetItem>;
-  export let onOptionClicked: (
-    option: Option,
-    item: Item,
-    grid?: Array<Array<Item | undefined>>,
-  ) => void;
+  export let onOptionClicked: (option: Option, item: Item) => void;
 
   onMount(() => {
     window.addEventListener('scroll', onScroll);
@@ -98,6 +95,7 @@
       if (localStorage.getItem('scrollY')) {
         window.scrollTo(0, Number(localStorage.getItem('scrollY')));
       }
+      stashGrid.set(grid);
     }
   }
 
@@ -124,7 +122,7 @@
     if (option === 'open') {
       containerOpenId = item.id;
     } else {
-      onOptionClicked(option, item, grid);
+      onOptionClicked(option, item);
     }
   }
 

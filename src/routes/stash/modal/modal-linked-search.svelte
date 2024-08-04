@@ -4,15 +4,17 @@
   import { onMount } from 'svelte';
   import Modal from './modal.svelte';
   import { findNewItemLocation, getName, getShortName, invokeWithLoader } from '../../../helper';
+  import { stashGrid } from '../../../store';
 
   export let onClose: () => void;
   export let item: Item;
   export let locale: Record<string, string>;
-  export let grid: Array<Array<Item | undefined>>;
+  export let grid: Array<Array<Item | undefined>> | undefined;
 
   let linkedItems: Array<RawBsgItem>;
   let showModal = true;
   let loadingLinkedItems = true;
+  $: isAddButtonDisabled = grid === undefined;
 
   $: if (!showModal) onClose();
 
@@ -43,6 +45,9 @@
       return;
     }
 
+    // remove grid so it refreshes after add_item command
+    stashGrid.set(undefined);
+
     invokeWithLoader<NewItem>('add_item', {
       item: {
         id: item._id,
@@ -54,12 +59,12 @@
   }
 </script>
 
-<Modal bind:showModal withSubmit={false}>
+<Modal fullHeight={true} bind:showModal withSubmit={false}>
   <h2 slot="header">
     Linked search for item {getShortName(item.tpl, locale)}
   </h2>
 
-  <div>
+  <div class="body">
     {#if loadingLinkedItems}
       loading....
     {/if}
@@ -77,7 +82,11 @@
                 </div>
                 {getName(linkedItem._id, locale)}
               </div>
-              <button class="primary" on:click={() => addItem(linkedItem)}>add</button>
+              <button
+                disabled={isAddButtonDisabled}
+                class="primary"
+                on:click={() => addItem(linkedItem)}>add</button
+              >
             </li>
           {/each}
         </ul>
@@ -87,6 +96,11 @@
 </Modal>
 
 <style>
+  .body {
+    height: 100%;
+    overflow-y: auto;
+  }
+
   ul {
     margin: 0;
     padding: 0;
