@@ -60,7 +60,7 @@
     {#if item.isFir}
       <div class="fir" />
     {/if}
-    {#if item.isStockable}
+    {#if item.isStockable || item.amount > 1}
       <div class="amount">{item.amount}</div>
     {/if}
     {#if item.maxResource && item.maxResource !== 1}
