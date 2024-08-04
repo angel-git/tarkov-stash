@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { Item, Option, Profile } from '../../types';
-  import { profile, loading } from '../../store';
+  import { profile, loading, stashGrid } from '../../store';
   import StashGrid from './stash-grid.svelte';
   import AmountModal from './modal/modal-amount.svelte';
   import DeleteModal from './modal/modal-delete.svelte';
   import DetailsModal from './modal/modal-details.svelte';
+  import LinkedSearchModal from './modal/modal-linked-search.svelte';
   import { goto } from '$app/navigation';
   import Loading from '$lib/images/loading.gif';
   import { invokeWithLoader } from '../../helper';
@@ -89,6 +90,14 @@
     {/if}
     {#if selectedItem && selectedOption && selectedOption === 'delete'}
       <DeleteModal item={selectedItem} locale={$profile.locale} onClose={handleCloseModal} />
+    {/if}
+    {#if selectedItem && selectedOption && selectedOption === 'linked-search'}
+      <LinkedSearchModal
+        item={selectedItem}
+        locale={$profile.locale}
+        onClose={handleCloseModal}
+        grid={$stashGrid}
+      />
     {/if}
     <StashGrid profile={$profile} onOptionClicked={handleOptionClicked} />
   {:else}

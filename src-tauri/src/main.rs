@@ -104,6 +104,7 @@ fn main() {
             restore_durability,
             add_item,
             remove_item,
+            linked_search,
             add_preset,
             add_user_preset,
         ])

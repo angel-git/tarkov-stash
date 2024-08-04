@@ -469,6 +469,22 @@ pub fn delete_item(
     serde_json::to_string(&root)
 }
 
+pub fn search_linked_items(
+    item: &Item,
+    bsg_items: &HashMap<String, Value>,
+) -> Result<HashMap<String, Value>, Error> {
+    let item_tpl = item.tpl.as_str();
+
+    let item_to_search = bsg_items.get(item_tpl).unwrap();
+    let filter_values = find_all_values_in_array_by_key(item_to_search, "Filter");
+    let mut linked_items: HashMap<String, Value> = HashMap::new();
+    for filter_value in filter_values {
+        let id = filter_value.as_str().unwrap();
+        linked_items.insert(id.to_string(), bsg_items.get(id).unwrap().clone());
+    }
+    Ok(linked_items)
+}
+
 fn get_inventory_items(root: &mut Value) -> Option<&mut Vec<Value>> {
     root.get_mut("characters")
         .and_then(|v| v.get_mut("pmc"))
@@ -538,6 +554,30 @@ fn get_stack_slot(template_id: &str, bsg_items: &HashMap<String, Value>) -> Opti
                 })
         })
         .unwrap_or(None)
+}
+
+fn find_all_values_in_array_by_key<'a>(value: &'a Value, key: &str) -> Vec<&'a Value> {
+    let mut result: Vec<&'a Value> = Vec::new();
+    match value {
+        Value::Object(map) => {
+            // Check if the current object contains the key
+            if let Some(v) = map.get(key) {
+                result.extend(v.as_array().unwrap());
+            }
+            // Otherwise, recursively search in nested objects
+            for (_, v) in map {
+                result.extend(find_all_values_in_array_by_key(v, key));
+            }
+        }
+        Value::Array(arr) => {
+            // If it's an array, search in each element
+            for v in arr {
+                result.extend(find_all_values_in_array_by_key(v, key));
+            }
+        }
+        _ => {}
+    }
+    result
 }
 
 #[cfg(test)]

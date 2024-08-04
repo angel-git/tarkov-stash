@@ -11,10 +11,12 @@
   import InfoIcon from '$lib/images/icon_info.png';
   import FirIcon from '$lib/images/fir.png';
   import InspectIcon from '$lib/images/inspect.png';
+  import LinkedSearchIcon from '$lib/images/linked-search.png';
   import OpenIcon from '$lib/images/open.png';
   import RepairIcon from '$lib/images/repair.png';
   import DiscardIcon from '$lib/images/discard.png';
   import AmountIcon from '$lib/images/amount.png';
+  import { stashGrid } from '../../../store';
 
   export let items: Array<Item>;
   export let locale: Record<string, string>;
@@ -93,6 +95,7 @@
       if (localStorage.getItem('scrollY')) {
         window.scrollTo(0, Number(localStorage.getItem('scrollY')));
       }
+      stashGrid.set(grid);
     }
   }
 
@@ -198,6 +201,18 @@
             <img alt="inspect logo" src={InspectIcon} />
             <div>Inspect</div>
           </div>
+          {#if nestedLevel === 1}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="option"
+              tabindex="-1"
+              role="button"
+              on:click={() => handleOptionClicked('linked-search', item)}
+            >
+              <img alt="inspect logo" src={LinkedSearchIcon} />
+              <div>Linked search</div>
+            </div>
+          {/if}
           {#if item.isContainer}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
