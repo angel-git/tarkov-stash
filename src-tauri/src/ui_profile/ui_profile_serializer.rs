@@ -336,19 +336,21 @@ fn parse_items(
             .or(bsg_item._props.max_hp_resource)
             .or(bsg_item._props.maximum_number_of_usages)
             .or(bsg_item._props.max_durability);
-        
+
         // calculate amount, it might be coming from cartridges
         let slots = find_all_slots_from_parent(item._id.as_str(), profile_items, "cartridges");
         if !slots.is_empty() {
             amount = slots.iter().fold(0, |acc, slot| {
-                if let Some(stack_objects_count) = slot.upd.as_ref().and_then(|u| u.stack_objects_count.as_ref())
+                if let Some(stack_objects_count) = slot
+                    .upd
+                    .as_ref()
+                    .and_then(|u| u.stack_objects_count.as_ref())
                 {
                     acc + stack_objects_count
                 } else {
                     acc
                 }
             });
-            println!("item {} setting amount {}", item._id, amount)
         }
 
         if udp_option.is_some() {
