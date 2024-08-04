@@ -2,6 +2,17 @@
 title = ""
 +++
 
+## Release: v0.14.0 @ 2024-08-04T20:49:41Z
+```
+## What's Changed
+* #183 Show amount of items inside `cartridges` by @angel-git in https://github.com/angel-git/tarkov-stash/pull/185
+* #182 Add linked search by @angel-git in https://github.com/angel-git/tarkov-stash/pull/184
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.13.1...v0.14.0
+```
+
+
 ## Release: v0.13.1 @ 2024-08-03T09:08:14Z
 ```
 ## What's Changed
@@ -319,7 +330,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.3.0...v0.3.1
 ```
 
-
 ## Release: v0.3.0 @ 2023-10-20T23:17:34Z
 ```
 ## What's Changed
@@ -330,6 +340,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.2.5...v0.3.0
 ```
+
 
 ## Release: v0.2.5 @ 2023-10-20T21:25:38Z
 ```
