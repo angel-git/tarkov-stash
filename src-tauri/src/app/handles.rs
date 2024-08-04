@@ -1,8 +1,8 @@
 use crate::prelude::server::Session;
 use crate::prelude::{
     add_new_item, add_new_preset, add_new_user_preset, convert_profile_to_ui, delete_item,
-    track_event, update_durability, update_item_amount, update_spawned_in_session, Item, NewItem,
-    UIProfile, SETTING_IMAGE_CACHE, SETTING_LOCALE,
+    search_linked_items, track_event, update_durability, update_item_amount,
+    update_spawned_in_session, Item, NewItem, UIProfile, SETTING_IMAGE_CACHE, SETTING_LOCALE,
 };
 use crate::spt::server::{
     is_server_running, is_tarkov_running, load_bsg_items_from_server, load_globals_from_server,
@@ -235,7 +235,7 @@ pub async fn refresh_profile_from_spt(
 }
 
 #[tauri::command]
-pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn change_amount(item: Item, app: AppHandle) -> Result<String, String> {
     if is_tarkov_running() {
         return Err(SPT_RUNNING_ERROR.to_string());
     }
@@ -253,7 +253,7 @@ pub async fn change_amount(item: Item, app: tauri::AppHandle) -> Result<String, 
 }
 
 #[tauri::command]
-pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn change_fir(item: Item, app: AppHandle) -> Result<String, String> {
     if is_tarkov_running() {
         return Err(SPT_RUNNING_ERROR.to_string());
     }
@@ -271,7 +271,7 @@ pub async fn change_fir(item: Item, app: tauri::AppHandle) -> Result<String, Str
 }
 
 #[tauri::command]
-pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn restore_durability(item: Item, app: AppHandle) -> Result<String, String> {
     if is_tarkov_running() {
         return Err(SPT_RUNNING_ERROR.to_string());
     }
@@ -289,7 +289,7 @@ pub async fn restore_durability(item: Item, app: tauri::AppHandle) -> Result<Str
 }
 
 #[tauri::command]
-pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn remove_item(item: Item, app: AppHandle) -> Result<String, String> {
     if is_tarkov_running() {
         return Err(SPT_RUNNING_ERROR.to_string());
     }
@@ -304,6 +304,33 @@ pub async fn remove_item(item: Item, app: tauri::AppHandle) -> Result<String, St
         Some(json!({"item_id": item.tpl.as_str()})),
     );
     with_state_do(item, &app, delete_item).await
+}
+
+#[tauri::command]
+pub async fn linked_search(item: Item, app: AppHandle) -> Result<HashMap<String, Value>, String> {
+    if is_tarkov_running() {
+        return Err(SPT_RUNNING_ERROR.to_string());
+    }
+    info!(
+        "Linking search item {} and tpl {}",
+        item.id.as_str(),
+        item.tpl.as_str()
+    );
+    track_event(
+        &app,
+        "linked_search",
+        Some(json!({"item_id": item.tpl.as_str()})),
+    );
+
+    let state: State<TarkovStashState> = app.state();
+    let internal_state = state.state.lock().unwrap();
+    let bsg_items_option = &internal_state.bsg_items;
+    let bsg_items = bsg_items_option.as_ref().unwrap();
+
+    match search_linked_items(&item, bsg_items) {
+        Ok(response) => Ok(response),
+        Err(e) => Err(e.to_string()),
+    }
 }
 
 #[tauri::command]
@@ -438,11 +465,7 @@ type UpdateFunction = fn(
     bsg_items: &HashMap<String, Value>,
 ) -> Result<String, Error>;
 
-async fn with_state_do(
-    item: Item,
-    app: &tauri::AppHandle,
-    f: UpdateFunction,
-) -> Result<String, String> {
+async fn with_state_do(item: Item, app: &AppHandle, f: UpdateFunction) -> Result<String, String> {
     let result = {
         let state: State<TarkovStashState> = app.state();
         let internal_state = state.state.lock().unwrap();
