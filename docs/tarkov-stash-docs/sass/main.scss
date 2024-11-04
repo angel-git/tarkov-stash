@@ -45,6 +45,10 @@ pre {
     color: var(--text-secondary-color);
   }
 
+  h2 {
+    margin: 8px 0;
+  }
+
   h2::before {
     content: "# ";
   }
