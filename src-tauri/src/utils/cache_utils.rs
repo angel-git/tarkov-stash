@@ -365,7 +365,10 @@ mod tests {
     use serde_json::Value;
 
     use crate::spt::spt_profile_serializer::load_profile;
-    use crate::utils::cache_utils::{get_deterministic_hash_code, get_hash_code_from_mongo_id, get_item_hash, get_max_visible_ammo, get_max_visible_ammo_ranges, is_ammo_item};
+    use crate::utils::cache_utils::{
+        get_deterministic_hash_code, get_hash_code_from_mongo_id, get_item_hash,
+        get_max_visible_ammo, get_max_visible_ammo_ranges, is_ammo_item,
+    };
 
     #[test]
     fn should_get_max_visible_ammo_ranges() {
