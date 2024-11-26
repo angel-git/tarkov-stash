@@ -149,7 +149,7 @@ fn get_hash_sum(item: &InventoryItem, items: &[InventoryItem]) -> i32 {
     let mut num =
         2777_i32.wrapping_mul(get_deterministic_hash_code(container_id.unwrap().as_str()));
     num = num.wrapping_add(
-        7901_i32.wrapping_mul(get_deterministic_hash_code(parent_item._tpl.as_str())),
+        7901_i32.wrapping_mul(get_hash_code_from_mongo_id(parent_item._tpl.as_str())),
     );
     num
 }
@@ -172,7 +172,7 @@ fn smethod_1(
     bsg_items_root: &HashMap<String, Value>,
 ) -> i32 {
     let mut hash = 0;
-    hash ^= get_deterministic_hash_code(item._tpl.as_str());
+    hash ^= get_hash_code_from_mongo_id(item._tpl.as_str());
 
     // something crazy for togglable items...
     let node = bsg_items_root.get(item._tpl.as_str()).unwrap();
@@ -284,6 +284,23 @@ fn get_deterministic_hash_code(s: &str) -> i32 {
     hash1.wrapping_add(hash2.wrapping_mul(1566083941))
 }
 
+fn get_hash_code_from_mongo_id(s: &str) -> i32 {
+    let timestamp = get_mongo_id_timestamp(s) as i32;
+    let counter = get_mongo_id_counter(s);
+    let counter_high = ((counter >> 32) as u32).wrapping_mul(3637) as i32;
+    let counter_low = ((counter & 0xFFFFFFFF) as u32).wrapping_mul(5807) as i32;
+
+    timestamp ^ counter_high ^ counter_low
+}
+
+fn get_mongo_id_timestamp(mongo_id: &str) -> u32 {
+    u32::from_str_radix(&mongo_id[..8], 16).unwrap()
+}
+
+fn get_mongo_id_counter(mongo_id: &str) -> u64 {
+    u64::from_str_radix(&mongo_id[8..24], 16).unwrap()
+}
+
 fn is_ammo_item(tpl: &str, bsg_items_root: &HashMap<String, Value>) -> bool {
     find_parent_by_name(bsg_items_root, tpl, "Ammo").is_some()
 }
@@ -348,10 +365,7 @@ mod tests {
     use serde_json::Value;
 
     use crate::spt::spt_profile_serializer::load_profile;
-    use crate::utils::cache_utils::{
-        get_deterministic_hash_code, get_item_hash, get_max_visible_ammo,
-        get_max_visible_ammo_ranges, is_ammo_item,
-    };
+    use crate::utils::cache_utils::{get_deterministic_hash_code, get_hash_code_from_mongo_id, get_item_hash, get_max_visible_ammo, get_max_visible_ammo_ranges, is_ammo_item};
 
     #[test]
     fn should_get_max_visible_ammo_ranges() {
@@ -450,6 +464,14 @@ mod tests {
     }
 
     #[test]
+    fn should_get_mongo_hash_code() {
+        assert_eq!(
+            get_hash_code_from_mongo_id("5448ba0b4bdc2d02308b456c"),
+            -865571915
+        );
+    }
+
+    #[test]
     fn should_item_be_ammo() {
         let bsg_items_root: HashMap<String, Value> = serde_json::from_str(
             String::from_utf8_lossy(include_bytes!(
@@ -491,7 +513,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -323410316)
+        assert_eq!(hash, -92892882)
     }
 
     #[test]
@@ -523,7 +545,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -1339329798)
+        assert_eq!(hash, 2140102241)
     }
 
     #[test]
@@ -555,7 +577,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -1812714602)
+        assert_eq!(hash, -929232747)
     }
 
     #[test]
@@ -587,7 +609,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -1812714654)
+        assert_eq!(hash, -929232799)
     }
 
     #[test]
@@ -619,7 +641,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -985595754)
+        assert_eq!(hash, -1121238231)
     }
 
     #[test]
@@ -651,7 +673,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -655496610)
+        assert_eq!(hash, 1157681845)
     }
 
     #[test]
@@ -683,7 +705,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, 1318880480)
+        assert_eq!(hash, 610725761)
     }
 
     #[test]
@@ -715,7 +737,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, 1318880510)
+        assert_eq!(hash, 610725791)
     }
 
     #[test]
@@ -747,7 +769,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, 1991976902)
+        assert_eq!(hash, 58308538)
     }
 
     #[test]
@@ -779,7 +801,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, 1444116778);
+        assert_eq!(hash, 420777264);
     }
 
     #[test]
@@ -811,7 +833,7 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, -96006026)
+        assert_eq!(hash, -157644762)
     }
 
     #[test]
@@ -843,6 +865,6 @@ mod tests {
             &tarkov_profile.characters.pmc.inventory.items,
             &bsg_items_root,
         );
-        assert_eq!(hash, 1165599878)
+        assert_eq!(hash, 395011762)
     }
 }
