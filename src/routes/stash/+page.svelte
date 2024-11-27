@@ -11,7 +11,7 @@
   import { invokeWithLoader } from '../../helper';
   import { listen } from '@tauri-apps/api/event';
 
-  const supported_version = '3.9';
+  const supported_version = '3.10';
 
   $: isLoading = $loading;
   let selectedOption: Option | undefined;
