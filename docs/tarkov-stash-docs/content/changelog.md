@@ -2,6 +2,16 @@
 title = ""
 +++
 
+## Release: v1.0.0 @ 2024-11-27T11:54:29Z
+```
+## What's Changed
+* #186 SPT 3.10 support by @angel-git in https://github.com/angel-git/tarkov-stash/pull/187
+
+
+**Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.14.0...v1.0.0
+```
+
+
 ## Release: v0.14.0 @ 2024-08-04T20:49:41Z
 ```
 ## What's Changed
@@ -320,7 +330,6 @@ Fix add_preset is broken since #135
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.3.1...v0.4.0
 ```
 
-
 ## Release: v0.3.1 @ 2023-10-21T15:38:57Z
 ```
 ## What's Changed
@@ -329,6 +338,7 @@ Fix add_preset is broken since #135
 
 **Full Changelog**: https://github.com/angel-git/tarkov-stash/compare/v0.3.0...v0.3.1
 ```
+
 
 ## Release: v0.3.0 @ 2023-10-20T23:17:34Z
 ```
