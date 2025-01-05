@@ -1,0 +1,1 @@
+nav a{margin-left:8px;font-size:1.5rem;border-bottom:3px solid var(--primary-color)}nav a::before{content:"/"}nav a.active{color:var(--hover-color)}
