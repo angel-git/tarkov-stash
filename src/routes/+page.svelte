@@ -6,8 +6,7 @@
   import type { Profile, Session } from '../types';
   import Loading from '$lib/images/loading.gif';
 
-  let hostValue = '127.0.0.1';
-  let portValue = 6969;
+  let address = 'https://127.0.0.1:6969';
 
   let sessions: Array<Session>;
   let selectedSession: Session | undefined;
@@ -27,7 +26,7 @@
 
   function connectToServer() {
     invokeWithLoader<Array<Session>>('connect_to_server', {
-      server: { host: hostValue, port: portValue },
+      server: { address },
     })
       .then((r: Array<Session>) => {
         connected = true;
@@ -70,8 +69,7 @@
     <img class="loading" src={Loading} alt="loading gif" width="40" height="40" />
   {/if}
   <form>
-    <input name="host" type="text" bind:value={hostValue} />
-    <input name="port" type="number" bind:value={portValue} />
+    <input name="host" type="text" bind:value={address} />
     <button class="primary" type="submit" on:click={connectToServer}>connect</button>
   </form>
   {#if connected}

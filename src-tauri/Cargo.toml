@@ -28,6 +28,7 @@ rand = "0.8.5"
 url = "2.4.0"
 sysinfo = "0.30.11"
 base64 = "0.22.0"
+reqwest = "0.12.14"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

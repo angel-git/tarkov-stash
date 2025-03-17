@@ -78,7 +78,10 @@
             <li>
               <div>
                 <div class="image-container">
-                  <img alt="item" src={`https://assets.tarkov.dev/${linkedItem._id}-512.webp`} />
+                  <img
+                    alt="item"
+                    src={`https://assets.tarkov.dev/${linkedItem._id}-base-image.webp`}
+                  />
                 </div>
                 {getName(linkedItem._id, locale)}
               </div>

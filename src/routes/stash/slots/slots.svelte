@@ -48,7 +48,7 @@
                 }/${itemInSlot.upd.Repairable.MaxDurability}`}
               </div>
             {/if}
-            <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-512.webp`} />
+            <img alt="item" src={`https://assets.tarkov.dev/${itemInSlot.tpl}-base-image.webp`} />
           </div>
         {/each}
       {:else}

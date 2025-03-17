@@ -66,6 +66,7 @@
         .filter((i) => !i.unbuyable)
         .filter((i) => getName(i.id, locale))
         .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
+        .filter((i) => !getName(i.id, locale).includes('DO NOT USE'))
         .forEach((i) => {
           categoriesSet.add(getParentNode(i));
         });
@@ -83,6 +84,7 @@
         .filter((i) => !HIDDEN_CATEGORIES.includes(i.parentId))
         .filter((i) => getName(i.id, locale))
         .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
+        .filter((i) => !getName(i.id, locale).includes('DO NOT USE'))
         .map((i) => ({ ...i, category: getParentNode(i), name: getName(i.id, locale) }))
         .filter(
           (i) =>
@@ -190,7 +192,10 @@
         >
           <div>{getShortName($addNewItem.item.id, locale)}</div>
           <div>{$addNewItem.item.width}x{$addNewItem.item.height}</div>
-          <img alt="item" src={`https://assets.tarkov.dev/${$addNewItem.item.id}-512.webp`} />
+          <img
+            alt="item"
+            src={`https://assets.tarkov.dev/${$addNewItem.item.id}-base-image.webp`}
+          />
           <div class="details">
             {getDescription($addNewItem.item.id, locale)}
           </div>

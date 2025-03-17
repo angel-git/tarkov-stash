@@ -1,7 +1,8 @@
-use std::collections::HashMap;
-
+use crate::prelude::cache_utils::load_image_from_cache;
 use crate::prelude::spt_profile_serializer::UserBuilds;
 use crate::prelude::*;
+use serde_json::Map;
+use std::collections::HashMap;
 
 pub fn find_id_from_encyclopedia(
     encyclopedia_id: &str,
@@ -84,6 +85,8 @@ fn ignore_encyclopedia_item(item_id: &str, bsg_items: &HashMap<String, Value>) -
 pub fn find_all_user_weapons_builds(
     user_builds: &UserBuilds,
     bsg_items_root: &HashMap<String, Value>,
+    index_cache: &Option<Map<String, Value>>,
+    server_path: &str,
 ) -> Vec<UserPresetItem> {
     let items: Vec<UserPresetItem> = user_builds
         .weapon_builds
@@ -103,6 +106,17 @@ pub fn find_all_user_weapons_builds(
                 width,
                 height,
                 name: obj.name.to_string(),
+                cache_image: if index_cache.is_some() {
+                    load_image_from_cache(
+                        items.first().unwrap(),
+                        items,
+                        bsg_items_root,
+                        index_cache.as_ref().unwrap(),
+                        server_path,
+                    )
+                } else {
+                    None
+                },
             }
         })
         .collect::<Vec<UserPresetItem>>();

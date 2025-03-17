@@ -24,7 +24,7 @@ pub async fn connect_to_server(
     server: ServerProps,
     app: AppHandle,
 ) -> Result<Vec<Session>, String> {
-    if !is_server_running(&server) {
+    if !is_server_running(&server).await {
         Err(format!("Server is not running at {}", server))
     } else if is_tarkov_running() {
         Err(SPT_RUNNING_ERROR.to_string())

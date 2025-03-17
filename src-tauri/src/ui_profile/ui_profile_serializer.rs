@@ -75,6 +75,8 @@ pub struct PresetItem {
 pub struct UserPresetItem {
     pub id: String,
     pub name: String,
+    #[serde(rename = "cacheImage")]
+    pub cache_image: Option<String>,
     pub items: Vec<spt_profile_serializer::InventoryItem>,
     pub width: u16,
     pub height: u16,
@@ -255,6 +257,8 @@ pub fn convert_profile_to_ui(
         user_presets: preset_utils::find_all_user_weapons_builds(
             &tarkov_profile.user_builds,
             bsg_items_root,
+            &cache_icon_index_file,
+            server_path,
         ),
     })
 }

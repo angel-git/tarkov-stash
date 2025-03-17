@@ -1,10 +1,10 @@
-use crate::prelude::{ClientBuilder, Deserialize, HttpRequestBuilder, Serialize};
+use crate::prelude::{Deserialize, Serialize};
 use crate::spt::spt_profile_serializer::TarkovProfile;
 use log::error;
+use reqwest::header::HeaderMap;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
-use std::net::TcpStream;
 use std::string::ToString;
 use sysinfo::System;
 
@@ -12,8 +12,7 @@ const TARKOV_PROCESS: &str = "EscapeFromTarkov.exe";
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ServerProps {
-    host: String,
-    port: u16,
+    address: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -26,7 +25,7 @@ pub struct ServerInfo {
 
 impl fmt::Display for ServerProps {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        write!(fmt, "{}:{}", self.host, self.port)
+        write!(fmt, "{}", self.address)
     }
 }
 
@@ -36,8 +35,19 @@ pub struct Session {
     pub username: String,
 }
 
-pub fn is_server_running(server_props: &ServerProps) -> bool {
-    TcpStream::connect(server_props.to_string()).is_ok()
+fn get_client() -> reqwest::Client {
+    reqwest::Client::builder()
+        .danger_accept_invalid_certs(true)
+        .build()
+        .unwrap()
+}
+
+pub async fn is_server_running(server_props: &ServerProps) -> bool {
+    get_client()
+        .get(server_props.address.to_string())
+        .send()
+        .await
+        .is_ok()
 }
 
 pub fn is_tarkov_running() -> bool {
@@ -47,67 +57,36 @@ pub fn is_tarkov_running() -> bool {
 }
 
 pub async fn load_server_info(server_props: &ServerProps) -> Result<ServerInfo, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/tarkov-stash/server", server_props),
-    )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    if let Ok(response) = serde_json::from_value(client.send(request).await?.read().await?.data) {
-        Ok(response)
-    } else {
-        Err(tauri::Error::Io(std::io::Error::from(
+    let value = do_get(server_props, "tarkov-stash/server", None).await?;
+    match serde_json::from_value::<ServerInfo>(value) {
+        Ok(server_info) => Ok(server_info),
+        Err(_) => Err(tauri::Error::Io(std::io::Error::from(
             std::io::ErrorKind::NotFound,
-        )))
+        ))),
     }
 }
 
 pub async fn load_sessions_from_server(
     server_props: &ServerProps,
 ) -> Result<Vec<Session>, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/tarkov-stash/profiles", server_props),
-    )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    Ok(parse_sessions(
-        client.send(request).await?.read().await?.data,
-    ))
+    let value = do_get(server_props, "tarkov-stash/profiles", None).await?;
+    Ok(parse_sessions(value))
 }
 
 pub async fn load_bsg_items_from_server(
     server_props: &ServerProps,
 ) -> Result<HashMap<String, Value>, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request =
-        HttpRequestBuilder::new("GET", format!("http://{}/tarkov-stash/items", server_props))
-            .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    Ok(parse_as_map(client.send(request).await?.read().await?.data))
+    let value = do_get(server_props, "tarkov-stash/items", None).await?;
+    Ok(parse_as_map(value))
 }
 
 pub async fn load_globals_from_server(
     server_props: &ServerProps,
 ) -> Result<HashMap<String, Value>, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/tarkov-stash/globals-presets", server_props),
-    )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    let globals_value = serde_json::to_value(client.send(request).await?.read().await?.data)
-        .expect("Can't parse globals from server");
+    let value = do_get(server_props, "tarkov-stash/globals-presets", None).await?;
     let mut globals: HashMap<String, Value> = HashMap::new();
     // for backwards compatibility, maybe to remove this in future
-    globals.insert("ItemPresets".to_string(), globals_value);
+    globals.insert("ItemPresets".to_string(), value);
     Ok(globals)
 }
 
@@ -115,57 +94,66 @@ pub async fn load_profile_from_server(
     server_props: &ServerProps,
     session: &Session,
 ) -> Result<TarkovProfile, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/tarkov-stash/profile", server_props),
-    )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    let request = request
-        .header("Cookie", format!("PHPSESSID={}", session.id))
-        .unwrap();
-    Ok(
-        serde_json::from_value(client.send(request).await?.read().await?.data)
-            .expect("Can't parse profile"),
-    )
+    let value = do_get(server_props, "tarkov-stash/profile", Some(&session.id)).await?;
+    Ok(serde_json::from_value(value).expect("Can't parse profile"))
 }
 
 pub async fn load_locale_from_server(
     server_props: &ServerProps,
     locale: &str,
 ) -> Result<HashMap<String, Value>, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
-
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/client/locale/{}", server_props, locale),
+    let value = do_get(
+        server_props,
+        format!("client/locale/{}", locale).as_str(),
+        None,
     )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    Ok(parse_locale(client.send(request).await?.read().await?.data))
+    .await?;
+    Ok(parse_locale(value))
 }
 
 pub async fn refresh_profile_on_server(
     server_props: &ServerProps,
     session_id: &String,
 ) -> Result<String, tauri::Error> {
-    let client = ClientBuilder::new().max_redirections(3).build().unwrap();
+    let value = do_get(
+        server_props,
+        "tarkov-stash/reload-profile",
+        Some(session_id),
+    )
+    .await?;
+    Ok(serde_json::from_value(value).expect("Can't parse refresh profile"))
+}
 
-    let request = HttpRequestBuilder::new(
-        "GET",
-        format!("http://{}/tarkov-stash/reload-profile", server_props),
-    )
-    .unwrap();
-    let request = request.header("responsecompressed", "0").unwrap();
-    let request = request
-        .header("Cookie", format!("PHPSESSID={}", session_id))
-        .unwrap();
-    Ok(
-        serde_json::from_value(client.send(request).await?.read().await?.data)
-            .expect("Can't parse refresh profile"),
-    )
+async fn do_get(
+    server_props: &ServerProps,
+    path: &str,
+    session: Option<&String>,
+) -> Result<Value, tauri::Error> {
+    let client = get_client();
+
+    let mut headers = HeaderMap::new();
+    headers.insert("responsecompressed", "0".parse().unwrap());
+    if session.is_some() {
+        headers.insert(
+            "Cookie",
+            format!("PHPSESSID={}", session.unwrap()).parse().unwrap(),
+        );
+    }
+    let response = client
+        .get(format!("{}/{}", server_props, path))
+        .header("responsecompressed", "0")
+        .headers(headers)
+        .send()
+        .await;
+
+    match response {
+        Ok(response) => Ok(serde_json::from_slice::<Value>(
+            &response.bytes().await.unwrap(),
+        )?),
+        Err(_) => Err(tauri::Error::Io(std::io::Error::from(
+            std::io::ErrorKind::NotFound,
+        ))),
+    }
 }
 
 fn parse_sessions(json_value: Value) -> Vec<Session> {
