@@ -24,7 +24,7 @@ pub async fn connect_to_server(
     server: ServerProps,
     app: AppHandle,
 ) -> Result<Vec<Session>, String> {
-    if !is_server_running(&server) {
+    if !is_server_running(&server).await {
         Err(format!("Server is not running at {}", server))
     } else if is_tarkov_running() {
         Err(SPT_RUNNING_ERROR.to_string())
@@ -530,6 +530,8 @@ fn create_backup(profile_path: &str) {
         backup_number += 1;
         backup_path = format!("{profile_path}.back.{backup_number}");
     }
+    println!("profile_path {}", profile_path);
+    println!("backup_path {}", backup_path);
     fs::copy(profile_path, backup_path).unwrap();
 }
 
