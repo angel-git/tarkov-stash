@@ -530,8 +530,6 @@ fn create_backup(profile_path: &str) {
         backup_number += 1;
         backup_path = format!("{profile_path}.back.{backup_number}");
     }
-    println!("profile_path {}", profile_path);
-    println!("backup_path {}", backup_path);
     fs::copy(profile_path, backup_path).unwrap();
 }
 
