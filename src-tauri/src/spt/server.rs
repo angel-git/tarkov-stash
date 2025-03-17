@@ -102,7 +102,12 @@ pub async fn load_locale_from_server(
     server_props: &ServerProps,
     locale: &str,
 ) -> Result<HashMap<String, Value>, tauri::Error> {
-    let value = do_get(server_props, format!("client/locale/{}", locale).as_str(), None).await?;
+    let value = do_get(
+        server_props,
+        format!("client/locale/{}", locale).as_str(),
+        None,
+    )
+    .await?;
     Ok(parse_locale(value))
 }
 
@@ -110,11 +115,13 @@ pub async fn refresh_profile_on_server(
     server_props: &ServerProps,
     session_id: &String,
 ) -> Result<String, tauri::Error> {
-    let value = do_get(server_props, "tarkov-stash/reload-profile", Some(session_id)).await?;
-    Ok(
-        serde_json::from_value(value)
-            .expect("Can't parse refresh profile"),
+    let value = do_get(
+        server_props,
+        "tarkov-stash/reload-profile",
+        Some(session_id),
     )
+    .await?;
+    Ok(serde_json::from_value(value).expect("Can't parse refresh profile"))
 }
 
 async fn do_get(
