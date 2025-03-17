@@ -161,10 +161,6 @@
 
   const stats = calculateStats();
   const slots = mergeSlots();
-
-  function fallbackImage(ev: any) {
-    ev.target.src = `https://assets.tarkov.dev/${item.tpl}-base-image.png`;
-  }
 </script>
 
 <Modal bind:showModal withSubmit={false}>
@@ -178,11 +174,7 @@
         {#if item.cacheImage}
           <img alt="item" src={item.cacheImage} />
         {:else}
-          <img
-            alt="item"
-            src={`https://assets.tarkov.dev/${item.presetImageId}-base-image.png`}
-            on:error={fallbackImage}
-          />
+          <img alt="item" src={`https://assets.tarkov.dev/${item.tpl}-base-image.webp`} />
         {/if}
       </div>
       <div class="details">

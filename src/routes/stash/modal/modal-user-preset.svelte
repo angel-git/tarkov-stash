@@ -112,7 +112,7 @@
           <div>{$addNewUserPreset.item.width}x{$addNewUserPreset.item.height}</div>
           <img
             alt="item"
-            src={`https://assets.tarkov.dev/${$addNewUserPreset.item.items[0].tpl}-base-image.png`}
+            src={`https://assets.tarkov.dev/${$addNewUserPreset.item.items[0].tpl}-base-image.webp`}
           />
           <Slots
             itemsInSlots={$addNewUserPreset.item?.items}
