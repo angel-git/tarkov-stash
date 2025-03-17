@@ -191,6 +191,7 @@ export interface PresetItem {
 export interface UserPresetItem {
   id: string;
   name: string;
+  cacheImage?: string;
   items: Array<PresetItemItem>;
   width: number;
   height: number;

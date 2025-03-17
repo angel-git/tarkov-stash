@@ -89,7 +89,7 @@
   {#if notEnoughSpaceError}
     <h3>You don't have enough space for this item</h3>
   {/if}
-  <h2 slot="header">Add user presets into stash <strong>(BETA!)</strong></h2>
+  <h2 slot="header">Add user presets into stash</h2>
 
   <div class="modal-content">
     <!-- svelte-ignore a11y-autofocus -->
@@ -112,7 +112,8 @@
           <div>{$addNewUserPreset.item.width}x{$addNewUserPreset.item.height}</div>
           <img
             alt="item"
-            src={`https://assets.tarkov.dev/${$addNewUserPreset.item.items[0].tpl}-base-image.webp`}
+            src={$addNewUserPreset.item.cacheImage ??
+              `https://assets.tarkov.dev/${$addNewUserPreset.item.items[0].tpl}-base-image.webp`}
           />
           <Slots
             itemsInSlots={$addNewUserPreset.item?.items}
