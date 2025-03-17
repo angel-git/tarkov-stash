@@ -66,6 +66,7 @@
         .filter((i) => !i.unbuyable)
         .filter((i) => getName(i.id, locale))
         .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
+        .filter((i) => !getName(i.id, locale).includes('DO NOT USE'))
         .forEach((i) => {
           categoriesSet.add(getParentNode(i));
         });
@@ -83,6 +84,7 @@
         .filter((i) => !HIDDEN_CATEGORIES.includes(i.parentId))
         .filter((i) => getName(i.id, locale))
         .filter((i) => !getName(i.id, locale).includes('!!!DO_NOT_USE!!'))
+        .filter((i) => !getName(i.id, locale).includes('DO NOT USE'))
         .map((i) => ({ ...i, category: getParentNode(i), name: getName(i.id, locale) }))
         .filter(
           (i) =>
