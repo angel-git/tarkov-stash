@@ -174,7 +174,10 @@
         {#if item.cacheImage}
           <img alt="item" src={item.cacheImage} />
         {:else}
-          <img alt="item" src={`https://assets.tarkov.dev/${item.tpl}-base-image.webp`} />
+          <img
+            alt="item"
+            src={`https://assets.tarkov.dev/${item.presetImageId ?? item.tpl}-base-image.webp`}
+          />
         {/if}
       </div>
       <div class="details">
